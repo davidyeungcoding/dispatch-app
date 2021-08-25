@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const mongoose = require('mongoose');
-const config = require('../config/database');
 
 module.exports = router;
 
@@ -13,6 +13,23 @@ module.exports = router;
 
 const { userModel } = require('../models/user');
 const User = require('../models/user');
+
+// ========================
+// || Authenticate Token ||
+// ========================
+
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader ? authHeader.split(' ')[1] : null;
+  console.log('here')
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, _user) => {
+    if (err) return res.sendStatus(403);
+    req.user = _user;
+    next();
+  });
+};
 
 // =================
 // || Create User ||
@@ -44,13 +61,13 @@ router.post('/authenticate', (req, res, next) => {
 
   User.authSearch(username, (err, _user) => {
     if (err) throw err;
-    if (!_user) return { success: false, msg: 'User not found' };
+    if (!_user) return res.json({ success: false, msg: 'User not found' });
 
     User.comparePassword(password, _user.password, (err, _match) => {
       if (err) throw err;
       
       if (_match) {
-        const token = jwt.sign(_user.toJSON(), config.secret, { expiresIn: '43200000' });
+        const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '12h' });
         const resUser = {
           _id: _user._id,
           username: _user.username,
@@ -67,6 +84,10 @@ router.post('/authenticate', (req, res, next) => {
       } else return res.json({ success: false, msg: 'Username and Password do not match'});
     });
   });
+});
+
+router.get('/verify-token', authenticateToken, (req, res, next) => {
+  return res.json({ status: 200 });
 });
 
 // ===============
@@ -88,8 +109,4 @@ router.get('/search', (req, res, next) => {
     return _users ? res.json({ success: true, msg: _users })
     : res.json({ success: false, msg: 'Unable to search for user' });
   });
-});
-
-router.get('/dispatch', passport.authenticate('jwt', { session: false }), (req, res, next) => {
-  res.send('DISPATCH');
 });
