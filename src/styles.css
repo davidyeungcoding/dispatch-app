@@ -1,3 +1,42 @@
+:root {
+  --primary-color: 218;
+  --card-primary-color: 220;
+  --color-body-background: hsl(var(--primary-color), 15%, 17%);
+  --color-card-background: hsl(var(--card-primary-color), 10%, 29%);
+  --color-section-background: hsl(var(--card-primary-color), 0%, 14%);
+  --color-text-light: hsl(0, 0%, 100%);
+  --color-text-confirm: hsl(100, 43%, 51%);
+  --color-text-busy: hsl(55, 53%, 51%);
+}
+
+/* =================== */
+/* || Error Message || */
+/* =================== */
+
 .error-msg-container {
   display: none;
 };
+
+/* =========== */
+/* || Fonts || */
+/* =========== */
+
+p, button, a, label {
+  word-wrap: break-word;
+}
+
+/* ============ */
+/* || Global || */
+/* ============ */
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-body-background);
+}

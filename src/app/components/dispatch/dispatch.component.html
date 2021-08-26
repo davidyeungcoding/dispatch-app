@@ -2,16 +2,69 @@
   <div class="row">
     <div class="col">
       <div *ngFor="let user of userList">
-        <h6>{{ user.name }}</h6>
-        <p>{{ user.accountType }}</p>
+        <div class="row user-card">
+          <div class="col">
+            <div class="row">
+              <h4 class="user-title">{{ user.name }}</h4>
+
+              <h6 class="user-title">{{ user.accountType }}</h6>
+            </div>
+  
+            <div class="row user-btn-container">
+              <button type="button"
+                class="btn btn-secondary card-btn"><i class="far fa-comment-alt"></i>&nbsp;Start Chat</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   
     <div class="col">
       <div *ngFor="let doctor of doctorList">
-        <h6>{{ doctor.name }}</h6>
-        <p>{{ doctor.accountType }}</p>
-        <p>{{ doctor.status }}</p>
+        <div class="row user-card">
+          <div class="col">
+            <div class="row">
+              <h4 class="user-title">{{ doctor.name }}</h4>
+              
+              <h6 class="user-title">{{ doctor.accountType }}</h6>
+              
+              <h6 *ngIf="doctor.status === 'available'; else unavailable" class="user-title available">{{ doctor.status }}</h6>
+
+              <ng-template #unavailable>
+                <h6 class="user-title busy">{{ doctor.status }}</h6>
+              </ng-template>
+            </div>
+
+            <div class="row link-container">
+              <button type="button"
+                class="btn btn-secondary edit-btn">
+                <i class="far fa-edit"></i>
+              </button>
+
+              <p class="video-link">{{ doctor.videoCall }}</p>
+            </div>
+
+            <div *ngIf="doctor._id === userData._id; else guestAccess" class="row btn-container">
+              <button type="button"
+                class="btn btn-secondary card-btn"
+                (click)="onChangeStatus('available')">Available</button>
+
+              <button type="button"
+                class="btn btn-secondary card-btn"
+                (click)="onChangeStatus('busy')">Busy</button>
+
+              <button type="button"
+                class="btn btn-secondary card-btn"><i class="far fa-comment-alt"></i>&nbsp;Start Chat</button>
+              </div>
+              
+            <ng-template #guestAccess>
+              <div class="row user-btn-container">
+                <button type="button"
+                  class="btn btn-secondary card-btn"><i class="far fa-comment-alt"></i>&nbsp;Start Chat</button>
+              </div>
+            </ng-template>
+          </div>
+        </div>
       </div>
     </div>
   </div>

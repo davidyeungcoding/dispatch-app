@@ -1,0 +1,57 @@
+.user-card {
+  background-color: var(--color-card-background);
+  padding: 20px;
+  border-radius: 5px;
+  margin: 5px 0;
+}
+
+.user-title {
+  color: var(--color-text-light);
+  display: flex;
+  align-self: flex-end;
+  width: fit-content;
+  text-transform: capitalize;
+}
+
+.available {
+  color: var(--color-text-confirm);
+}
+
+.busy {
+  color: var(--color-text-busy);
+}
+
+.link-container {
+  display: flex;
+  align-items: center;
+}
+
+.edit-btn {
+  width: fit-content;
+  border-radius: 5px 0 0 5px;
+}
+
+.video-link {
+  color: var(--color-text-light);
+  /* width: 100%; */
+  background-color: var(--color-section-background);
+  border-radius: 0 5px 5px 0;
+  padding: 10px 15px;
+}
+
+.user-btn-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.card-btn {
+  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

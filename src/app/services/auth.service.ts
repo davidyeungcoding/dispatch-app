@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { RedirectService } from './redirect.service';
+import { SocketioService } from './socketio.service';
 
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -31,7 +32,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private redirectService: RedirectService
+    private redirectService: RedirectService,
+    private socketioService: SocketioService
   ) { }
 
   // =====================
@@ -74,6 +76,8 @@ export class AuthService {
   };
 
   logout(): void {
+    this.socketioService.emitDisconnect(localStorage.getItem('user'));
+    this.redirectService.handleRedirect('home');
     this.changeAuthToken(null);
     this.changeUserData(null);
     localStorage.clear();

@@ -53,6 +53,7 @@ io.on('connection', socket => {
     console.log(user)
     userList[socket.id] = {
       _id: user._id,
+      socketId: socket.id,
       name: user.name,
       accountType: user.accountType
     };
