@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-// ==============
-// || Services ||
-// ==============
-
 import { AuthService } from 'src/app/services/auth.service';
 import { RedirectService } from 'src/app/services/redirect.service';
+import { SocketioService } from 'src/app/services/socketio.service';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +15,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private redirectService: RedirectService
+    private redirectService: RedirectService,
+    private socketioService: SocketioService
   ) { }
 
   ngOnInit(): void {
@@ -36,7 +34,6 @@ export class HomeComponent implements OnInit {
 
   onLoginSubmit(form: NgForm): void {
     $('#loginErrorMsgContainer').css('display', 'none');
-    this.loginErrorMsg = '';
     const payload = {
       username: form.value.username.trim(),
       password: form.value.password.trim()
@@ -51,18 +48,17 @@ export class HomeComponent implements OnInit {
 
     this.authService.authenticateUser(payload).subscribe(_user => {
       if (_user.success) {
-        const tempUser = {
+        const tempUser: any = {
           _id: _user.user._id,
-          username: _user.user.username,
           name: _user.user.name,
           accountType: _user.user.accountType
         };
-
+        if (_user.user.accountType === 'doctor') tempUser.videoCall = _user.user.videoCall;
+        this.socketioService.emitLogin(tempUser);
         this.authService.setLocalStorageUser(_user.token, JSON.stringify(tempUser));
         this.authService.changeAuthToken(_user.token);
         this.authService.changeUserData(_user.user);
         this.redirectService.handleRedirect('dispatch');
-        // connect to socket.io
       };
 
       this.loginErrorMsg = 'Username and password do not match';

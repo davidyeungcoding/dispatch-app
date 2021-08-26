@@ -26,6 +26,49 @@ mongoose.connection.on('error', err => {
   console.log(`Database Error: ${err}`);
 });
 
+// ===============
+// || Socket.io ||
+// ===============
+
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: ['http://localhost:4200']
+  }
+});
+
+const userList = {};
+
+io.on('connection', socket => {
+  console.log(`=================||    Connected: ${socket.id}     ||=================`);
+  socket.on('disconnect', user => {
+    console.log(`=================|| User Disconnected ${socket.id} ||=================`);
+    delete userList[socket.id];
+    console.log(userList); // delete line
+    io.emit('user-list-update', userList);
+  });
+
+  socket.on('login', user => {
+    console.log('=================||             New User Login             ||=================');
+    console.log(user)
+    userList[socket.id] = {
+      _id: user._id,
+      name: user.name,
+      accountType: user.accountType
+    };
+    if (user.accountType === 'doctor') userList[socket.id].videoCall = user.videoCall;
+    if (user.accountType !== 'doctor') io.emit('user-list-update', userList);
+    console.log(userList); // delete line
+  });
+
+  socket.on('emit-status', status => { // send full list vs send specified user
+    console.log(`=================||        Status Update: ${status}        ||=================`);
+    userList[socket.id].status = status;
+    console.log(userList[socket.id])
+    io.emit('status-change', userList);
+  });
+});
+
 // ================
 // || Middleware ||
 // ================
@@ -45,6 +88,6 @@ const users = require('./routes/users');
 
 app.use('/users', users);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server started on port: ${port}`);
 });

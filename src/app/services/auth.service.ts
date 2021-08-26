@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { RedirectService } from './redirect.service';
+
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
-
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { RedirectService } from './redirect.service';
 
 @Injectable({
   providedIn: 'root'
@@ -101,7 +101,7 @@ export class AuthService {
       accountType: user.accountType
     };
 
-    if (user.accountTye === 'doctor') {
+    if (user.accountType === 'doctor') {
       payload.status = user.status,
       payload.videoCall = user.videoCall
     };

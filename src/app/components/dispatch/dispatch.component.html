@@ -1,1 +1,18 @@
-<p>dispatch works!</p>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div *ngFor="let user of userList">
+        <h6>{{ user.name }}</h6>
+        <p>{{ user.accountType }}</p>
+      </div>
+    </div>
+  
+    <div class="col">
+      <div *ngFor="let doctor of doctorList">
+        <h6>{{ doctor.name }}</h6>
+        <p>{{ doctor.accountType }}</p>
+        <p>{{ doctor.status }}</p>
+      </div>
+    </div>
+  </div>
+</div>

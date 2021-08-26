@@ -21,7 +21,6 @@ const User = require('../models/user');
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader ? authHeader.split(' ')[1] : null;
-  console.log('here')
   if (!token) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, _user) => {
@@ -42,6 +41,7 @@ router.post('/create', (req, res, next) => {
     name: req.body.name,
     accountType: req.body.accountType
   });
+  if (payload.accountType === 'doctor') payload.videoCall = req.body.videoCall;
 
   User.createUser(payload, (err, _user) => {
     if (err) throw err;
@@ -74,11 +74,7 @@ router.post('/authenticate', (req, res, next) => {
           name: _user.name,
           accountType: _user.accountType
         };
-
-        if (resUser.accountType === 'doctor') {
-          resUser.status = _user.status;
-          resUser.videoCall = _user.videoCall;
-        };
+        if (resUser.accountType === 'doctor') resUser.videoCall = _user.videoCall;
 
         return res.json({ success: true, token: `JWT ${token}`, user: resUser });
       } else return res.json({ success: false, msg: 'Username and Password do not match'});

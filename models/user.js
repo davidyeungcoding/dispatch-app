@@ -24,11 +24,6 @@ const userSchema = new mongoose.Schema({
     enum: ['admin', 'doctor', 'dispatch'],
     required: true
   },
-  status: {
-    type: String,
-    enum: ['busy', 'available'],
-    required: false
-  },
   videoCall: {
     type: String,
     required: false
