@@ -8,12 +8,16 @@ import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { DispatchComponent } from './components/dispatch/dispatch.component';
+import { NavComponent } from './components/nav/nav.component';
+import { CreateAccountComponent } from './components/create-account/create-account.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    DispatchComponent
+    DispatchComponent,
+    NavComponent,
+    CreateAccountComponent
   ],
   imports: [
     BrowserModule,

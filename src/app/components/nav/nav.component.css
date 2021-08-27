@@ -1,0 +1,19 @@
+.nav-title {
+  text-decoration: none;
+}
+
+.nav-title:hover {
+  color: var(--color-text-light);
+}
+
+.navbar-btn-container {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  width: -webkit-fill-available;
+}
+
+.nav-btn {
+  color: var(--color-text-light);
+  width: fit-content;
+}

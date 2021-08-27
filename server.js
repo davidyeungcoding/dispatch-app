@@ -47,6 +47,13 @@ io.on('connection', socket => {
     console.log(userList); // delete line
     io.emit('user-list-update', userList);
   });
+  
+  socket.on('logout', user => {
+    console.log(`=================|| User Logged out ${socket.id} ||=================`);
+    delete userList[socket.id];
+    console.log(userList); // delete line
+    io.emit('user-list-update', userList);
+  });
 
   socket.on('login', user => {
     console.log('=================||             New User Login             ||=================');

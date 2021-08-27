@@ -29,12 +29,6 @@ export class SocketioService {
       user.accountType === 'doctor' ? doctors.push(user) : users.push(user);
     });
 
-    // for (let i = 0; i < Object.values(list).length; i++) {
-    //   let user: any = Object.values(list)[i];
-    //   user.socketId = Object.keys(list)[i];
-    //   user.accountType === 'doctor' ? doctors.push(user) : users.push(user);
-    // };
-
     this.changeDoctorList(doctors);
     this.changeUserList(users);
   };
@@ -53,6 +47,10 @@ export class SocketioService {
 
   emitDisconnect(user: any): void {
     if (!!this.socket) this.socket.disconnect(user);
+  };
+
+  emitLogout(user: any): void {
+    this.socket.emit('logout', user);
   };
 
   emitLogin(user: any): void {

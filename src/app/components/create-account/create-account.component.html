@@ -1,0 +1,90 @@
+<app-nav></app-nav>
+
+<div class="container nav-offset">
+  <form #createAccountForm="ngForm"
+    class="create-form"
+    (ngSubmit)="onCreateSubmit(createAccountForm)">
+    <h4>Create Account</h4>
+
+    <div class="form-group text-field">
+      <label for="createUsername">Username:</label>
+
+      <input type="text"
+        class="form-control"
+        id="createUsername"
+        name="username"
+        ngModel>
+    </div>
+
+    <div class="form-group text-field">
+      <label for="createPassword">Password:</label>
+
+      <input type="password"
+        class="form-control"
+        id="createPassword"
+        name="password"
+        ngModel>
+    </div>
+
+    <div class="form-group text-field">
+      <label for="createName">Name:</label>
+
+      <input type="text"
+        class="form-control"
+        id="createName"
+        name="name"
+        ngModel>
+    </div>
+
+    <div class="radio-control-container">
+      <div class="radio-group">
+        <input type="radio"
+          id="dispatch"
+          name="accountType"
+          value="dispatch"
+          ngModel>
+          
+        <label class="radio-label" for="dispatch">Dispatch</label>
+      </div>
+  
+      <div class="radio-group">
+        <input type="radio"
+          id="doctor"
+          name="accountType"
+          value="doctor"
+          ngModel>
+          
+        <label class="radio-label" for="doctor">Doctor</label>
+      </div>
+  
+      <div class="radio-group">
+        <input type="radio"
+          id="admin"
+          name="accountType"
+          value="admin"
+          ngModel>
+          
+        <label class="radio-label" for="admin">Admin</label>
+      </div>
+    </div>
+
+    <div class="msg-container"
+      id="createErrorMsgContainer">
+      <p class="error-msg">{{ createErrorMsg }}</p>
+    </div>
+
+    <div class="msg-container"
+      id="createSuccessMsgContainer">
+      <p class="success-msg">{{ createSuccessMsg }}</p>
+    </div>
+
+    <div class="create-btn-container">
+      <button type="submit"
+        class="btn btn-secondary create-btn">Create User</button>
+  
+      <button type="button"
+        class="btn btn-secondary create-btn"
+        (click)="onCancelCreate()">Cancel</button>
+    </div>
+  </form>
+</div>

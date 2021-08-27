@@ -81,5 +81,6 @@ module.exports.editUser = (id, update, callback) => {
 module.exports.search = (type, term, callback) => {
   const query = { [`${type}`]: term };
   const fields = { password: 0 };
+  console.log(query)
   this.userModel.aggregate([{ $match: query }, { $project: fields }], callback);
 };

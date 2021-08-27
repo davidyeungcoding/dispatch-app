@@ -1,0 +1,37 @@
+.create-form {
+  padding: 0 20%;
+}
+
+.radio-control-container {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 8px;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+}
+
+input[type=radio] {
+  -ms-transform: scale(1.5);
+  -webkit-transform: scale(1.5);
+  transform: scale(1.5);
+}
+
+.radio-label {
+  margin-left: 8px;
+}
+
+.msg-container {
+  text-align: center;
+}
+
+.create-btn-container {
+  display:flex;
+  justify-content: space-around;
+}
+
+.create-btn {
+  width: 35%;
+}

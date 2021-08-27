@@ -1,0 +1,17 @@
+.login-form {
+  padding: 0 20%;
+  padding-top: 32vh;
+}
+
+.msg-container {
+  text-align: center;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+}
+
+.login-btn {
+  width: 33%;
+}

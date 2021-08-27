@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./dispatch.component.css']
 })
 export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
-  private subscription: Subscription = new Subscription();
+  private subscriptions: Subscription = new Subscription();
   userData: any = {};
   userList: any = [];
   doctorList: any = [];
@@ -22,18 +22,17 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.subscription.add(this.authService.compareToken(localStorage.getItem('id_token')!));
-    this.subscription.add(this.authService.userData.subscribe(_user => this.userData = _user));
-    this.subscription.add(this.socketioService.userList.subscribe(_list => this.userList = _list));
-    this.subscription.add(this.socketioService.doctorList.subscribe(_list => this.doctorList = _list));
+    this.subscriptions.add(this.authService.compareToken(localStorage.getItem('id_token')!));
+    this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
+    this.subscriptions.add(this.socketioService.userList.subscribe(_list => this.userList = _list));
+    this.subscriptions.add(this.socketioService.doctorList.subscribe(_list => this.doctorList = _list));
   }
   
   ngAfterViewInit(): void {
-    console.log(this.userList);
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptions.unsubscribe();
   }
 
   onChangeStatus(status: string): void {

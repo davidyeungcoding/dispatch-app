@@ -40,6 +40,19 @@ export class AuthService {
   // || Router Requests ||
   // =====================
 
+  createUser(payload: any, token: string) {
+    const validateHeaders = {
+      headers: new HttpHeaders({
+        'Authorization': token,
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.post(`${this.api}/create`, payload, validateHeaders).pipe(
+      catchError(err => of(err))
+    );
+  };
+
   authenticateUser(payload: any) {
     return this.http.post(`${this.api}/authenticate`, payload, this.httpOptions).pipe(
       catchError(err => of(err))
@@ -58,6 +71,19 @@ export class AuthService {
     );
   };
 
+  verifyAdmin(id: any, token: string) {
+    const adminHeaders = {
+      headers: new HttpHeaders({
+        'Authorization': token,
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.post(`${this.api}/verify-admin`, id, adminHeaders).pipe(
+      catchError(err => of(err))
+    );
+  };
+
   // ======================
   // || Shared Functions ||
   // ======================
@@ -71,12 +97,8 @@ export class AuthService {
     return this.jwt.isTokenExpired(token);
   };
 
-  expirationDate(token: string): any { // delete later
-    return this.jwt.getTokenExpirationDate(token);
-  };
-
   logout(): void {
-    this.socketioService.emitDisconnect(localStorage.getItem('user'));
+    this.socketioService.emitLogout(localStorage.getItem('user'));
     this.redirectService.handleRedirect('home');
     this.changeAuthToken(null);
     this.changeUserData(null);
@@ -85,7 +107,8 @@ export class AuthService {
 
   compareToken(token: string): void {
     this.validateToken(token).subscribe(res => {
-      if (res.status !== 200) this.redirectService.handleRedirect('home');
+      if (res.status !== 200) !!localStorage.getItem('user') ? this.logout()
+      : this.redirectService.handleRedirect('home');
     });
   };
 
@@ -98,6 +121,7 @@ export class AuthService {
   };
 
   changeUserData(user: any): void {
+    if (!user) return this.userDataSource.next(user);
     let payload: any = {
       _id: user._id,
       username: user.username,

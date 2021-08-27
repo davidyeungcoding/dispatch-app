@@ -7,27 +7,54 @@
   --color-text-light: hsl(0, 0%, 100%);
   --color-text-confirm: hsl(100, 43%, 51%);
   --color-text-busy: hsl(55, 53%, 51%);
+  --color-text-warning: hsl(0, 100%, 45%);
+  --box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.25);
 }
 
-/* =================== */
-/* || Error Message || */
-/* =================== */
+/* ============= */
+/* || Message || */
+/* ============= */
 
-.error-msg-container {
+.msg-container {
   display: none;
-};
+}
+
+.error-msg {
+  color: var(--color-text-warning);
+}
+
+.success-msg {
+  color: var(--color-text-confirm);
+}
 
 /* =========== */
 /* || Fonts || */
 /* =========== */
 
-p, button, a, label {
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-light);
+}
+
+p, button, a, label, span {
+  color: var(--color-text-light);
   word-wrap: break-word;
+}
+
+/* =========== */
+/* || Forms || */
+/* =========== */
+
+.text-field {
+  margin-bottom: 10px;
 }
 
 /* ============ */
 /* || Global || */
 /* ============ */
+
+.nav-offset {
+  margin-top: 60px;
+}
 
 html {
   box-sizing: border-box;

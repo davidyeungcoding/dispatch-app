@@ -1,9 +1,10 @@
 <div class="container">
   <form #loginForm="ngForm"
+    class="login-form"
     (ngSubmit)="onLoginSubmit(loginForm)">
     <h4>Login</h4>
 
-    <div class="form-group">
+    <div class="form-group text-field">
       <label for="loginUsername">Username:</label>
 
       <input type="text"
@@ -13,7 +14,7 @@
         ngModel>
     </div>
 
-    <div class="form-group">
+    <div class="form-group text-field">
       <label for="loginPassword">Password:</label>
 
       <input type="password"
@@ -23,11 +24,14 @@
         ngModel>
     </div>
 
-    <div class="error-msg-container"
+    <div class="msg-container"
       id="loginErrorMsgContainer">
       <p class="error-msg">{{ loginErrorMsg }}</p>
     </div>
 
-    <button type="submit">Sign In</button>
+    <div class="btn-container">
+      <button type="submit"
+        class="btn btn-secondary login-btn">Sign In</button>
+    </div>
   </form>
 </div>

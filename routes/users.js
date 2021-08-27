@@ -34,14 +34,35 @@ const authenticateToken = (req, res, next) => {
 // || Create User ||
 // =================
 
-router.post('/create', (req, res, next) => {
+router.post('/create', authenticateToken, async (req, res, next) => {
+  const creatorId = mongoose.Types.ObjectId(req.body.creatorId);
+
+  const adminCheck = await new Promise(resolve => {
+    User.search('_id', creatorId, (err, _user) => {
+      if (err) throw err;
+      resolve(!_user.length || _user[0].accountType !== 'admin' ? false : true);
+    });
+  });
+
+  if (!adminCheck) return res.json({ success: false, status: 401, msg: 'Creator is not an admin' });
+
+  const duplicate = await new Promise(resolve => {
+    User.search('username', req.body.username, (err, _user) => {
+      if (err) throw err;
+      console.log(`username: ${req.body.username}, || array length: ${_user.length} || ${!!_user.length}`)
+      resolve(!!_user.length ? true : false);
+    });
+  });
+
+  console.log(`duplicate: ${duplicate}`)
+  if (duplicate) return res.json({ success: false, status: 400, msg: 'Duplicate username'});
+
   const payload = new userModel({
     username: req.body.username,
     password: req.body.password,
     name: req.body.name,
     accountType: req.body.accountType
   });
-  if (payload.accountType === 'doctor') payload.videoCall = req.body.videoCall;
 
   User.createUser(payload, (err, _user) => {
     if (err) throw err;
@@ -84,6 +105,15 @@ router.post('/authenticate', (req, res, next) => {
 
 router.get('/verify-token', authenticateToken, (req, res, next) => {
   return res.json({ status: 200 });
+});
+
+router.post('/verify-admin', authenticateToken, (req, res, next) => {
+  console.log(`Res: ${req.user.accountType} || ${req.user.accountType === 'admin'}`);
+  console.log(`Res: ${req.user._id} || Sent: ${req.body._id} || ${req.user._id === req.body._id}`);
+  if (req.user._id === req.body._id && req.user.accountType === 'admin') return res.json({ status: 200 });
+  if (req.user._id !== req.body._id) return res.json({ status: 403 });
+  if (req.user.accountType !== 'admin') return res.json({ status: 401 });
+  return res.json({ status: 400 });
 });
 
 // ===============
