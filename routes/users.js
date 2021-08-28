@@ -20,7 +20,7 @@ const User = require('../models/user');
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader ? authHeader.split(' ')[1] : null;
+  const token = authHeader ? authHeader.split(' ')[2] : null;
   if (!token) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, _user) => {
