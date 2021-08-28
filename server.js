@@ -33,7 +33,7 @@ mongoose.connection.on('error', err => {
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
   cors: {
-    origin: ['http://localhost:4200']
+    origin: ['http://localhost:4200', 'https://medical-consultation-dispatch.herokuapp.com']
   }
 });
 
