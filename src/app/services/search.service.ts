@@ -8,7 +8,8 @@ import { of } from 'rxjs';
   providedIn: 'root'
 })
 export class SearchService {
-  private api = 'http://localhost/users';
+  // private api = 'http://localhost/users';
+  private api = 'users';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -24,7 +25,7 @@ export class SearchService {
   // =====================
 
   checkUnique(payload: any) {
-    return this.http.post('/search', payload, this.httpOptions).pipe(
+    return this.http.post(`${this.api}/search`, payload, this.httpOptions).pipe(
       catchError(err => of(err))
     );
   };
