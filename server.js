@@ -75,6 +75,13 @@ io.on('connection', socket => {
     console.log(userList[socket.id])
     io.emit('status-change', userList);
   });
+
+  socket.on('emit-link', link => {
+    console.log(`=====================||        Link Update        ||=====================`);
+    userList[socket.id].videoCall = link;
+    console.log(userList[socket.id]);
+    io.emit('link-change', userList);
+  });
 });
 
 // ================

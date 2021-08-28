@@ -53,6 +53,19 @@ export class AuthService {
     );
   };
 
+  editUser(payload: any, token: string) {
+    const validateHeaders = {
+      headers: new HttpHeaders({
+        'Authorization': token,
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.put(`${this.api}/edit`, payload, validateHeaders).pipe(
+      catchError(err => of(err))
+    );
+  };
+
   authenticateUser(payload: any) {
     return this.http.post(`${this.api}/authenticate`, payload, this.httpOptions).pipe(
       catchError(err => of(err))

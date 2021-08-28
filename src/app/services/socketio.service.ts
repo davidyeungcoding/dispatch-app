@@ -20,6 +20,10 @@ export class SocketioService {
 
   constructor() { }
 
+  // ======================
+  // || Helper Functions ||
+  // ======================
+
   parseUserList(list: any): void {
     let users: any = [];
     let doctors: any = [];
@@ -55,12 +59,15 @@ export class SocketioService {
 
   emitLogin(user: any): void {
     this.socket.emit('login', user);
-    console.log(user)
     if (user.accountType === 'doctor') this.emitStatus('available');
   };
 
   emitStatus(status: string): void {
     this.socket.emit('emit-status', status);
+  };
+
+  emitLink(link: string): void {
+    this.socket.emit('emit-link', link);
   };
 
   // =====================
@@ -77,6 +84,12 @@ export class SocketioService {
     this.socket.on('user-list-update', (_userList: any) => {
       console.log('User List Update');
       console.log(_userList); // set to update user list from a service to track changes
+      this.parseUserList(_userList);
+    });
+
+    this.socket.on('link-change', (_userList: any) => {
+      console.log('Link Change');
+      console.log(_userList);
       this.parseUserList(_userList);
     });
   };

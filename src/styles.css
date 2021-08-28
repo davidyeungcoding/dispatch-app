@@ -49,6 +49,28 @@ p, button, a, label, span {
 }
 
 /* ============ */
+/* || Modals || */
+/* ============ */
+
+.modal-card {
+  background-color: var(--color-card-background);
+}
+
+.modal-form {
+  margin: 15px 15px 10px;
+}
+
+.custom-modal-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.custom-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ============ */
 /* || Global || */
 /* ============ */
 

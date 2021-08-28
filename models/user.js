@@ -71,7 +71,8 @@ module.exports.comparePassword = (password, hash, callback) => {
 // ===============
 
 module.exports.editUser = (id, update, callback) => {
-  this.userModel.findByIdAndUpdate(id, update, callback);
+  const options = { new: true };
+  this.userModel.findByIdAndUpdate(id, update, options, callback);
 };
 
 // =================

@@ -55,8 +55,6 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
       name: form.value.name.trim(),
       accountType: form.value.accountType
     };
-    console.log(this.userData)
-    console.log(payload)
 
     this.authService.createUser(payload, localStorage.getItem('id_token')!).subscribe(_user => {
       if (!_user.success) {
@@ -71,7 +69,7 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.redirectService.handleRedirect('dispatch');
         $('#createSuccessMsgContainer').css('display', 'none');
-      }, 3000);
+      }, 1000);
     });
   };
 

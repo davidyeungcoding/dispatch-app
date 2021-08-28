@@ -39,7 +39,10 @@
 
             <div class="row link-container">
               <button type="button"
-                class="btn btn-secondary edit-btn">
+                class="btn btn-secondary edit-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#editCallLink"
+                (click)="storeTarget(doctor)">
                 <i class="far fa-edit"></i>
               </button>
 
@@ -67,6 +70,56 @@
             </ng-template>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade"
+  id="editCallLink"
+  tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-card">
+      <div class="modal-body">
+        <div class="custom-modal-header">
+          <h5 class="modal-title">Eidt Call Link</h5>
+  
+          <button type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+
+        <form #changeCallLink="ngForm"
+          class="create-form modal-form"
+          (ngSubmit)="onChangeCallLink(changeCallLink)">
+          <div class="form-group text-field">
+            <input type="text"
+              class="form-control"
+              id="callLink"
+              name="callLink"
+              ngModel>
+          </div>
+
+          <div class="msg-container"
+            id="callLinkErrorContainer">
+            <p class="error-msg">{{ callLinkError }}</p>
+          </div>
+
+          <div class="msg-container"
+            id="callLinkSuccessContainer">
+            <p class="success-msg">Link successfully updated</p>
+          </div>
+
+          <div class="custom-modal-footer">
+            <button type="submit"
+              class="btn btn-secondary modal-btn">Submit</button>
+    
+            <button type="button"
+              class="btn btn-secondary modal-btn"
+              data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

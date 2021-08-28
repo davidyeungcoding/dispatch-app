@@ -120,6 +120,18 @@ router.post('/verify-admin', authenticateToken, (req, res, next) => {
 // || Edit User ||
 // ===============
 
+router.put('/edit', authenticateToken, async (req, res, next) => {
+  if (req.body._id !== req.body.targetId) return res.json({ success: false, status: 403, msg: 'Not your account' });
+  const update = { [req.body.target]: req.body.change };
+  
+  User.editUser(req.body.targetId, update, (err, _user) => {
+    if (err) throw err;
+
+    return _user ? res.json({ success: true, status: 200, msg: 'User successfully updated' })
+    : res.json({ success: false, status: 400, msg: 'Unable to update user' });
+  });
+});
+
 // =================
 // || Search User ||
 // =================
