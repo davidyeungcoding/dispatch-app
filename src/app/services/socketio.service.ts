@@ -42,7 +42,8 @@ export class SocketioService {
   // ===========
 
   setupSocketConnection(): void {
-    this.socket = io('http://localhost:3000');
+    // this.socket = io('http://localhost:3000'); // dev
+    this.socket = io();
   };
 
   // ==================
