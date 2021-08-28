@@ -8,7 +8,7 @@ import { of } from 'rxjs';
   providedIn: 'root'
 })
 export class SearchService {
-  // private api = 'http://localhost/users';
+  // private api = 'http://localhost:3000/users';
   private api = 'users';
   private httpOptions = {
     headers: new HttpHeaders({
