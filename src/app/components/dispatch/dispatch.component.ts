@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private target: any = {};
+  private authToken: string = '';
   userData: any = {};
   userList: any = [];
   doctorList: any = [];
@@ -25,10 +26,11 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.subscriptions.add(this.authService.compareToken(localStorage.getItem('id_token')!));
+    // this.subscriptions.add(this.authService.compareToken(localStorage.getItem('id_token')!));
     this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
     this.subscriptions.add(this.socketioService.userList.subscribe(_list => this.userList = _list));
     this.subscriptions.add(this.socketioService.doctorList.subscribe(_list => this.doctorList = _list));
+    this.subscriptions.add(this.authService.authToken.subscribe(_token => this.authToken = _token));
   }
   
   ngAfterViewInit(): void {
@@ -76,7 +78,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
       change: link
     };
 
-    this.authService.editUser(payload, localStorage.getItem('id_token')!).subscribe(_user => {
+    this.authService.editUser(payload, this.authToken).subscribe(_user => {
       if (!_user.success) {
         this.callLinkError = _user.msg;
         $('#callLinkErrorContainer').css('display', 'inline');

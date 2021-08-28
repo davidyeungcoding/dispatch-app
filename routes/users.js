@@ -88,7 +88,7 @@ router.post('/authenticate', (req, res, next) => {
       if (err) throw err;
       
       if (_match) {
-        const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '12h' });
+        const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
         const resUser = {
           _id: _user._id,
           username: _user.username,
