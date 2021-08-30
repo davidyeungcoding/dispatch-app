@@ -16,20 +16,7 @@ export class AdminGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const localUser = localStorage.getItem('user');
-    const user = !!localUser ? JSON.parse(localUser) : null;
-    const authToken = localStorage.getItem('id_token');
-
-    if (!user || !authToken) {
-      this.redirectService.handleRedirect('home');
-      return false;
-    };
-
-    this.authService.verifyAdmin({ _id: user._id }, authToken).subscribe(_status => {
-      console.log(_status.status)
-      return _status.status === 200 ? true : false;
-    })
-    return true;
+    return this.authService.handleAdminCheck();
   };
   
 }

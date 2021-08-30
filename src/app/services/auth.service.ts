@@ -13,8 +13,8 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  // private api = 'http://localhost:3000/users'; // dev
-  private api = 'users'; // production
+  private api = 'http://localhost:3000/users'; // dev
+  // private api = 'users'; // production
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -126,17 +126,25 @@ export class AuthService {
     });
   };
 
+  // ======================
+  // || Helper Functions ||
+  // ======================
+
+  adminCheckParser(id: string, token: string): Promise<boolean> {
+    return new Promise(resolve => {
+      this.verifyAdmin({ _id: id }, token).subscribe(_status => {
+        resolve(_status.status === 200 ? true : false);
+      });
+    });
+  };
+
   // =======================
   // || Auth Guard Checks ||
   // =======================
 
-  dispatchCheck(): boolean {
+  handleDispatchCheck(): boolean {
     const token = localStorage.getItem('id_token');
-
-    if (!token) {
-      this.redirectService.handleRedirect('home');
-      return false;
-    };
+    if (!token) return this.redirectService.falseCheckRedirect('home');
 
     if (this.isExpired(token)) {
       this.logout();
@@ -144,6 +152,14 @@ export class AuthService {
     };
 
     return true;
+  };
+
+  async handleAdminCheck(): Promise<boolean> {
+    const token = localStorage.getItem('id_token');
+    const user = localStorage.getItem('user');
+    if (!user || !token) return this.redirectService.falseCheckRedirect('home');
+    const check = await this.adminCheckParser(JSON.parse(user)._id, token);
+    return check;
   };
 
   // ============================

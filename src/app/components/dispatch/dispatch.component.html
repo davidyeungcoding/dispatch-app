@@ -38,13 +38,22 @@
             </div>
 
             <div class="row link-container">
-              <button type="button"
-                class="btn btn-secondary edit-btn"
+              <button *ngIf="doctor._id === userData._id; else copyButton"
+                type="button"
+                class="btn btn-secondary action-btn"
                 data-bs-toggle="modal"
                 data-bs-target="#editCallLink"
                 (click)="storeTarget(doctor)">
                 <i class="far fa-edit"></i>
               </button>
+
+              <ng-template #copyButton>
+                <button type="button"
+                  class="btn btn-secondary action-btn"
+                  (click)="onCopyLink(doctor.videoCall)">
+                  <i class="far fa-copy"></i>
+                </button>
+              </ng-template>
 
               <p class="video-link">{{ doctor.videoCall }}</p>
             </div>

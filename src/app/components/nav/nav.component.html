@@ -17,7 +17,8 @@
           class="btn nav-btn"
           (click)="onLogout()">Logout</button>
 
-        <button type="button"
+        <button *ngIf="currentUser.accountType === 'admin'"
+          type="button"
           class="btn nav-btn"
           (click)="onRedirect('create-account')">Create Account</button>
       </div>

@@ -95,4 +95,13 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
       }, 1000);
     });
   };
+
+  onCopyLink(link: string): void {
+    const temp = document.createElement('textarea');
+    document.body.appendChild(temp);
+    temp.value = link;
+    temp.select();
+    document.execCommand('copy');
+    document.body.removeChild(temp);
+  };
 }

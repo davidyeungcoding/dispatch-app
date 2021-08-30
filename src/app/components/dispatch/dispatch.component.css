@@ -28,7 +28,7 @@
   box-shadow: var(--box-shadow);
 }
 
-.edit-btn {
+.action-btn {
   width: 10%;
   border-radius: 5px 0 0 5px;
 }

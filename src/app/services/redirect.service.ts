@@ -13,4 +13,9 @@ export class RedirectService {
   handleRedirect(route: string): void {
     this.router.navigate([`/${route}`]);
   };
+
+  falseCheckRedirect(route: string): boolean {
+    this.router.navigate([`/${route}`]);
+    return false;
+  };
 }
