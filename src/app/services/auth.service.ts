@@ -159,6 +159,7 @@ export class AuthService {
     const user = localStorage.getItem('user');
     if (!user || !token) return this.redirectService.falseCheckRedirect('home');
     const check = await this.adminCheckParser(JSON.parse(user)._id, token);
+    if (!check) this.logout();
     return check;
   };
 

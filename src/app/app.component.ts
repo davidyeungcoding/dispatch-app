@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
+import { AuthService } from './services/auth.service';
 import { SocketioService } from './services/socketio.service';
 
 @Component({
@@ -11,6 +12,7 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'dispatch-app';
 
   constructor(
+    private authService: AuthService,
     private socketioService: SocketioService
   ) {}
 

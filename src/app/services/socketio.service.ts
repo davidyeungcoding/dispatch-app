@@ -19,6 +19,15 @@ export class SocketioService {
   doctorList = this.doctorListSource.asObservable();
 
   constructor() { }
+  
+  // ===========
+  // || Setup ||
+  // ===========
+
+  setupSocketConnection(): void {
+    // this.socket = io('http://localhost:3000'); // dev
+    this.socket = io(); // production
+  };
 
   // ======================
   // || Helper Functions ||
@@ -35,15 +44,6 @@ export class SocketioService {
 
     this.changeDoctorList(doctors);
     this.changeUserList(users);
-  };
-
-  // ===========
-  // || Setup ||
-  // ===========
-
-  setupSocketConnection(): void {
-    // this.socket = io('http://localhost:3000'); // dev
-    this.socket = io();
   };
 
   // ==================
@@ -69,6 +69,10 @@ export class SocketioService {
 
   emitLink(link: string): void {
     this.socket.emit('emit-link', link);
+  };
+
+  emitUserListRequest(): void {
+    this.socket.emit('request-user-list');
   };
 
   // =====================

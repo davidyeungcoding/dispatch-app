@@ -82,6 +82,12 @@ io.on('connection', socket => {
     console.log(userList[socket.id]);
     io.emit('link-change', userList);
   });
+
+  socket.on('request-user-list', () => {
+    console.log(`==================||        User List Request        ||==================`);
+    console.log(userList);
+    io.emit('user-list-update', userList);
+  });
 });
 
 // ================

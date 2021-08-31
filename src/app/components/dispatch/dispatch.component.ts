@@ -31,9 +31,13 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.add(this.socketioService.userList.subscribe(_list => this.userList = _list));
     this.subscriptions.add(this.socketioService.doctorList.subscribe(_list => this.doctorList = _list));
     this.subscriptions.add(this.authService.authToken.subscribe(_token => this.authToken = _token));
+    this.socketioService.emitUserListRequest();
   }
   
   ngAfterViewInit(): void {
+    console.log('======================================')
+    console.log(this.userList);
+    console.log('======================================')
   }
 
   ngOnDestroy(): void {

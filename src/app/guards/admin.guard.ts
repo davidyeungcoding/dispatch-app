@@ -3,7 +3,6 @@ import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } fro
 import { Observable } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
-import { RedirectService } from '../services/redirect.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +10,7 @@ import { RedirectService } from '../services/redirect.service';
 export class AdminGuard implements CanActivate {
 
   constructor(
-    private authService: AuthService,
-    private redirectService: RedirectService
+    private authService: AuthService
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
