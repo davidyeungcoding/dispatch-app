@@ -1,0 +1,28 @@
+#chatContainer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.chat-box {
+  height: 300px;
+  width: 225px;
+  margin: 0 10px;
+  background-color:aliceblue;
+}
+
+.chat-box:first-child {
+  margin-right: 20px;
+}
+
+.chat-box:last-child {
+  margin-left: 0;
+}
+
+.chat-control {
+  width: 100%;
+  height: 45px;
+  background-color: var(--color-window-control);
+}

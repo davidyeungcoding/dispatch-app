@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { ChatService } from './chat.service';
+
 import { BehaviorSubject } from 'rxjs';
 import { io } from 'socket.io-client';
 
@@ -17,16 +19,20 @@ export class SocketioService {
   userList = this.userListSource.asObservable();
   private doctorListSource = new BehaviorSubject([]);
   doctorList = this.doctorListSource.asObservable();
+  private conversionListSource = new BehaviorSubject({});
+  conversionList = this.conversionListSource.asObservable();
 
-  constructor() { }
+  constructor(
+    private chatService: ChatService
+  ) { }
   
   // ===========
   // || Setup ||
   // ===========
 
   setupSocketConnection(): void {
-    // this.socket = io('http://localhost:3000'); // dev
-    this.socket = io(); // production
+    this.socket = io('http://localhost:3000'); // dev
+    // this.socket = io(); // production
   };
 
   // ======================
@@ -50,8 +56,8 @@ export class SocketioService {
   // || Emit Changes ||
   // ==================
 
-  emitDisconnect(user: any): void {
-    if (!!this.socket) this.socket.disconnect(user);
+  emitDisconnect(): void {
+    if (!!this.socket) this.socket.disconnect();
   };
 
   emitLogout(user: any): void {
@@ -75,27 +81,35 @@ export class SocketioService {
     this.socket.emit('request-user-list');
   };
 
+  emitSendMessage(payload: any): void {
+    this.socket.emit('send-message', payload);
+  };
+
   // =====================
   // || Receive Updates ||
   // =====================
 
   receiveStatusChange(): void {
     this.socket.on('status-change', (_userList: any) => {
-      console.log('Status Change');
-      console.log(_userList); // set to update user list from a service to track changes
       this.parseUserList(_userList);
     });
 
     this.socket.on('user-list-update', (_userList: any) => {
-      console.log('User List Update');
-      console.log(_userList); // set to update user list from a service to track changes
       this.parseUserList(_userList);
     });
 
     this.socket.on('link-change', (_userList: any) => {
-      console.log('Link Change');
-      console.log(_userList);
       this.parseUserList(_userList);
+    });
+
+    this.socket.on('socket-conversion', (conversion: any) => {
+      this.changeConversionList(conversion);
+    });
+
+    this.socket.on('update-chat', (_message: any) => {
+      console.log('update-chat');
+      console.log(_message);
+      this.chatService.receiveMessage(_message);
     });
   };
 
@@ -109,5 +123,9 @@ export class SocketioService {
   
   changeDoctorList(list: any): void {
     this.doctorListSource.next(list);
+  };
+
+  changeConversionList(list: any): void {
+    this.conversionListSource.next(list);
   };
 }

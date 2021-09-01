@@ -10,6 +10,7 @@ import { HomeComponent } from './components/home/home.component';
 import { DispatchComponent } from './components/dispatch/dispatch.component';
 import { NavComponent } from './components/nav/nav.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { CreateAccountComponent } from './components/create-account/create-accou
     HomeComponent,
     DispatchComponent,
     NavComponent,
-    CreateAccountComponent
+    CreateAccountComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,

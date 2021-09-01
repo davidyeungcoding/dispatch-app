@@ -58,7 +58,7 @@
               <p class="video-link">{{ doctor.videoCall }}</p>
             </div>
 
-            <div *ngIf="doctor._id === userData._id; else guestAccess" class="row btn-container">
+            <div *ngIf="doctor._id === userData._id; else guestView" class="row btn-container">
               <button type="button"
                 class="btn btn-secondary card-btn"
                 (click)="onChangeStatus('available')">Available</button>
@@ -68,13 +68,14 @@
                 (click)="onChangeStatus('busy')">Busy</button>
 
               <button type="button"
-                class="btn btn-secondary card-btn"><i class="far fa-comment-alt"></i>&nbsp;Start Chat</button>
+                class="btn btn-secondary card-btn"><i class="far fa-comment-alt"></i>&nbsp;Chat</button>
               </div>
               
-            <ng-template #guestAccess>
+            <ng-template #guestView>
               <div class="row user-btn-container">
                 <button type="button"
-                  class="btn btn-secondary card-btn"><i class="far fa-comment-alt"></i>&nbsp;Start Chat</button>
+                  class="btn btn-secondary card-btn"
+                  (click)="startChat(doctor)"><i class="far fa-comment-alt"></i>&nbsp;Chat</button>
               </div>
             </ng-template>
           </div>
@@ -83,6 +84,8 @@
     </div>
   </div>
 </div>
+
+<app-chat></app-chat>
 
 <div class="modal fade"
   id="editCallLink"

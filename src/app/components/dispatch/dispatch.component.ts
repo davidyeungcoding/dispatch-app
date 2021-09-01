@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 
 import { AuthService } from 'src/app/services/auth.service';
 import { SocketioService } from 'src/app/services/socketio.service';
+import { ChatService } from 'src/app/services/chat.service';
 
 import { Subscription } from 'rxjs';
 
@@ -15,6 +16,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private target: any = {};
   private authToken: string = '';
+  private openChats: any = {};
   userData: any = {};
   userList: any = [];
   doctorList: any = [];
@@ -22,15 +24,16 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private socketioService: SocketioService
+    private socketioService: SocketioService,
+    private chatService: ChatService
   ) { }
 
   ngOnInit(): void {
-    // this.subscriptions.add(this.authService.compareToken(localStorage.getItem('id_token')!));
     this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
     this.subscriptions.add(this.socketioService.userList.subscribe(_list => this.userList = _list));
     this.subscriptions.add(this.socketioService.doctorList.subscribe(_list => this.doctorList = _list));
     this.subscriptions.add(this.authService.authToken.subscribe(_token => this.authToken = _token));
+    this.subscriptions.add(this.chatService.openChats.subscribe(_list => this.openChats = _list));
     this.socketioService.emitUserListRequest();
   }
   
@@ -38,6 +41,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('======================================')
     console.log(this.userList);
     console.log('======================================')
+    console.log(this.userData)
   }
 
   ngOnDestroy(): void {
@@ -62,6 +66,10 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   // =======================
 
   onChangeStatus(status: string): void {
+    console.log(this.userData.status === status)
+    if (this.userData.status === status) return;
+    this.userData.status = status;
+    console.log(this.userData.status);
     this.socketioService.emitStatus(status);
   };
 
@@ -107,5 +115,19 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     temp.select();
     document.execCommand('copy');
     document.body.removeChild(temp);
+  };
+
+  startChat(user: any): void {
+    if (this.openChats[user._id]) return; // show chat box if closed
+    const payload = {
+      _id: user._id,
+      socketId: user.socketId,
+      name: user.name,
+      messages: []
+    };
+
+    this.openChats[user._id] = payload;
+    this.chatService.changeOpenChats(this.openChats);
+    console.log(this.openChats);
   };
 }

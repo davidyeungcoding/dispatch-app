@@ -22,6 +22,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.socketioService.emitDisconnect(localStorage.getItem('user'));
+    this.socketioService.emitDisconnect();
   }
 }
