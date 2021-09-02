@@ -32,31 +32,29 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  onSendMessage(target: any, sentMessage: string): void {
+  onSendMessage(conversation: any, form: NgForm): void {
+    const parsedMessage = form.value.message.trim();
+    form.value.message = '';
+    $(`#${Object.values(conversation)[0]}Chat`).val('');
+    if (!parsedMessage) return;
     const message = { 
       name: 'You',
-      message: sentMessage
+      message: parsedMessage
      };
     const payload = {
       _id: this.userData._id,
       name: this.userData.name,
-      targetSocket: target.socketId,
-      message: sentMessage
+      targetSocket: conversation.socketId,
+      message: parsedMessage
     };
-    target.messages.push(message);
-    this.chatService.changeOpenChats(this.openChats[target._id] = target);
-    this.socketioService.emitSendMessage(payload);
+    console.log('=================================')
+    // @ts-ignore
+    console.log(Object.values(conversation))
+    // @ts-ignore
+    console.log(Object.values(conversation)[1].messages)
+    // @ts-ignore
+    Object.values(conversation)[1].messages.push(message);
+    // this.chatService.changeOpenChats(this.openChats[conversation._id] = conversation);
+    // this.socketioService.emitSendMessage(payload);
   };
-
-  // onSendMessage(form: NgForm, target: any): void {
-  //   const message = form.value.message.trim();
-  //   if (!message) return;
-  //   const payload = {
-  //     _id: this.userData._id,
-  //     name: this.userData.name,
-  //     message: message,
-
-  //   }
-
-  // }
 }

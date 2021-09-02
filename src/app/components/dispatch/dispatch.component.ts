@@ -117,7 +117,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     document.body.removeChild(temp);
   };
 
-  startChat(user: any): void {
+  onStartChat(user: any): void {
     if (this.openChats[user._id]) return; // show chat box if closed
     const payload = {
       _id: user._id,

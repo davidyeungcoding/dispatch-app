@@ -2,12 +2,44 @@
   <div *ngFor="let conversation of openChats | keyvalue"
     class="chat-box">
     <div class="chat-control">
+      <button type="button"
+        class="btn-close btn-close-white chat-close-btn"
+        aria-label="Close"></button>
+
+      <button type="button"
+        class="btn chat-minimize-btn"
+        aria-labelledby="Minimize">
+        <i class="far fa-window-minimize"></i>
+      </button>
     </div>
 
-    <div class="chat-display">
-    </div>
+    <div class="minimize-content">
+      <div class="chat-display">
+        <!-- <span *ngFor="let temp of openChats['conversation.key']"> -->
+          <!-- {{openChats['conversation.key']}} -->
+          <!-- {{conversation.value | json}} -->
+          <!-- {{chat}} -->
+        <!-- </span> -->
+      </div>
+  
+      <div class="chat-text-area">
+        <form #chatMessageForm="ngForm"
+          class="chat-msg-form"
+          (ngSubmit)="onSendMessage(conversation, chatMessageForm)">
+          <div class="form-group text-field">
+            <textarea class="form-control chat-text-field"
+              id="{{ conversation.key }}Chat"
+              name="message"
+              ngModel>
+            </textarea>
+          </div>
 
-    <div class="chat-text-area">
+          <div class="send-msg-container">
+            <button type="submit"
+              class="btn btn-secondary send-msg"><i class="far fa-paper-plane"></i></button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
