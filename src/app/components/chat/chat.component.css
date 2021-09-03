@@ -10,7 +10,7 @@
   height: 300px;
   width: 225px;
   margin: 0 10px;
-  background-color:aliceblue;
+  background-color:var(--color-chat-backgroud);
 }
 
 .chat-box:first-child {
@@ -39,12 +39,29 @@
 
 .chat-display {
   height: 190px;
+  overflow: auto;
+}
+
+.chat-message {
+  display: block;
+  margin: 5px;
+  padding: 5px;
+  color: var(--color-text-light);
+  background-color: var(--color-card-background);
+}
+
+.personal {
+  margin-left: 25px;
+  border-radius: 5px 5px 0 5px;
+}
+
+.response {
+  margin-right: 25px;
+  border-radius: 5px 5px 5px 0;
 }
 
 .chat-msg-form {
   display: flex;
-  /* position: absolute;
-  bottom: 0; */
 }
 
 .send-msg, .chat-text-field {

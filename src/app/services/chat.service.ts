@@ -1,24 +1,41 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
+import { ChatEntry } from '../interfaces/chat-entry';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private openChatsSource = new BehaviorSubject<any>({});
+  private openChatsSource = new BehaviorSubject<any>([]);
   openChats = this.openChatsSource.asObservable();
 
   constructor() { }
 
-  receiveMessage(payload: any): void {
-    const list = this.openChatsSource.value;
-    if (!list[payload._id]) list[payload._id] = [];
+  // =======================
+  // || General Functions ||
+  // =======================
 
-    list[payload._id].push({
+  receiveMessage(payload: any): void {
+    let list = this.openChatsSource.value;
+    console.log('++++++++++++++++++++++++++++++++++++++')
+    console.log('received message')
+    console.log(list)
+    const update: ChatEntry = {
+      _id: payload._id,
+      socketId: payload.socketId,
       name: payload.name,
-      messsage: payload.message
-    });
+      messages: [{
+        personal: payload.messages.personal,
+        message: payload.messages[0]
+      }]
+    };
+    const chatEntry: ChatEntry = list.find((entry: ChatEntry) => entry._id === update._id);
+    chatEntry ? chatEntry.messages.push(update.messages[0]) : list.push(update);
+    console.log('list update')
+    console.log(list)
+    console.log('++++++++++++++++++++++++++++++++++++++')
+    this.changeOpenChats(list);
   };
 
   // =======================
@@ -27,5 +44,8 @@ export class ChatService {
 
   changeOpenChats(list: any): void {
     this.openChatsSource.next(list);
+    console.log('0000000000000000000000000000000000000000')
+    console.log(this.openChatsSource.value);
+    console.log('0000000000000000000000000000000000000000')
   };
 }

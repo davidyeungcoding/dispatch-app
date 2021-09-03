@@ -4,8 +4,10 @@
   --window-control-color: 200;
   --color-body-background: hsl(var(--primary-color), 15%, 17%);
   --color-card-background: hsl(var(--card-primary-color), 10%, 29%);
+  --color-chat-backgroud: hsl(208, 100%, 97%);
   --color-window-control: hsl(var(--window-control-color), 10%, 20%);
   --color-section-background: hsl(var(--card-primary-color), 0%, 14%);
+  --color-text-dark: hsl(0, 0%, 0%);
   --color-text-light: hsl(0, 0%, 100%);
   --color-text-confirm: hsl(100, 43%, 51%);
   --color-text-busy: hsl(55, 53%, 51%);

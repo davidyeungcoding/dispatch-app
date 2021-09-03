@@ -106,10 +106,10 @@ export class SocketioService {
       this.changeConversionList(conversion);
     });
 
-    this.socket.on('update-chat', (_message: any) => {
-      console.log('update-chat');
-      console.log(_message);
-      this.chatService.receiveMessage(_message);
+    this.socket.on('update-chat', (payload: any) => {
+      console.log('socketio: update-chat');
+      console.log(payload);
+      this.chatService.receiveMessage(payload);
     });
   };
 

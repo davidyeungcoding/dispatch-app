@@ -1,5 +1,5 @@
 <div id="chatContainer">
-  <div *ngFor="let conversation of openChats | keyvalue"
+  <div *ngFor="let conversation of openChats"
     class="chat-box">
     <div class="chat-control">
       <button type="button"
@@ -15,11 +15,19 @@
 
     <div class="minimize-content">
       <div class="chat-display">
-        <!-- <span *ngFor="let temp of openChats['conversation.key']"> -->
-          <!-- {{openChats['conversation.key']}} -->
-          <!-- {{conversation.value | json}} -->
-          <!-- {{chat}} -->
-        <!-- </span> -->
+        <div *ngFor="let message of conversation.messages">
+          <span *ngIf="message.personal; else response" class="chat-message personal">
+            {{ message.message }}
+          </span>
+
+          <ng-template #response>
+            <span class="chat-message response">
+              <!-- {{conversation.messages|json}}
+              {{ message.message | json }} -->
+              {{message.message.message}}
+            </span>
+          </ng-template>
+        </div>
       </div>
   
       <div class="chat-text-area">
@@ -28,7 +36,7 @@
           (ngSubmit)="onSendMessage(conversation, chatMessageForm)">
           <div class="form-group text-field">
             <textarea class="form-control chat-text-field"
-              id="{{ conversation.key }}Chat"
+              id="{{ conversation._id }}Chat"
               name="message"
               ngModel>
             </textarea>

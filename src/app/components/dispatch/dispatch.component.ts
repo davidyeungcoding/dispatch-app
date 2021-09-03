@@ -6,6 +6,7 @@ import { SocketioService } from 'src/app/services/socketio.service';
 import { ChatService } from 'src/app/services/chat.service';
 
 import { Subscription } from 'rxjs';
+import { ChatEntry } from 'src/app/interfaces/chat-entry';
 
 @Component({
   selector: 'app-dispatch',
@@ -16,7 +17,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private target: any = {};
   private authToken: string = '';
-  private openChats: any = {};
+  private openChats: any = [];
   userData: any = {};
   userList: any = [];
   doctorList: any = [];
@@ -117,17 +118,41 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     document.body.removeChild(temp);
   };
 
+  // onStartChat(user: any): void {
+  //   if (this.openChats[user._id]) return; // show chat box if closed
+  //   const payload = {
+  //     _id: user._id,
+  //     socketId: user.socketId,
+  //     name: user.name,
+  //     messages: []
+  //   };
+
+  //   this.openChats[user._id] = payload;
+  //   this.chatService.changeOpenChats(this.openChats);
+  //   console.log(this.openChats);
+  // };
+
   onStartChat(user: any): void {
-    if (this.openChats[user._id]) return; // show chat box if closed
-    const payload = {
+    const chatUser = {
       _id: user._id,
       socketId: user.socketId,
       name: user.name,
       messages: []
     };
 
-    this.openChats[user._id] = payload;
-    this.chatService.changeOpenChats(this.openChats);
-    console.log(this.openChats);
+    if (!this.openChats.length) {
+      this.openChats.push(chatUser);
+      this.chatService.changeOpenChats(this.openChats);
+      return;
+    } else {
+      for (let i = 0; i < this.openChats.length; i++) {
+        if (this.openChats[i]._id === user._id) return;
+        if (i === this.openChats.length - 1) {
+          this.openChats.push(chatUser);
+          this.chatService.changeOpenChats(this.openChats);
+          return;
+        };
+      };
+    };
   };
 }
