@@ -118,41 +118,18 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     document.body.removeChild(temp);
   };
 
-  // onStartChat(user: any): void {
-  //   if (this.openChats[user._id]) return; // show chat box if closed
-  //   const payload = {
-  //     _id: user._id,
-  //     socketId: user.socketId,
-  //     name: user.name,
-  //     messages: []
-  //   };
-
-  //   this.openChats[user._id] = payload;
-  //   this.chatService.changeOpenChats(this.openChats);
-  //   console.log(this.openChats);
-  // };
-
   onStartChat(user: any): void {
-    const chatUser = {
+    const chatUser: ChatEntry = {
       _id: user._id,
       socketId: user.socketId,
       name: user.name,
       messages: []
     };
-
-    if (!this.openChats.length) {
+    const chatEntry = this.openChats.find((log: ChatEntry) => log._id === user._id);
+    
+    if (!chatEntry) {
       this.openChats.push(chatUser);
       this.chatService.changeOpenChats(this.openChats);
-      return;
-    } else {
-      for (let i = 0; i < this.openChats.length; i++) {
-        if (this.openChats[i]._id === user._id) return;
-        if (i === this.openChats.length - 1) {
-          this.openChats.push(chatUser);
-          this.chatService.changeOpenChats(this.openChats);
-          return;
-        };
-      };
     };
   };
 }

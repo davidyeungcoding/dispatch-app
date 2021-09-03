@@ -108,18 +108,6 @@ io.on('connection', socket => {
   
   socket.on('send-message', payload => {
     console.log(`=========================||        Start Chat        ||========================`);
-    // const pathOne = `${socket.id}-${paylaod.targetSocket}`;
-    // const pathTwo = `${payload.targetSocket}-${socket.id}`;
-    // const newMessage = {
-    //   _id: payload._id,
-    //   name: payload.name,
-    //   message: payload.message
-    // };
-
-    // if (!messages[pathOne] && !messages[pathTwo]) messages[pathOne] = [];
-    // messages[pathOne] ? messages[pathOne].push(newMessage) : messages[pathTwo].push(newMessage);
-    // console.log(newMessage);
-    // console.log(messages);
     const receiver = payload.socketId;
     payload.socketId = socket.id;
     console.log(payload);

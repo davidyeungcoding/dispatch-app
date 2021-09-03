@@ -18,24 +18,31 @@ export class ChatService {
 
   receiveMessage(payload: any): void {
     let list = this.openChatsSource.value;
-    console.log('++++++++++++++++++++++++++++++++++++++')
-    console.log('received message')
-    console.log(list)
     const update: ChatEntry = {
       _id: payload._id,
       socketId: payload.socketId,
       name: payload.name,
       messages: [{
-        personal: payload.messages.personal,
-        message: payload.messages[0]
+        personal: payload.messages[0].personal,
+        message: payload.messages[0].message
       }]
     };
     const chatEntry: ChatEntry = list.find((entry: ChatEntry) => entry._id === update._id);
     chatEntry ? chatEntry.messages.push(update.messages[0]) : list.push(update);
-    console.log('list update')
-    console.log(list)
-    console.log('++++++++++++++++++++++++++++++++++++++')
     this.changeOpenChats(list);
+    this.scrollDown(`#${update._id}ChatDisplay`);
+  };
+
+  // temp workaroud issue where scroll won't go all the way to the bottom
+  // of the element container
+  scrollDown(elemId: string): void {
+    setTimeout(() => {
+      $(elemId)[0].lastElementChild?.scrollIntoView({
+        block: 'end',
+        inline: 'nearest',
+        behavior: 'smooth'
+      });
+    }, 50);
   };
 
   // =======================
@@ -44,8 +51,5 @@ export class ChatService {
 
   changeOpenChats(list: any): void {
     this.openChatsSource.next(list);
-    console.log('0000000000000000000000000000000000000000')
-    console.log(this.openChatsSource.value);
-    console.log('0000000000000000000000000000000000000000')
   };
 }

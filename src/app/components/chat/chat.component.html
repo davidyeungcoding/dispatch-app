@@ -14,7 +14,8 @@
     </div>
 
     <div class="minimize-content">
-      <div class="chat-display">
+      <div class="chat-display"
+        id="{{ conversation._id }}ChatDisplay">
         <div *ngFor="let message of conversation.messages">
           <span *ngIf="message.personal; else response" class="chat-message personal">
             {{ message.message }}
@@ -22,9 +23,7 @@
 
           <ng-template #response>
             <span class="chat-message response">
-              <!-- {{conversation.messages|json}}
-              {{ message.message | json }} -->
-              {{message.message.message}}
+              {{ message.message }}
             </span>
           </ng-template>
         </div>

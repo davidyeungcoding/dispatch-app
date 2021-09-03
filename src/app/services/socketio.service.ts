@@ -107,8 +107,6 @@ export class SocketioService {
     });
 
     this.socket.on('update-chat', (payload: any) => {
-      console.log('socketio: update-chat');
-      console.log(payload);
       this.chatService.receiveMessage(payload);
     });
   };

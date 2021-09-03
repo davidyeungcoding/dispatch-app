@@ -46,6 +46,7 @@
   display: block;
   margin: 5px;
   padding: 5px;
+  white-space: pre-wrap;
   color: var(--color-text-light);
   background-color: var(--color-card-background);
 }
