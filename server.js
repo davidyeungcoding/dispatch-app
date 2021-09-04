@@ -108,8 +108,7 @@ io.on('connection', socket => {
   
   socket.on('send-message', payload => {
     console.log(`=========================||        Start Chat        ||========================`);
-    const receiver = payload.socketId;
-    payload.socketId = socket.id;
+    const receiver = userToSocket[payload.targetId];
     console.log(payload);
     io.to(receiver).emit('update-chat', payload);
   });
@@ -120,8 +119,8 @@ io.on('connection', socket => {
 // ================
 
 app.use(cors());
-app.use(express.static(path.join(__dirname, 'src'))); // dev
-// app.use(express.static(path.join(__dirname, '/dist/dispatch-app'))); // production
+// app.use(express.static(path.join(__dirname, 'src'))); // dev
+app.use(express.static(path.join(__dirname, '/dist/dispatch-app'))); // production
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({
   extended: false

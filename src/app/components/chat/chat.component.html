@@ -3,17 +3,31 @@
     class="chat-box">
     <div class="chat-control">
       <button type="button"
-        class="btn-close btn-close-white chat-close-btn"
-        aria-label="Close"></button>
+        class="btn chat-control-btn"
+        aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
 
-      <button type="button"
-        class="btn chat-minimize-btn"
-        aria-labelledby="Minimize">
+      <button *ngIf="conversation.minimize; else maximizeContent"
+        type="button"
+        class="btn chat-control-btn"
+        aria-label="Minimize"
+        (click)="resize(conversation)">
         <i class="far fa-window-minimize"></i>
       </button>
+
+      <ng-template #maximizeContent>
+        <button type="button"
+          class="btn chat-control-btn"
+          aria-label="Maximize"
+          (click)="resize(conversation)">
+          <i class="far fa-window-maximize"></i>
+        </button>
+      </ng-template>
     </div>
 
-    <div class="minimize-content">
+    <div class="minimize-content"
+      id="{{ conversation._id }}MinimizeContent">
       <div class="chat-display"
         id="{{ conversation._id }}ChatDisplay">
         <div *ngFor="let message of conversation.messages">
@@ -27,6 +41,8 @@
             </span>
           </ng-template>
         </div>
+
+        <div id="buffer"></div>
       </div>
   
       <div class="chat-text-area">

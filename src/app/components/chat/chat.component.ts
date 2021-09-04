@@ -47,17 +47,16 @@ export class ChatComponent implements OnInit, OnDestroy {
   // || Socketio Functions ||
   // ========================
 
-  sendSocketioMessage(targetSocket: string, message: string): void {
-    const targetUser: ChatEntry = {
+  sendSocketioMessage(conversation: any, message: string): void {
+    const targetUser = {
+      targetId: conversation._id,
       _id: this.userData._id,
-      socketId: targetSocket,
       name: this.userData.name,
       messages: [{
         personal: false,
         message: message
       }]
     };
-
     this.socketioService.emitSendMessage(targetUser);
   };
 
@@ -80,8 +79,13 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     conversation.messages.push(message);
     this.clearTextField(conversation, form);
-    this.chatService.changeOpenChats(this.openChats);
-    this.sendSocketioMessage(conversation.socketId, message.message);
+    this.sendSocketioMessage(conversation, message.message);
     this.chatService.scrollDown(`#${conversation._id}ChatDisplay`);
+  };
+
+  resize(conversation: any): void {
+    const node = $(`#${conversation._id}MinimizeContent`);
+    conversation.minimize ? node.css('display', 'none') : node.css('display', 'inline');
+    conversation.minimize = !conversation.minimize;
   };
 }

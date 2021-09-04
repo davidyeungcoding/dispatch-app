@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { RedirectService } from './redirect.service';
 import { SocketioService } from './socketio.service';
+import { ChatService } from './chat.service';
 
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -13,8 +14,8 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private api = 'http://localhost:3000/users'; // dev
-  // private api = 'users'; // production
+  // private api = 'http://localhost:3000/users'; // dev
+  private api = 'users'; // production
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -34,7 +35,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private redirectService: RedirectService,
-    private socketioService: SocketioService
+    private socketioService: SocketioService,
+    private chatService: ChatService
   ) { }
 
   // =====================
@@ -112,6 +114,7 @@ export class AuthService {
   };
 
   logout(): void {
+    this.chatService.changeOpenChats([]);
     this.socketioService.emitLogout(localStorage.getItem('user'));
     this.redirectService.handleRedirect('home');
     this.changeAuthToken(null);

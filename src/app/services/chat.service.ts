@@ -18,16 +18,18 @@ export class ChatService {
 
   receiveMessage(payload: any): void {
     let list = this.openChatsSource.value;
+    const chatEntry: ChatEntry = list.find((entry: ChatEntry) => entry._id === payload._id);
+    const minimizeValue = chatEntry ? chatEntry.minimize : true;
     const update: ChatEntry = {
+      targetId: payload.target,
       _id: payload._id,
-      socketId: payload.socketId,
       name: payload.name,
       messages: [{
         personal: payload.messages[0].personal,
         message: payload.messages[0].message
-      }]
+      }],
+      minimize: minimizeValue
     };
-    const chatEntry: ChatEntry = list.find((entry: ChatEntry) => entry._id === update._id);
     chatEntry ? chatEntry.messages.push(update.messages[0]) : list.push(update);
     this.changeOpenChats(list);
     this.scrollDown(`#${update._id}ChatDisplay`);

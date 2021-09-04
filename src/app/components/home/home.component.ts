@@ -54,6 +54,7 @@ export class HomeComponent implements OnInit {
           accountType: _user.user.accountType
         };
         if (_user.user.accountType === 'doctor') tempUser.videoCall = _user.user.videoCall;
+
         this.socketioService.emitLogin(tempUser);
         this.authService.setLocalStorageUser(_user.token, JSON.stringify(tempUser));
         this.authService.changeAuthToken(_user.token);

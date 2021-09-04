@@ -1,8 +1,9 @@
 import { ChatMessage } from "./chat-message";
 
 export interface ChatEntry {
+  targetId: string,
   _id: string,
-  socketId: string,
   name: string,
-  messages: ChatMessage[]
+  messages: ChatMessage[],
+  minimize: boolean
 }

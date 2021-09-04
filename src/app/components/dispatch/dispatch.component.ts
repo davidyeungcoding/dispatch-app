@@ -67,10 +67,8 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   // =======================
 
   onChangeStatus(status: string): void {
-    console.log(this.userData.status === status)
     if (this.userData.status === status) return;
     this.userData.status = status;
-    console.log(this.userData.status);
     this.socketioService.emitStatus(status);
   };
 
@@ -120,10 +118,11 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onStartChat(user: any): void {
     const chatUser: ChatEntry = {
+      targetId: this.userData._id,
       _id: user._id,
-      socketId: user.socketId,
       name: user.name,
-      messages: []
+      messages: [],
+      minimize: true
     };
     const chatEntry = this.openChats.find((log: ChatEntry) => log._id === user._id);
     
