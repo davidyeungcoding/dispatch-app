@@ -4,7 +4,8 @@
     <div class="chat-control">
       <button type="button"
         class="btn chat-control-btn"
-        aria-label="Close">
+        aria-label="Close"
+        (click)="onClose(conversation)">
         <i class="fas fa-times"></i>
       </button>
 
@@ -12,7 +13,7 @@
         type="button"
         class="btn chat-control-btn"
         aria-label="Minimize"
-        (click)="resize(conversation)">
+        (click)="onResize(conversation)">
         <i class="far fa-window-minimize"></i>
       </button>
 
@@ -20,7 +21,7 @@
         <button type="button"
           class="btn chat-control-btn"
           aria-label="Maximize"
-          (click)="resize(conversation)">
+          (click)="onResize(conversation)">
           <i class="far fa-window-maximize"></i>
         </button>
       </ng-template>

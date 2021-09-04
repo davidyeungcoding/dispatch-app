@@ -17,7 +17,7 @@ import { ChatEntry } from 'src/app/interfaces/chat-entry';
 export class ChatComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private userData: any = {};
-  openChats: any = {};
+  openChats: any = [];
 
   constructor(
     private chatService: ChatService,
@@ -83,7 +83,16 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.chatService.scrollDown(`#${conversation._id}ChatDisplay`);
   };
 
-  resize(conversation: any): void {
+  onClose(conversation: any): void {
+    for (let i = 0; i < this.openChats.length; i++) {
+      if (this.openChats[i]._id === conversation._id) {
+        this.openChats.splice(i, 1);
+        return;
+      };
+    };
+  };
+
+  onResize(conversation: any): void {
     const node = $(`#${conversation._id}MinimizeContent`);
     conversation.minimize ? node.css('display', 'none') : node.css('display', 'inline');
     conversation.minimize = !conversation.minimize;
