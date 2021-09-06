@@ -1,11 +1,34 @@
+.nav-offset {
+  margin-top: 108px;
+}
+
+/* ================= */
+/* || Back Button || */
+/* ================= */
+
+.create-account-btn-container {
+  padding: 0 15%;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-light);
+}
+
+/* ========== */
+/* || Form || */
+/* ========== */
+
 .create-form {
   padding: 0 20%;
+  margin-top: 20px;
 }
 
 .radio-control-container {
   display: flex;
   justify-content: space-evenly;
-  margin-bottom: 8px;
+  margin: 22px 0;
 }
 
 .radio-group {

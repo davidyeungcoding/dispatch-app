@@ -1,30 +1,37 @@
 <div id="chatContainer">
   <div *ngFor="let conversation of openChats"
-    class="chat-box">
-    <div class="chat-control">
-      <button type="button"
-        class="btn chat-control-btn"
-        aria-label="Close"
-        (click)="onClose(conversation)">
-        <i class="fas fa-times"></i>
-      </button>
+    class="chat-box"
+    id="{{ conversation._id }}ChatBox"
+    (click)="activateChat(conversation)">
+    <div class="chat-control new-message"
+      id="{{ conversation._id }}ChatControl">
+      <h5 class="chat-name">{{ conversation.name }}</h5>
 
-      <button *ngIf="conversation.minimize; else maximizeContent"
-        type="button"
-        class="btn chat-control-btn"
-        aria-label="Minimize"
-        (click)="onResize(conversation)">
-        <i class="far fa-window-minimize"></i>
-      </button>
-
-      <ng-template #maximizeContent>
+      <div class="control-btn-container">
         <button type="button"
           class="btn chat-control-btn"
-          aria-label="Maximize"
-          (click)="onResize(conversation)">
-          <i class="far fa-window-maximize"></i>
+          aria-label="Close"
+          (click)="onClose(conversation)">
+          <i class="fas fa-times"></i>
         </button>
-      </ng-template>
+  
+        <button *ngIf="conversation.minimize; else maximizeContent"
+          type="button"
+          class="btn chat-control-btn"
+          aria-label="Minimize"
+          (click)="onResize(conversation)">
+          <i class="far fa-window-minimize"></i>
+        </button>
+  
+        <ng-template #maximizeContent>
+          <button type="button"
+            class="btn chat-control-btn"
+            aria-label="Maximize"
+            (click)="onResize(conversation)">
+            <i class="far fa-window-maximize"></i>
+          </button>
+        </ng-template>
+      </div>
     </div>
 
     <div class="minimize-content"
@@ -32,14 +39,20 @@
       <div class="chat-display"
         id="{{ conversation._id }}ChatDisplay">
         <div *ngFor="let message of conversation.messages">
-          <span *ngIf="message.personal; else response" class="chat-message personal">
+          <span *ngIf="message.personal === true; else response" class="chat-message personal">
             {{ message.message }}
           </span>
 
           <ng-template #response>
-            <span class="chat-message response">
+            <span *ngIf="message.personal === false; else msgError" class="chat-message response">
               {{ message.message }}
             </span>
+          </ng-template>
+
+          <ng-template #msgError>
+            <div class="msg-error-container">
+              <span class="msg-error">{{ message.message }}</span>
+            </div>
           </ng-template>
         </div>
 

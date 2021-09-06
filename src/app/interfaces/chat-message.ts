@@ -1,4 +1,4 @@
 export interface ChatMessage {
-  personal: boolean,
+  personal: boolean | 'error',
   message: string
 }

@@ -33,6 +33,7 @@ export class ChatService {
     chatEntry ? chatEntry.messages.push(update.messages[0]) : list.push(update);
     this.changeOpenChats(list);
     this.scrollDown(`#${update._id}ChatDisplay`);
+    $(`#${payload._id}ChatControl`).addClass('new-message');
   };
 
   // temp workaroud issue where scroll won't go all the way to the bottom
@@ -45,6 +46,15 @@ export class ChatService {
         behavior: 'smooth'
       });
     }, 50);
+  };
+
+  failedToDeliver(payload: any): void {
+    const list = this.openChatsSource.value;
+    const chatEntry: ChatEntry = list.find((entry: ChatEntry) => entry._id === payload.targetId);
+    chatEntry.messages.push({
+      personal: 'error',
+      message: 'Unable to send message. User is no longer logged on.'
+    });
   };
 
   // =======================

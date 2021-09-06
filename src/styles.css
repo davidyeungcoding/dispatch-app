@@ -4,7 +4,9 @@
   --window-control-color: 200;
   --color-body-background: hsl(var(--primary-color), 15%, 17%);
   --color-card-background: hsl(var(--card-primary-color), 10%, 29%);
-  --color-chat-backgroud: hsl(208, 100%, 97%);
+  --color-chat-background: hsl(208, 100%, 97%);
+  --color-chat-primary: hsl(196, 12%, 37%);
+  --color-chat-secondary: hsl(227, 12%, 37%);
   --color-window-control: hsl(var(--window-control-color), 10%, 20%);
   --color-section-background: hsl(var(--card-primary-color), 0%, 14%);
   --color-text-dark: hsl(0, 0%, 0%);
@@ -79,7 +81,7 @@ p, button, a, label, span {
 /* ============ */
 
 .nav-offset {
-  margin-top: 60px;
+  margin-top: 54px;
 }
 
 html {

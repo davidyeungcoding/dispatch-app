@@ -117,6 +117,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   onStartChat(user: any): void {
+    if (user._id === this.userData._id) return;
     const chatUser: ChatEntry = {
       targetId: this.userData._id,
       _id: user._id,

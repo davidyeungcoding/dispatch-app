@@ -38,7 +38,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   // || Helper Functions ||
   // ======================
 
-  clearTextField(conversation: any, form: NgForm): void {
+  clearTextField(conversation: ChatEntry, form: NgForm): void {
     form.value.message = '';
     $(`#${conversation._id}Chat`).val('');
   };
@@ -47,7 +47,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   // || Socketio Functions ||
   // ========================
 
-  sendSocketioMessage(conversation: any, message: string): void {
+  sendSocketioMessage(conversation: ChatEntry, message: string): void {
     const targetUser = {
       targetId: conversation._id,
       _id: this.userData._id,
@@ -64,7 +64,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   // || General Functions ||
   // =======================
 
-  onSendMessage(conversation: any, form: NgForm): void {
+  onSendMessage(conversation: ChatEntry, form: NgForm): void {
     let parsedMessage = form.value.message.trim();
 
     if (!parsedMessage) {
@@ -83,7 +83,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.chatService.scrollDown(`#${conversation._id}ChatDisplay`);
   };
 
-  onClose(conversation: any): void {
+  onClose(conversation: ChatEntry): void {
     for (let i = 0; i < this.openChats.length; i++) {
       if (this.openChats[i]._id === conversation._id) {
         this.openChats.splice(i, 1);
@@ -92,9 +92,14 @@ export class ChatComponent implements OnInit, OnDestroy {
     };
   };
 
-  onResize(conversation: any): void {
+  onResize(conversation: ChatEntry): void {
     const node = $(`#${conversation._id}MinimizeContent`);
     conversation.minimize ? node.css('display', 'none') : node.css('display', 'inline');
     conversation.minimize = !conversation.minimize;
+  };
+
+  activateChat(conversation: ChatEntry): void {
+    const node = $(`#${conversation._id}ChatControl`);
+    if (node[0].classList.contains('new-message')) node[0].classList.remove('new-message');
   };
 }

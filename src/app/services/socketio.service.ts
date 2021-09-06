@@ -109,6 +109,10 @@ export class SocketioService {
     this.socket.on('update-chat', (payload: any) => {
       this.chatService.receiveMessage(payload);
     });
+
+    this.socket.on('failed-to-deliver-message', (payload: any) => {
+      this.chatService.failedToDeliver(payload);
+    });
   };
 
   // =======================

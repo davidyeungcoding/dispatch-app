@@ -1,5 +1,6 @@
 .nav-title {
   text-decoration: none;
+  margin: 0;
 }
 
 .nav-title:hover {

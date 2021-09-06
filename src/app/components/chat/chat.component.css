@@ -7,10 +7,9 @@
 }
 
 .chat-box {
-  /* height: 300px; */
   width: 225px;
   margin: 0 10px;
-  background-color:var(--color-chat-backgroud);
+  background-color:var(--color-chat-background);
 }
 
 .chat-box:first-child {
@@ -28,8 +27,28 @@
 .chat-control {
   width: 100%;
   display: flex;
-  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
   background-color: var(--color-window-control);
+}
+
+.new-message {
+  animation: new-message 1s linear infinite alternate;
+}
+
+@keyframes new-message {
+  0% { background-color: var(--color-window-control) }
+  100% { background-color: var(--color-chat-secondary) }
+}
+
+.chat-name {
+  text-transform: capitalize;
+  margin: 0 0 0 10px;
+}
+
+.control-btn-container {
+  display: flex;
+  flex-direction: row-reverse;
 }
 
 .chat-control-btn {
@@ -53,17 +72,26 @@
   padding: 5px;
   white-space: pre-wrap;
   color: var(--color-text-light);
-  background-color: var(--color-card-background);
 }
 
 .personal {
   margin-left: 25px;
   border-radius: 5px 5px 0 5px;
+  background-color: var(--color-chat-primary);
 }
 
 .response {
   margin-right: 25px;
   border-radius: 5px 5px 5px 0;
+  background-color: var(--color-chat-secondary);
+}
+
+.msg-error-container {
+  text-align: center;
+}
+
+.msg-error {
+  color: hsl(0, 0%, 30%);
 }
 
 #buffer {

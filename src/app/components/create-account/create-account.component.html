@@ -1,6 +1,16 @@
 <app-nav></app-nav>
 
 <div class="container nav-offset">
+  <div class="create-account-btn-container">
+    <button type="button"
+      class="btn back-btn"
+      (click)="onCancelCreate()">
+      <i class="fas fa-arrow-left"></i>
+
+      <span>&nbsp;Back</span>
+    </button>
+  </div>
+
   <form #createAccountForm="ngForm"
     class="create-form"
     (ngSubmit)="onCreateSubmit(createAccountForm)">

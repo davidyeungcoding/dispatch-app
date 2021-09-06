@@ -108,9 +108,10 @@ io.on('connection', socket => {
   
   socket.on('send-message', payload => {
     console.log(`=========================||        Start Chat        ||========================`);
-    const receiver = userToSocket[payload.targetId];
+    const receiver = userToSocket[payload.targetId] ? userToSocket[payload.targetId] : null;
     console.log(payload);
-    io.to(receiver).emit('update-chat', payload);
+    receiver ? io.to(receiver).emit('update-chat', payload)
+    : io.to(socket.id).emit('failed-to-deliver-message', payload);
   });
 });
 
