@@ -45,7 +45,7 @@ export class ChatService {
         inline: 'nearest',
         behavior: 'smooth'
       });
-    }, 3000);
+    }, 500);
   };
 
   failedToDeliver(payload: any): void {
