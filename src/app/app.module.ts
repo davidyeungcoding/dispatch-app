@@ -11,6 +11,7 @@ import { DispatchComponent } from './components/dispatch/dispatch.component';
 import { NavComponent } from './components/nav/nav.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { EditAccountComponent } from './components/edit-account/edit-account.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ChatComponent } from './components/chat/chat.component';
     DispatchComponent,
     NavComponent,
     CreateAccountComponent,
-    ChatComponent
+    ChatComponent,
+    EditAccountComponent
   ],
   imports: [
     BrowserModule,

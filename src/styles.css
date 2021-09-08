@@ -46,12 +46,55 @@ p, button, a, label, span {
   word-wrap: break-word;
 }
 
+/* ================= */
+/* || Back Button || */
+/* ================= */
+
+.back-btn-container {
+  padding: 0 15%;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-light);
+}
+
+.back-btn:hover {
+  color: var(--color-text-light);
+}
+
 /* =========== */
 /* || Forms || */
 /* =========== */
 
+.btn-input-group {
+  display: flex;
+  align-items: stretch;
+  border-radius: 5px;
+}
+
+.btn-input-btn {
+  border: 0;
+  border-radius: 5px 0 0 5px;
+}
+
+.btn-input-input {
+  border: 0;
+  border-radius: 0 5px 5px 0;
+}
+
 .text-field {
   margin-bottom: 10px;
+}
+
+.form-btn-container {
+  display:flex;
+  justify-content: space-around;
+}
+
+.form-btn {
+  width: 35%;
 }
 
 /* ============ */
@@ -81,7 +124,7 @@ p, button, a, label, span {
 /* ============ */
 
 .nav-offset {
-  margin-top: 54px;
+  margin-top: 108px;
 }
 
 html {

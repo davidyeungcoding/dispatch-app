@@ -21,26 +21,21 @@
   color: var(--color-text-busy);
 }
 
-.link-container {
-  margin-bottom: 8px;
-  display: flex;
-  align-items: stretch;
+.btn-input-group {
   box-shadow: var(--box-shadow);
+  margin-bottom: 8px;
 }
 
-.action-btn {
+.btn-input-btn {
   width: 10%;
-  border: 0;
-  border-radius: 5px 0 0 5px;
 }
 
-.video-link {
+.btn-input-input {
   color: var(--color-text-light);
   width: 90%;
   padding: 10px 15px;
   margin: 0;
   background-color: var(--color-section-background);
-  border-radius: 0 5px 5px 0;
 }
 
 .user-btn-container {

@@ -1,0 +1,46 @@
+.edit-form {
+  padding: 0 20%;
+  margin-top: 20px;
+}
+
+/* ======================== */
+/* || Button Input Group || */
+/* ======================== */
+
+.label-err-container {
+  display: flex;
+}
+
+.btn-input-group {
+  display: flex;
+  align-items: center;
+}
+
+.name-label {
+  margin: 0;
+}
+
+.name-btn {
+  height: 36px;
+  width: 42px;
+  border: 0;
+}
+
+.name-name {
+  margin-left: 10px;
+  margin-bottom: 0;
+}
+
+/* ================== */
+/* || Form Buttons || */
+/* ================== */
+
+#submitErrContainer {
+  text-align: center;
+  margin: 0;
+  margin-top: 24px;
+}
+
+.form-btn-container {
+  margin-top: 24px;
+}

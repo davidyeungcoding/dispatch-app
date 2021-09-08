@@ -38,10 +38,10 @@
               </ng-template>
             </div>
 
-            <div class="row link-container">
+            <div class="row btn-input-group">
               <button *ngIf="doctor._id === userData._id; else copyButton"
                 type="button"
-                class="btn btn-secondary action-btn"
+                class="btn btn-secondary btn-input-btn"
                 data-bs-toggle="modal"
                 data-bs-target="#editCallLink"
                 (click)="storeTarget(doctor)">
@@ -50,13 +50,13 @@
 
               <ng-template #copyButton>
                 <button type="button"
-                  class="btn btn-secondary action-btn"
+                  class="btn btn-secondary btn-input-btn"
                   (click)="onCopyLink(doctor.videoCall)">
                   <i class="far fa-copy"></i>
                 </button>
               </ng-template>
 
-              <p class="video-link">{{ doctor.videoCall }}</p>
+              <p class="btn-input-input">{{ doctor.videoCall }}</p>
             </div>
 
             <div *ngIf="doctor._id === userData._id; else guestView" class="row btn-container">

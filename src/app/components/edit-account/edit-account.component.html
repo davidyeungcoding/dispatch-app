@@ -1,0 +1,124 @@
+<app-nav></app-nav>
+
+<div class="container nav-offset">
+  <div class="back-btn-container">
+    <button type="button"
+      class="btn back-btn"
+      (click)="onCancelEdit()">
+      <i class="fas fa-arrow-left"></i>
+
+      <span>&nbsp;Back</span>
+    </button>
+  </div>
+
+  <form #editAccountForm="ngForm"
+    class="edit-form"
+    (submit)="onSubmitForm(editAccountForm)">
+    <h4>Edit Account</h4>
+
+    <div class="form-group text-field">
+      <div class='label-err-container'>
+        <label for="username">Username:</label>
+  
+        <div class="err-container" id="usernameErrContainer">
+          <span class="error-msg">&nbsp;Required Field</span>
+        </div>
+      </div>
+
+      <div class="btn-input-group">
+        <button type="button"
+          class="btn btn-secondary btn-input-btn"
+          (click)="onShowContent('username')"><i class="far fa-edit"></i></button>
+  
+        <input type="text"
+          class="form-control btn-input-input"
+          id="username"
+          name="username"
+          ngModel>
+      </div>
+    </div>
+
+    <div *ngIf="username">
+      <div class="form-group text-field">
+        <label for="newUsername">New Username:</label>
+  
+        <input type="text"
+          class="form-control"
+          id="newUsername"
+          name="newUsername"
+          ngModel>
+      </div>
+    </div>
+
+    <div class="form-group text-field">
+      <div class="label-err-container">
+        <label for="Password">Password:</label>
+
+        <div class="err-container" id="passwordErrContainer">
+          <span class="error-msg">&nbsp;Required Field</span>
+        </div>
+      </div>
+
+      <div class="btn-input-group">
+        <button type="button"
+          class="btn btn-secondary btn-input-btn"
+          (click)="onShowContent('password')"><i class="far fa-edit"></i></button>
+  
+        <input type="password"
+          class="form-control btn-input-input"
+          id="password"
+          name="password"
+          ngModel>
+      </div>
+    </div>
+
+    <div *ngIf="password">
+      <div class="form-group text-field">
+        <label for="newPassword">New Password:</label>
+  
+        <input type="password"
+          class="form-control"
+          id="newPassword"
+          name="newPassword"
+          ngModel>
+      </div>
+    </div>
+
+    <div class="form-group text-field">
+      <p class="name-label">Name:</p>
+
+      <div class="btn-input-group">
+        <button type="button"
+          class="btn btn-secondary name-btn"
+          (click)="onShowContent('name')"><i class="far fa-edit"></i></button>
+  
+          <h4 class="name-name">{{ userData.name }}</h4>
+      </div>
+    </div>
+
+    <div *ngIf="name">
+      <div class="form-group text-field">
+        <label for="newName">New Name:</label>
+  
+        <input type="text"
+          class="form-control"
+          id="newName"
+          name="newName"
+          ngModel>
+      </div>
+    </div>
+
+    <div class="err-container" id="submitErrContainer">
+      <p class="error-msg">{{ errorMsg }}</p>
+    </div>
+
+    <div class="form-btn-container">
+      <button type="submit"
+        class="btn btn-secondary form-btn">Edit User</button>
+
+      <button type="button"
+        class="btn btn-secondary form-btn"
+        (click)="onCancelEdit()">Cancel</button>
+    </div>
+  </form>
+</div>
