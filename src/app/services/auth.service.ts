@@ -6,9 +6,8 @@ import { RedirectService } from './redirect.service';
 import { SocketioService } from './socketio.service';
 import { ChatService } from './chat.service';
 
-import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -39,32 +38,36 @@ export class AuthService {
     private chatService: ChatService
   ) { }
 
+  // ======================
+  // || Helper Functions ||
+  // ======================
+
+  buildHeader(token: string) {
+    const validateHeader = {
+      headers: new HttpHeaders({
+        'Authorization': token,
+        'Content-Type': 'application/json'
+      })
+    };
+    return validateHeader;
+  };
+
+  adminCheckParser(id: string, token: string): Promise<boolean> {
+    return new Promise(resolve => {
+      this.verifyAdmin({ _id: id }, token).subscribe(_status => {
+        resolve(_status.status === 200 ? true : false);
+      });
+    });
+  };
+
   // =====================
   // || Router Requests ||
   // =====================
 
   createUser(payload: any, token: string) {
-    const validateHeaders = {
-      headers: new HttpHeaders({
-        'Authorization': token,
-        'Content-Type': 'application/json'
-      })
-    };
+    const validateHeader = this.buildHeader(token);
 
-    return this.http.post(`${this.api}/create`, payload, validateHeaders).pipe(
-      catchError(err => of(err))
-    );
-  };
-
-  editUser(payload: any, token: string) {
-    const validateHeaders = {
-      headers: new HttpHeaders({
-        'Authorization': token,
-        'Content-Type': 'application/json'
-      })
-    };
-
-    return this.http.put(`${this.api}/edit`, payload, validateHeaders).pipe(
+    return this.http.post(`${this.api}/create`, payload, validateHeader).pipe(
       catchError(err => of(err))
     );
   };
@@ -75,27 +78,22 @@ export class AuthService {
     );
   };
 
-  validateToken(token: string) {
-    const validateHeaders = {
-      headers: new HttpHeaders({
-        'Authorization': `${token}`
-      })
-    };
+  // validateToken(token: string) {
+  //   const validateHeader = {
+  //     headers: new HttpHeaders({
+  //       'Authorization': `${token}`
+  //     })
+  //   };
 
-    return this.http.get(`${this.api}/verify-token`, validateHeaders).pipe(
-      catchError(err => of(err))
-    );
-  };
+  //   return this.http.get(`${this.api}/verify-token`, validateHeader).pipe(
+  //     catchError(err => of(err))
+  //   );
+  // };
 
   verifyAdmin(id: any, token: string) {
-    const adminHeaders = {
-      headers: new HttpHeaders({
-        'Authorization': token,
-        'Content-Type': 'application/json'
-      })
-    };
+    const validateHeader = this.buildHeader(token);
 
-    return this.http.post(`${this.api}/verify-admin`, id, adminHeaders).pipe(
+    return this.http.post(`${this.api}/verify-admin`, id, validateHeader).pipe(
       catchError(err => of(err))
     );
   };
@@ -115,31 +113,19 @@ export class AuthService {
 
   logout(): void {
     this.chatService.changeOpenChats([]);
-    this.socketioService.emitLogout(localStorage.getItem('user'));
+    if (localStorage.getItem('user')) this.socketioService.emitLogout(localStorage.getItem('user'));
     this.redirectService.handleRedirect('home');
     this.changeAuthToken(null);
     this.changeUserData(null);
     localStorage.clear();
   };
 
-  compareToken(token: string): void {
-    this.validateToken(token).subscribe(res => {
-      if (res.status !== 200) !!localStorage.getItem('user') ? this.logout()
-      : this.redirectService.handleRedirect('home');
-    });
-  };
-
-  // ======================
-  // || Helper Functions ||
-  // ======================
-
-  adminCheckParser(id: string, token: string): Promise<boolean> {
-    return new Promise(resolve => {
-      this.verifyAdmin({ _id: id }, token).subscribe(_status => {
-        resolve(_status.status === 200 ? true : false);
-      });
-    });
-  };
+  // compareToken(token: string): void {
+  //   this.validateToken(token).subscribe(res => {
+  //     if (res.status !== 200) !!localStorage.getItem('user') ? this.logout()
+  //     : this.redirectService.handleRedirect('home');
+  //   });
+  // };
 
   // =======================
   // || Auth Guard Checks ||

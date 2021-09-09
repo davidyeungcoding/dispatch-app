@@ -7,6 +7,7 @@ import { ChatService } from 'src/app/services/chat.service';
 
 import { Subscription } from 'rxjs';
 import { ChatEntry } from 'src/app/interfaces/chat-entry';
+import { EditAccountService } from 'src/app/services/edit-account.service';
 
 @Component({
   selector: 'app-dispatch',
@@ -26,7 +27,8 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private socketioService: SocketioService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private editAccountService: EditAccountService
   ) { }
 
   ngOnInit(): void {
@@ -89,7 +91,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
       change: link
     };
 
-    this.authService.editUser(payload, this.authToken).subscribe(_user => {
+    this.editAccountService.editUser(payload, this.authToken).subscribe(_user => {
       if (!_user.success) {
         this.callLinkError = _user.msg;
         $('#callLinkErrorContainer').css('display', 'inline');

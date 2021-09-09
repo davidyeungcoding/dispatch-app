@@ -23,27 +23,23 @@ export class HomeComponent implements OnInit {
   }
 
   clearForm(form: any): void {
-    $('#loginPassword').val('');
-    form.value.password = '';
-
-    if (!form.value.username.trim()) {
-      $('#loginUsername').val('');
-      form.value.username = '';
-    };
+    form.reset({ username: form.value.username.trim() });
   };
 
   onLoginSubmit(form: NgForm): void {
     $('#loginErrorMsgContainer').css('display', 'none');
-    const payload = {
-      username: form.value.username.trim(),
-      password: form.value.password.trim()
-    };
-
-    if (!payload.username || !payload.password) {
+    
+    if (!form.value.username || !form.value.username.trim()
+    || !form.value.password || !form.value.password.trim()) {
       this.clearForm(form);
       this.loginErrorMsg = 'Please fill out both fields';
       $('#loginErrorMsgContainer').css('display', 'inline');
       return;
+    };
+
+    const payload = {
+      username: form.value.username.trim(),
+      password: form.value.password.trim()
     };
 
     this.authService.authenticateUser(payload).subscribe(_user => {

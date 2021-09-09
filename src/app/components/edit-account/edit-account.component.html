@@ -20,7 +20,7 @@
       <div class='label-err-container'>
         <label for="username">Username:</label>
   
-        <div class="err-container" id="usernameErrContainer">
+        <div class="msg-container" id="usernameErrContainer">
           <span class="error-msg">&nbsp;Required Field</span>
         </div>
       </div>
@@ -54,7 +54,7 @@
       <div class="label-err-container">
         <label for="Password">Password:</label>
 
-        <div class="err-container" id="passwordErrContainer">
+        <div class="msg-container" id="passwordErrContainer">
           <span class="error-msg">&nbsp;Required Field</span>
         </div>
       </div>
@@ -108,8 +108,12 @@
       </div>
     </div>
 
-    <div class="err-container" id="submitErrContainer">
-      <p class="error-msg">{{ errorMsg }}</p>
+    <div class="msg-container" id="errorMsgContainer">
+      <p class="error-msg" id="submitMsg">{{ errorMsg }}</p>
+    </div>
+
+    <div class="msg-container" id="successMsgContainer">
+      <p class="success-msg" id="submitMsg">{{ successMsg }}</p>
     </div>
 
     <div class="form-btn-container">

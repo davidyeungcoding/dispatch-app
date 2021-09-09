@@ -99,6 +99,13 @@ io.on('connection', socket => {
     console.log(userList[socket.id]);
     io.emit('link-change', userList);
   });
+  
+  socket.on('update-account', payload => {
+    console.log(`=======================||        Account Update        ||=======================`);
+    userList[socket.id].name = payload.name;
+    userList[socket.id].accountType = payload.accountType;
+    io.emit('user-list-update', userList);
+  })
 
   socket.on('request-user-list', () => {
     console.log(`=====================||        User List Request        ||=====================`);

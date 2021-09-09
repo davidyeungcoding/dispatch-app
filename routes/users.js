@@ -14,9 +14,9 @@ module.exports = router;
 const { userModel } = require('../models/user');
 const User = require('../models/user');
 
-// ========================
-// || Authenticate Token ||
-// ========================
+// ======================
+// || Shared Functions ||
+// ======================
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'].split(' ');
@@ -28,6 +28,50 @@ const authenticateToken = (req, res, next) => {
     req.user = _user;
     next();
   });
+};
+
+const authUser = async (username) => {
+  const user = await new Promise(resolve => {
+    User.authSearch(username, (err, _user) => {
+      if (err) throw err;
+      resolve(_user);
+    });
+  });
+
+  return user ? { success: true, status: 200, msg: user }
+  : { success: false, status: 403, msg: 'User not found' };
+};
+
+const matchPassword = async (password, hash) => {
+  const match = await new Promise(resolve => {
+    User.comparePassword(password, hash, (err, _match) => {
+      if (err) throw err;
+      resolve(_match);
+    });
+  });
+
+  return match ? { success: true, status: 200, msg: 'Password and hash match' }
+  : { success: false, status: 403, msg: 'Password and hash mismatch' };
+};
+
+const passwordCheck = async (username, password) => {
+  const _user = await authUser(username);
+  if (!_user.success) return _user;
+  const _match = await matchPassword(password, _user.msg.password);
+  if (!_match.success) return _match;
+  return { success: true, status: 200, msg: 'User, token, and database data match' };
+};
+
+const duplicateCheck = async (username) => {
+  const duplicate = await new Promise(resolve => {
+    User.search('username', username, (err, _user) => {
+      if (err) throw err;
+      resolve(_user.length ? true : false);
+    });
+  });
+
+  return duplicate ? { success: false, status: 400, msg: 'Duplicate username' }
+  : { success: true, status: 200, msg: 'Unique username' };
 };
 
 // =================
@@ -45,17 +89,8 @@ router.post('/create', authenticateToken, async (req, res, next) => {
   });
 
   if (!adminCheck) return res.json({ success: false, status: 401, msg: 'Creator is not an admin' });
-
-  const duplicate = await new Promise(resolve => {
-    User.search('username', req.body.username, (err, _user) => {
-      if (err) throw err;
-      console.log(`username: ${req.body.username}, || array length: ${_user.length} || ${!!_user.length}`)
-      resolve(!!_user.length ? true : false);
-    });
-  });
-
-  console.log(`duplicate: ${duplicate}`)
-  if (duplicate) return res.json({ success: false, status: 400, msg: 'Duplicate username'});
+  const duplicate = await duplicateCheck(req.body.username);
+  if (!duplicate.success) return res.json(duplicate);
 
   const payload = new userModel({
     username: req.body.username,
@@ -128,7 +163,36 @@ router.put('/edit', authenticateToken, async (req, res, next) => {
     if (err) throw err;
 
     return _user ? res.json({ success: true, status: 200, msg: 'User successfully updated' })
-    : res.json({ success: false, status: 400, msg: 'Unable to update user' });
+    : res.json({ success: false, status: 403, msg: 'Unable to update user' });
+  });
+});
+
+router.put('/edit-account', authenticateToken, async (req, res, next) => {
+  if (req.body.username !== req.user.username) return res.json({ success: false, status: 401, msg: 'User and token do not match' });
+  const match = await passwordCheck(req.body.username, req.body.password);
+  if (!match.success) return res.json(match);
+  const payload = {};
+  if (req.body.newPassword) payload.password = req.body.newPassword;
+  if (req.body.newName) payload.name = req.body.newName;
+  if (req.body.newUsername) {
+    const duplicate = await duplicateCheck(req.body.newUsername);
+    if (!duplicate.success) return res.json(duplicate);
+    payload.username = req.body.newUsername;
+  };
+  
+  User.updateAccount(req.body.username, payload, (err, _user) => {
+    if (err) throw err;
+    const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
+    const resUser = {
+      _id: _user._id,
+      accountType: _user.accountType,
+      name: _user.name,
+      username: _user.username
+    };
+
+    if (resUser.accountType === 'doctor') resUser.videoCall = _user.videoCall;
+    return res.json(_user ? { success: true, status: 200, msg: _user, token: token }
+    : { success: false, status: 500, msg: 'Unable to update at this time' });
   });
 });
 

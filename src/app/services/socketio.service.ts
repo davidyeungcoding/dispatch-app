@@ -85,6 +85,10 @@ export class SocketioService {
     this.socket.emit('send-message', payload);
   };
 
+  emitAccountUpdate(payload: any): void {
+    this.socket.emit('update-account', payload);
+  };
+
   // =====================
   // || Receive Updates ||
   // =====================

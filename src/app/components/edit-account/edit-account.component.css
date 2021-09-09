@@ -35,8 +35,11 @@
 /* || Form Buttons || */
 /* ================== */
 
-#submitErrContainer {
+#errorMsgContainer, #successMsgContainer {
   text-align: center;
+}
+
+#submitMsg {
   margin: 0;
   margin-top: 24px;
 }

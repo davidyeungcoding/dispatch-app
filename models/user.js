@@ -75,6 +75,23 @@ module.exports.editUser = (id, update, callback) => {
   this.userModel.findByIdAndUpdate(id, update, options, callback);
 };
 
+module.exports.updateAccount = (username, update, callback) => {
+  const options = {
+    new: true,
+    useFindAndModify: false
+  };
+
+  if (update.password) {
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(update.password, salt, (err, hash) => {
+        if (err) throw err;
+        update.password = hash;
+        this.userModel.findOneAndUpdate({ username: username }, { $set: update }, options, callback);
+      });
+    });
+  } else this.userModel.findOneAndUpdate({ username: username }, { $set: update }, options, callback);
+};
+
 // =================
 // || Search User ||
 // =================
@@ -82,6 +99,5 @@ module.exports.editUser = (id, update, callback) => {
 module.exports.search = (type, term, callback) => {
   const query = { [`${type}`]: term };
   const fields = { password: 0 };
-  console.log(query)
   this.userModel.aggregate([{ $match: query }, { $project: fields }], callback);
 };
