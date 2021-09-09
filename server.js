@@ -142,10 +142,6 @@ const users = require('./routes/users');
 
 app.use('/users', users);
 
-app.get('/*', req, res, next => {
-  res.sendFile('index.html', { root: 'dist/dispatch-app/'});
-});
-
 server.listen(port, () => {
   console.log(`Server started on port: ${port}`);
 });
