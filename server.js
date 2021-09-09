@@ -143,7 +143,7 @@ const users = require('./routes/users');
 app.use('/users', users);
 
 app.get('/*', (req, res, next) => {
-  res.sendFile(path.join(__dirname, '/dist/dispatch-app'));
+  res.sendFile(path.join(__dirname, '/dist/dispatch-app', 'index.html'));
 });
 
 server.listen(port, () => {
