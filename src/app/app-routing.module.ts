@@ -11,8 +11,8 @@ import { AdminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'dispatch', canActivate: [AuthGuard], component: DispatchComponent },
-  { path: 'create-account', canActivate: [AdminGuard], component: CreateAccountComponent},
+  { path: 'dispatch', component: DispatchComponent },
+  { path: 'create-account', component: CreateAccountComponent},
   { path: 'edit-account', component: EditAccountComponent },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', component: HomeComponent }
