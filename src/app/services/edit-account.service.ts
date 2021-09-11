@@ -10,11 +10,11 @@ import { of } from 'rxjs';
 export class EditAccountService {
   // private api = 'http://localhost:3000/users'; // dev
   private api = 'users'; // production
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  };
+  // private httpOptions = {
+  //   headers: new HttpHeaders({
+  //     'Content-Type': 'application/json'
+  //   })
+  // };
 
   constructor(
     private http: HttpClient
