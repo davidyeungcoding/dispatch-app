@@ -28,7 +28,7 @@ export class AuthService {
 
   private authTokenSource = new BehaviorSubject<any>(null);
   authToken = this.authTokenSource.asObservable();
-  private userDataSource = new BehaviorSubject<any>({});
+  private userDataSource = new BehaviorSubject<any>(null);
   userData = this.userDataSource.asObservable();
 
   constructor(
@@ -60,6 +60,28 @@ export class AuthService {
     });
   };
 
+  parseLocalStorageUser(): any {
+    let user = localStorage.getItem('user');
+    
+    if (user) {
+      try {
+        user = JSON.parse(user);
+      } catch {
+        user = null;
+      };
+    };
+
+    return user;
+  };
+
+  compareToken(token: string): Promise<boolean> {
+    return new Promise(resolve => {
+      this.validateToken(token).subscribe(res => {
+        resolve(res.status === 200 ? true : false);
+      });
+    });
+  };
+
   // =====================
   // || Router Requests ||
   // =====================
@@ -78,17 +100,17 @@ export class AuthService {
     );
   };
 
-  // validateToken(token: string) {
-  //   const validateHeader = {
-  //     headers: new HttpHeaders({
-  //       'Authorization': `${token}`
-  //     })
-  //   };
+  validateToken(token: string) {
+    const validateHeader = {
+      headers: new HttpHeaders({
+        'Authorization': `${token}`
+      })
+    };
 
-  //   return this.http.get(`${this.api}/verify-token`, validateHeader).pipe(
-  //     catchError(err => of(err))
-  //   );
-  // };
+    return this.http.get(`${this.api}/verify-token`, validateHeader).pipe(
+      catchError(err => of(err))
+    );
+  };
 
   verifyAdmin(id: any, token: string) {
     const validateHeader = this.buildHeader(token);
@@ -102,7 +124,7 @@ export class AuthService {
   // || Shared Functions ||
   // ======================
 
-  setLocalStorageUser(token: string, user: any): void {
+  setLocalStorageUser(token: string, user: string): void {
     localStorage.setItem('id_token', token);
     localStorage.setItem('user', user);
   };
@@ -112,30 +134,37 @@ export class AuthService {
   };
 
   logout(): void {
+    const user = this.userDataSource.value ? this.userDataSource.value
+    : this.parseLocalStorageUser();
+    if (user) this.socketioService.emitLogout(user);
     this.chatService.changeOpenChats([]);
-    if (localStorage.getItem('user')) this.socketioService.emitLogout(localStorage.getItem('user'));
     this.redirectService.handleRedirect('home');
     this.changeAuthToken(null);
     this.changeUserData(null);
     localStorage.clear();
   };
 
-  // compareToken(token: string): void {
-  //   this.validateToken(token).subscribe(res => {
-  //     if (res.status !== 200) !!localStorage.getItem('user') ? this.logout()
-  //     : this.redirectService.handleRedirect('home');
-  //   });
-  // };
+  onReload(): void {
+    if (this.userDataSource.value && this.authTokenSource.value) return;
+    const localUser = this.parseLocalStorageUser();
+    const localToken = localStorage.getItem('id_token');
+    if (!localUser || !localToken) this.logout();
+    if (!this.authTokenSource.value) this.changeAuthToken(localStorage.getItem('id_token'));
+    if (!this.userDataSource.value) this.changeUserData(localUser);
+    this.socketioService.emitLogin(this.userDataSource.value);
+  };
 
   // =======================
   // || Auth Guard Checks ||
   // =======================
 
-  handleDispatchCheck(): boolean {
-    const token = localStorage.getItem('id_token');
+  async handleDispatchCheck(): Promise<boolean> {
+    const token = this.authTokenSource.value ? this.authTokenSource.value
+    : localStorage.getItem('id_token');
     if (!token) return this.redirectService.falseCheckRedirect('home');
+    const valid = await this.compareToken(token);
 
-    if (this.isExpired(token)) {
+    if (this.isExpired(token) || !valid) {
       this.logout();
       return false;
     };
@@ -144,10 +173,13 @@ export class AuthService {
   };
 
   async handleAdminCheck(): Promise<boolean> {
-    const token = localStorage.getItem('id_token');
-    const user = localStorage.getItem('user');
+    const token = this.authTokenSource.value ? this.authTokenSource.value
+    : localStorage.getItem('id_token');
+    let user = this.userDataSource.value ? this.userDataSource.value
+    : localStorage.getItem('user');
     if (!user || !token) return this.redirectService.falseCheckRedirect('home');
-    const check = await this.adminCheckParser(JSON.parse(user)._id, token);
+    if (typeof(user) === 'string') user = JSON.parse(user);
+    const check = await this.adminCheckParser(user._id, token);
     if (!check) this.logout();
     return check;
   };

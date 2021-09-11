@@ -33,6 +33,7 @@ export class EditAccountComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptions.add(this.authServcie.userData.subscribe(_user => this.userData = _user));
     this.subscriptions.add(this.authServcie.authToken.subscribe(_token => this.token = _token));
+    // this.authServcie.onReload();
   }
 
   ngOnDestroy(): void {
@@ -48,9 +49,11 @@ export class EditAccountComponent implements OnInit, OnDestroy {
   }
 
   checkRequiredFields(form: NgForm): boolean {
-    if (!form.value.username || !form.value.username.trim()
-    || !form.value.password || !form.value.password.trim()) {
-      if (!form.value.username || !form.value.username.trim()) $('#usernameErrContainer').css('display', 'inline');
+    const username = form.value.username;
+    const password = form.value.password;
+
+    if (!username || !username.trim() || !password || !password.trim()) {
+      if (!username || !username.trim()) $('#usernameErrContainer').css('display', 'inline');
       $('#passwordErrContainer').css('display', 'inline');
       this.resetForm(form);
       return false;

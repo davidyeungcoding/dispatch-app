@@ -29,6 +29,7 @@
 .name-name {
   margin-left: 10px;
   margin-bottom: 0;
+  text-transform: capitalize;
 }
 
 /* ================== */

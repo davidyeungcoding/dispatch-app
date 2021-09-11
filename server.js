@@ -61,7 +61,7 @@ io.on('connection', socket => {
   
   socket.on('logout', user => {
     console.log(`=================|| User Logged out ${socket.id} ||=================`);
-    user = JSON.parse(user);
+    if (typeof(user) === 'string') user = JSON.parse(user);
     delete userList[socket.id];
     delete userToSocket[user._id];
     console.log(userToSocket)

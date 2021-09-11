@@ -46,6 +46,7 @@ export class HomeComponent implements OnInit {
       if (_user.success) {
         const tempUser: any = {
           _id: _user.user._id,
+          username: _user.user.username,
           name: _user.user.name,
           accountType: _user.user.accountType
         };

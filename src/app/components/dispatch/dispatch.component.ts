@@ -41,10 +41,10 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   
   ngAfterViewInit(): void {
-    console.log('======================================')
-    console.log(this.userList);
-    console.log('======================================')
-    console.log(this.userData)
+    // console.log('======================================')
+    // console.log(this.userList);
+    // console.log('======================================')
+    // console.log(this.userData)
   }
 
   ngOnDestroy(): void {
