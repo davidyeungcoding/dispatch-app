@@ -61,6 +61,7 @@ export class SocketioService {
   };
 
   emitLogout(user: any): void {
+    console.log('emitLogout')
     this.socket.emit('logout', user);
   };
 

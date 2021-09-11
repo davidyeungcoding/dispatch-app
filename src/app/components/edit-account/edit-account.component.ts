@@ -33,7 +33,6 @@ export class EditAccountComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptions.add(this.authServcie.userData.subscribe(_user => this.userData = _user));
     this.subscriptions.add(this.authServcie.authToken.subscribe(_token => this.token = _token));
-    // this.authServcie.onReload();
   }
 
   ngOnDestroy(): void {

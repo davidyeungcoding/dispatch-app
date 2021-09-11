@@ -148,10 +148,15 @@ export class AuthService {
     if (this.userDataSource.value && this.authTokenSource.value) return;
     const localUser = this.parseLocalStorageUser();
     const localToken = localStorage.getItem('id_token');
-    if (!localUser || !localToken) this.logout();
-    if (!this.authTokenSource.value) this.changeAuthToken(localStorage.getItem('id_token'));
-    if (!this.userDataSource.value) this.changeUserData(localUser);
-    this.socketioService.emitLogin(this.userDataSource.value);
+
+    if (localUser && localToken) {
+      this.changeAuthToken(localStorage.getItem('id_token'));
+      this.changeUserData(localUser);
+      this.socketioService.emitLogin(this.userDataSource.value);
+      return;
+    };
+    
+    this.logout();
   };
 
   // =======================
