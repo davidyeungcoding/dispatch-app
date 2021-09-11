@@ -34,7 +34,7 @@ const authUser = async (username) => {
   const user = await new Promise(resolve => {
     User.authSearch(username, (err, _user) => {
       if (err) throw err;
-      resolve(_user);
+      return resolve(_user);
     });
   });
 
@@ -46,7 +46,7 @@ const matchPassword = async (password, hash) => {
   const match = await new Promise(resolve => {
     User.comparePassword(password, hash, (err, _match) => {
       if (err) throw err;
-      resolve(_match);
+      return resolve(_match);
     });
   });
 
@@ -66,7 +66,7 @@ const duplicateCheck = async (username) => {
   const duplicate = await new Promise(resolve => {
     User.search('username', username, (err, _user) => {
       if (err) throw err;
-      resolve(_user.length ? true : false);
+      return resolve(_user.length ? true : false);
     });
   });
 
@@ -84,7 +84,7 @@ router.post('/create', authenticateToken, async (req, res, next) => {
   const adminCheck = await new Promise(resolve => {
     User.search('_id', creatorId, (err, _user) => {
       if (err) throw err;
-      resolve(!_user.length || _user[0].accountType !== 'admin' ? false : true);
+      return resolve(!_user.length || _user[0].accountType !== 'admin' ? false : true);
     });
   });
 

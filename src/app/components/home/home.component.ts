@@ -22,46 +22,54 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  clearForm(form: any): void {
+  // ======================
+  // || Helper Functions ||
+  // ======================
+
+  clearForm(form: NgForm): void {
     form.reset({ username: form.value.username.trim() });
   };
 
-  onLoginSubmit(form: NgForm): void {
+  loginError(form: NgForm, msg: string): void {
+    this.clearForm(form);
+    this.loginErrorMsg = msg;
+    $('#loginErrorMsgContainer').css('display', 'inline');
+  };
+
+  authenticateUser(payload: any): Promise<any> {
+    return new Promise(resolve => {
+      this.authService.authenticateUser(payload).subscribe(_user => {
+        if (!_user.success) return resolve({ token: null, user: null });
+        return resolve({ token: _user.token, user: _user.user });
+      });
+    });
+  };
+  
+  // ========================
+  // || Generaal Functions ||
+  // ========================
+
+  async onLoginSubmit(form: NgForm): Promise<void> {
+    const username = form.value.username;
+    const password = form.value.password;
     $('#loginErrorMsgContainer').css('display', 'none');
     
-    if (!form.value.username || !form.value.username.trim()
-    || !form.value.password || !form.value.password.trim()) {
-      this.clearForm(form);
-      this.loginErrorMsg = 'Please fill out both fields';
-      $('#loginErrorMsgContainer').css('display', 'inline');
+    if (!username || !username.trim() || !password || !password.trim()) {
+      this.loginError(form, 'Please fill out both fields');
       return;
     };
 
     const payload = {
-      username: form.value.username.trim(),
-      password: form.value.password.trim()
+      username: username.trim(),
+      password: password.trim()
     };
 
-    this.authService.authenticateUser(payload).subscribe(_user => {
-      if (_user.success) {
-        const tempUser: any = {
-          _id: _user.user._id,
-          username: _user.user.username,
-          name: _user.user.name,
-          accountType: _user.user.accountType
-        };
-        if (_user.user.accountType === 'doctor') tempUser.videoCall = _user.user.videoCall;
-
-        this.socketioService.emitLogin(tempUser);
-        this.authService.setLocalStorageUser(_user.token, JSON.stringify(tempUser));
-        this.authService.changeAuthToken(_user.token);
-        this.authService.changeUserData(_user.user);
-        this.redirectService.handleRedirect('dispatch');
-      };
-
-      this.loginErrorMsg = 'Username and password do not match';
-      $('#loginErrorMsgContainer').css('display', 'inline');
-      this.clearForm(form);
-    });
+    const res = await this.authenticateUser(payload);
+    if (!res.user) return this.loginError(form, 'Username and password do not match');
+    this.socketioService.emitLogin(res.user);
+    this.authService.setLocalStorageUser(res.token, JSON.stringify(res.user));
+    this.authService.changeAuthToken(res.token);
+    this.authService.changeUserData(res.user);
+    this.redirectService.handleRedirect('dispatch');
   };
 }

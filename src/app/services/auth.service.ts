@@ -55,7 +55,7 @@ export class AuthService {
   adminCheckParser(id: string, token: string): Promise<boolean> {
     return new Promise(resolve => {
       this.verifyAdmin({ _id: id }, token).subscribe(_status => {
-        resolve(_status.status === 200 ? true : false);
+        return resolve(_status.status === 200 ? true : false);
       });
     });
   };
@@ -77,7 +77,7 @@ export class AuthService {
   compareToken(token: string): Promise<boolean> {
     return new Promise(resolve => {
       this.validateToken(token).subscribe(res => {
-        resolve(res.status === 200 ? true : false);
+        return resolve(res.status === 200 ? true : false);
       });
     });
   };
@@ -198,7 +198,7 @@ export class AuthService {
   };
 
   changeUserData(user: any): void {
-    if (!user) return this.userDataSource.next(user);
+    if (!user) return this.userDataSource.next(null);
     let payload: any = {
       _id: user._id,
       username: user.username,
