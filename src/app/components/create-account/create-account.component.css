@@ -4,7 +4,7 @@
 
 .create-form {
   padding: 0 20%;
-  margin-top: 20px;
+  margin: 20px 0;
 }
 
 .radio-control-container {
@@ -30,4 +30,8 @@ input[type=radio] {
 
 .msg-container {
   text-align: center;
+}
+
+.form-btn-container {
+  margin-top: 1rem;
 }

@@ -30,7 +30,7 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-const authUser = async (username) => {
+const authUser = async username => {
   const user = await new Promise(resolve => {
     User.authSearch(username, (err, _user) => {
       if (err) throw err;
@@ -51,15 +51,24 @@ const matchPassword = async (password, hash) => {
   });
 
   return match ? { success: true, status: 200, msg: 'Password and hash match' }
-  : { success: false, status: 403, msg: 'Password and hash mismatch' };
+  : { success: false, status: 403, msg: 'Entered and recorded password mismatch' };
 };
 
 const passwordCheck = async (username, password) => {
-  const _user = await authUser(username);
-  if (!_user.success) return _user;
-  const _match = await matchPassword(password, _user.msg.password);
-  if (!_match.success) return _match;
+  const user = await authUser(username);
+  if (!user.success) return user;
+  const match = await matchPassword(password, user.msg.password);
+  if (!match.success) return match;
   return { success: true, status: 200, msg: 'User, token, and database data match' };
+};
+
+const addminCheck = async (username, password) => {
+  const user = await authUser(username);
+  if (!user.success) return user;
+  const match = await matchPassword(password, user.msg.password);
+  if (!match) return match;
+  return user.msg.accountType === 'admin' ? { success: true, status: 200, msg: 'User credentials recognized and has admin rights' }
+  : { success: false, status: 403, msg: 'User is not an admin' };
 };
 
 const duplicateCheck = async (username) => {
@@ -70,7 +79,7 @@ const duplicateCheck = async (username) => {
     });
   });
 
-  return duplicate ? { success: false, status: 400, msg: 'Duplicate username' }
+  return duplicate ? { success: false, status: 409, msg: 'Duplicate username' }
   : { success: true, status: 200, msg: 'Unique username' };
 };
 
@@ -79,31 +88,29 @@ const duplicateCheck = async (username) => {
 // =================
 
 router.post('/create', authenticateToken, async (req, res, next) => {
-  const creatorId = mongoose.Types.ObjectId(req.body.creatorId);
-
-  const adminCheck = await new Promise(resolve => {
-    User.search('_id', creatorId, (err, _user) => {
-      if (err) throw err;
-      return resolve(!_user.length || _user[0].accountType !== 'admin' ? false : true);
-    });
-  });
-
-  if (!adminCheck) return res.json({ success: false, status: 401, msg: 'Creator is not an admin' });
-  const duplicate = await duplicateCheck(req.body.username);
+  const admin = req.body.admin;
+  const newUser = req.body.newUser;
+  const tokenUser = req.user;
+  if (admin.username !== tokenUser.username) return res.json({ success: false, status: 401, msg: 'Account does not match token' });
+  const adminCheck = await addminCheck(admin.username, admin.password);
+  if (!adminCheck.success) return res.json(adminCheck);
+  const duplicate = await duplicateCheck(newUser.username);
   if (!duplicate.success) return res.json(duplicate);
 
   const payload = new userModel({
-    username: req.body.username,
-    password: req.body.password,
-    name: req.body.name,
-    accountType: req.body.accountType
+    username: newUser.username,
+    password: newUser.password,
+    name: newUser.name,
+    accountType: newUser.accountType
   });
+
+  if (newUser.accountType === 'doctor') payload.videoCall = '';
 
   User.createUser(payload, (err, _user) => {
     if (err) throw err;
 
-    return _user ? res.json({ success: true, msg: 'New user created'})
-    : res.json({ success: false, msg: 'Unable to create new user'});
+    return _user ? res.json({ success: true, status: 200, msg: 'New user created'})
+    : res.json({ success: false, status: 500, msg: 'Unable to create new user'});
   });
 });
 
