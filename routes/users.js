@@ -19,15 +19,19 @@ const User = require('../models/user');
 // ======================
 
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'].split(' ');
-  const token = authHeader ? authHeader[authHeader.length - 1] : null;
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, _user) => {
-    if (err) return res.sendStatus(403);
-    req.user = _user;
-    next();
-  });
+  try {
+    const authHeader = req.headers['authorization'].split(' ');
+    const token = authHeader ? authHeader[authHeader.length - 1] : null;
+    if (!token) return res.json({ success: false, status: 401, msg: 'Missing authorization credentials' });
+  
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, _user) => {
+      if (err) return res.json({ success: false, status: 403, msg: 'User is not authorized for access' });
+      req.user = _user;
+      next();
+    });
+  } catch {
+    return res.json({ success: false, status: 400, msg: 'Missing authorization credentials' });
+  };
 };
 
 const authUser = async username => {
@@ -51,14 +55,14 @@ const matchPassword = async (password, hash) => {
   });
 
   return match ? { success: true, status: 200, msg: 'Password and hash match' }
-  : { success: false, status: 401, msg: 'Entered and recorded password mismatch' };
+  : { success: false, status: 401, msg: 'Username and password mismatch' };
 };
 
 const addminCheck = async (username, password) => {
   const user = await authUser(username);
   if (!user.success) return user;
   const match = await matchPassword(password, user.msg.password);
-  if (!match) return match;
+  if (!match.success) return match;
   return user.msg.accountType === 'admin' ? { success: true, status: 200, msg: 'User credentials recognized and has admin rights' }
   : { success: false, status: 403, msg: 'User is not an admin' };
 };
@@ -135,8 +139,6 @@ router.get('/verify-token', authenticateToken, (req, res, next) => {
 });
 
 router.post('/verify-admin', authenticateToken, (req, res, next) => {
-  console.log(`Res: ${req.user.accountType} || ${req.user.accountType === 'admin'}`);
-  console.log(`Res: ${req.user._id} || Sent: ${req.body._id} || ${req.user._id === req.body._id}`);
   if (req.user._id === req.body._id && req.user.accountType === 'admin') return res.json({ status: 200 });
   if (req.user._id !== req.body._id) return res.json({ status: 403 });
   if (req.user.accountType !== 'admin') return res.json({ status: 401 });

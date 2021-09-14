@@ -100,7 +100,7 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
     if (!status.success) {
       this.createErrorMsg = status.msg;
       $('#createErrorMsgContainer').css('display', 'inline');
-      if (status.status === 401 || status.status === 403) setTimeout(() => this.authService.logout(), 1500);
+      if (status.status === 400) setTimeout(() => this.authService.logout(), 2000);
       this.resetForm(form);
       return;
     };
