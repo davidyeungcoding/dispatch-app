@@ -54,12 +54,6 @@ const matchPassword = async (password, hash) => {
   : { success: false, status: 401, msg: 'Entered and recorded password mismatch' };
 };
 
-const passwordCheck = async (password, hash) => {
-  const match = await matchPassword(password, hash);
-  if (!match.success) return match;
-  return { success: true, status: 200, msg: 'User, token, and database data match' };
-};
-
 const addminCheck = async (username, password) => {
   const user = await authUser(username);
   if (!user.success) return user;
@@ -121,7 +115,7 @@ router.post('/authenticate', async (req, res, next) => {
   const password = req.body.password;
   const user = await authUser(username);
   if (!user.success) return res.json(user);
-  const match = await passwordCheck(password, user.msg.password);
+  const match = await matchPassword(password, user.msg.password);
   if (!match.success) return res.json(match);
   const token = jwt.sign(user.msg.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
   
@@ -166,10 +160,10 @@ router.put('/edit', authenticateToken, async (req, res, next) => {
 });
 
 router.put('/edit-account', authenticateToken, async (req, res, next) => {
-  if (req.body.username !== req.user.username) return res.json({ success: false, status: 401, msg: 'User and token do not match' });
+  if (req.body.username !== req.user.username) return res.json({ success: false, status: 406, msg: 'User and token do not match' });
   const user = await authUser(req.body.username);
   if (!user.success) return res.json(user);
-  const match = await passwordCheck(user, req.body.password);
+  const match = await matchPassword(req.body.password, user.msg.password);
   if (!match.success) return res.json(match);
   const payload = {};
   if (req.body.newPassword) payload.password = req.body.newPassword;

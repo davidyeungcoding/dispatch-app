@@ -111,12 +111,14 @@ export class EditAccountComponent implements OnInit, OnDestroy {
     if (!this.checkForChanges(payload, form)) return;
 
     this.editAccountService.editAccount(payload, this.token).subscribe(_res => {
-      if (_res.status === 401) {
+      console.log(_res)
+      if (_res.status === 406) {
         this.errorMsg = 'Invalid user access';
         $('#errorMsgContainer').css('display', 'inline');
         setTimeout(() => this.authServcie.logout(), 1500);
         return;
       } else if (_res.status !== 200) {
+        this.resetForm(form);
         this.errorMsg = _res.msg;
         $('#errorMsgContainer').css('display', 'inline');
         return;
