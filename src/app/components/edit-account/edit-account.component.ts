@@ -16,9 +16,9 @@ import { Subscription } from 'rxjs';
 export class EditAccountComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private token: string = '';
-  userData: any = {};
+  userData: any = null;
   errorMsg: string = '';
-  successMsg: string = '';
+  successMsg: string = 'Account has been updated';
   username: boolean = false;
   password: boolean = false;
   name: boolean = false;
@@ -45,7 +45,7 @@ export class EditAccountComponent implements OnInit, OnDestroy {
 
   resetForm(form: NgForm): void {
     form.reset({ username: form.value.username.trim() })
-  }
+  };
 
   checkRequiredFields(form: NgForm): boolean {
     const username = form.value.username;
@@ -82,7 +82,6 @@ export class EditAccountComponent implements OnInit, OnDestroy {
     if (form.value.newUsername && form.value.newUsername.trim()) payload.newUsername = form.value.newUsername;
     if (form.value.newPassword && form.value.newPassword.trim()) payload.newPassword = form.value.newPassword;
     if (form.value.newName && form.value.newName.trim()) payload.newName = form.value.newName;
-    console.log(`username: ${payload.newUsername} || password: ${payload.newPassword} || name: ${payload.newName}`);
     return payload;
   };
 
@@ -108,10 +107,17 @@ export class EditAccountComponent implements OnInit, OnDestroy {
     $('.msg-container').css('display', 'none');
     if (!this.checkRequiredFields(form)) return;
     const payload = this.buildPayload(form);
+
+    if (payload.username !== this.userData.username) {
+      this.errorMsg = 'You may only change your own account information';
+      $('#errorMsgContainer').css('display', 'inline');
+      form.reset({ username: '' });
+      return;
+    };
+
     if (!this.checkForChanges(payload, form)) return;
 
     this.editAccountService.editAccount(payload, this.token).subscribe(_res => {
-      console.log(_res)
       if (_res.status === 406) {
         this.errorMsg = 'Invalid user access';
         $('#errorMsgContainer').css('display', 'inline');
@@ -127,9 +133,8 @@ export class EditAccountComponent implements OnInit, OnDestroy {
       this.authServcie.changeUserData(_res.msg);
       this.authServcie.changeAuthToken(_res.token);
       this.socketIoService.emitAccountUpdate(_res.msg);
-      this.successMsg = 'Account has been updated';
       $('#successMsgContainer').css('display', 'inline');
-      setTimeout(() => this.redirectService.handleRedirect('dispatch'), 1500);
+      setTimeout(() => this.redirectService.handleRedirect('dispatch'), 1000);
     });
   };
 

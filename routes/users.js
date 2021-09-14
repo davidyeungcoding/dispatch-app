@@ -168,6 +168,7 @@ router.put('/edit-account', authenticateToken, async (req, res, next) => {
   const payload = {};
   if (req.body.newPassword) payload.password = req.body.newPassword;
   if (req.body.newName) payload.name = req.body.newName;
+  
   if (req.body.newUsername) {
     const duplicate = await duplicateCheck(req.body.newUsername);
     if (!duplicate.success) return res.json(duplicate);
