@@ -111,16 +111,15 @@ export class EditAccountComponent implements OnInit, OnDestroy {
     if (!this.checkForChanges(payload, form)) return;
 
     this.editAccountService.editAccount(payload, this.token).subscribe(_res => {
-      if (_res.status === 400) {
-        this.errorMsg = _res.msg;
-        $('#errorMsgContainer').css('display', 'inline');
-      } else if (_res.status !== 200) {
+      if (_res.status === 401) {
         this.errorMsg = 'Invalid user access';
         $('#errorMsgContainer').css('display', 'inline');
-
-        setTimeout(() => {
-          this.authServcie.logout();
-        }, 1500);
+        setTimeout(() => this.authServcie.logout(), 1500);
+        return;
+      } else if (_res.status !== 200) {
+        this.errorMsg = _res.msg;
+        $('#errorMsgContainer').css('display', 'inline');
+        return;
       };
 
       this.authServcie.changeUserData(_res.msg);
@@ -128,10 +127,7 @@ export class EditAccountComponent implements OnInit, OnDestroy {
       this.socketIoService.emitAccountUpdate(_res.msg);
       this.successMsg = 'Account has been updated';
       $('#successMsgContainer').css('display', 'inline');
-
-      setTimeout(() => {
-        this.redirectService.handleRedirect('dispatch');
-      }, 1500);
+      setTimeout(() => this.redirectService.handleRedirect('dispatch'), 1500);
     });
   };
 

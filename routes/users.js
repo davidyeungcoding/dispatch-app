@@ -39,7 +39,7 @@ const authUser = async username => {
   });
 
   return user ? { success: true, status: 200, msg: user }
-  : { success: false, status: 403, msg: 'User not found' };
+  : { success: false, status: 401, msg: 'User not found' };
 };
 
 const matchPassword = async (password, hash) => {
@@ -51,13 +51,11 @@ const matchPassword = async (password, hash) => {
   });
 
   return match ? { success: true, status: 200, msg: 'Password and hash match' }
-  : { success: false, status: 403, msg: 'Entered and recorded password mismatch' };
+  : { success: false, status: 401, msg: 'Entered and recorded password mismatch' };
 };
 
-const passwordCheck = async (username, password) => {
-  const user = await authUser(username);
-  if (!user.success) return user;
-  const match = await matchPassword(password, user.msg.password);
+const passwordCheck = async (password, hash) => {
+  const match = await matchPassword(password, hash);
   if (!match.success) return match;
   return { success: true, status: 200, msg: 'User, token, and database data match' };
 };
@@ -118,31 +116,24 @@ router.post('/create', authenticateToken, async (req, res, next) => {
 // || Authenticate User ||
 // =======================
 
-router.post('/authenticate', (req, res, next) => {
-    const username = req.body.username;
-    const password = req.body.password;
-
-  User.authSearch(username, (err, _user) => {
-    if (err) throw err;
-    if (!_user) return res.json({ success: false, msg: 'User not found' });
-
-    User.comparePassword(password, _user.password, (err, _match) => {
-      if (err) throw err;
-      
-      if (_match) {
-        const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
-        const resUser = {
-          _id: _user._id,
-          username: _user.username,
-          name: _user.name,
-          accountType: _user.accountType
-        };
-        if (resUser.accountType === 'doctor') resUser.videoCall = _user.videoCall;
-
-        return res.json({ success: true, token: `JWT ${token}`, user: resUser });
-      } else return res.json({ success: false, msg: 'Username and Password do not match'});
-    });
-  });
+router.post('/authenticate', async (req, res, next) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  const user = await authUser(username);
+  if (!user.success) return res.json(user);
+  const match = await passwordCheck(password, user.msg.password);
+  if (!match.success) return res.json(match);
+  const token = jwt.sign(user.msg.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
+  
+  const resUser = {
+    _id: user.msg._id,
+    username: user.msg.username,
+    name: user.msg.name,
+    accountType: user.msg.accountType
+  };
+  
+  if (resUser.accountType === 'doctor') resUser.videoCall = user.msg.videoCall;
+  return res.json({ success: true, status: 200, token: `JWT ${token}`, user: resUser });
 });
 
 router.get('/verify-token', authenticateToken, (req, res, next) => {
@@ -176,7 +167,9 @@ router.put('/edit', authenticateToken, async (req, res, next) => {
 
 router.put('/edit-account', authenticateToken, async (req, res, next) => {
   if (req.body.username !== req.user.username) return res.json({ success: false, status: 401, msg: 'User and token do not match' });
-  const match = await passwordCheck(req.body.username, req.body.password);
+  const user = await authUser(req.body.username);
+  if (!user.success) return res.json(user);
+  const match = await passwordCheck(user, req.body.password);
   if (!match.success) return res.json(match);
   const payload = {};
   if (req.body.newPassword) payload.password = req.body.newPassword;
@@ -209,7 +202,7 @@ router.put('/edit-account', authenticateToken, async (req, res, next) => {
 
 router.get('/search', (req, res, next) => {
   const type = req.query.type;
-  const term = req.query.type === '_id' ? mongoose.Types.ObjectId(req.query.term)
+  const term = type === '_id' ? mongoose.Types.ObjectId(req.query.term)
   : new RegExp(req.query.term, 'i');
 
   User.search(type, term, (err, _users) => {

@@ -14,7 +14,6 @@ import { Subscription } from 'rxjs';
 export class CreateAccountComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private token: string = '';
-  // private userData: any = {};
   createErrorMsg: string = '';
   createSuccessMsg: string = '';
   successfulUserCreation: string = 'Successfully create new user';
@@ -25,7 +24,6 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    // this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
     this.subscriptions.add(this.authService.authToken.subscribe(_token => this.token = _token));
   }
 
@@ -113,30 +111,6 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.redirectService.handleRedirect('dispatch');
     }, 1500);
-    
-    // const payload = {
-    //   creatorId: this.userData._id,
-    //   username: username.trim(),
-    //   password: password.trim(),
-    //   name: name.trim(),
-    //   accountType: accountType
-    // };
-
-    // this.authService.createUser(payload, localStorage.getItem('id_token')!).subscribe(_user => {
-    //   if (!_user.success) {
-    //     this.createErrorMsg = _user.msg;
-    //     $('#createErrorMsgContainer').css('display', 'inline');
-    //     return;
-    //   };
-      
-    //   this.createSuccessMsg = _user.msg;
-    //   $('#createSuccessMsgContainer').css('display', 'inline');
-
-    //   setTimeout(() => {
-    //     this.redirectService.handleRedirect('dispatch');
-    //     $('#createSuccessMsgContainer').css('display', 'none');
-    //   }, 1000);
-    // });
   };
 
   onCancelCreate(): void {

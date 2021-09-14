@@ -68,6 +68,11 @@ p, button, a, label, span {
 /* || Forms || */
 /* =========== */
 
+.form-container {
+  padding: 0 20%;
+  margin: 20px 0;
+}
+
 .btn-input-group {
   display: flex;
   align-items: stretch;

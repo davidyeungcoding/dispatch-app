@@ -2,11 +2,6 @@
 /* || Form || */
 /* ========== */
 
-.create-form {
-  padding: 0 20%;
-  margin: 20px 0;
-}
-
 .radio-control-container {
   display: flex;
   justify-content: space-evenly;
