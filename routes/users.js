@@ -87,6 +87,7 @@ router.post('/create', authenticateToken, async (req, res, next) => {
   const admin = req.body.admin;
   const newUser = req.body.newUser;
   const tokenUser = req.user;
+  if (!admin || !newUser || !tokenUser) return res.json({ success: false, status: 400, msg: 'Missing payload' })
   if (admin.username !== tokenUser.username) return res.json({ success: false, status: 401, msg: 'Account does not match token' });
   const adminCheck = await addminCheck(admin.username, admin.password);
   if (!adminCheck.success) return res.json(adminCheck);
@@ -117,6 +118,7 @@ router.post('/create', authenticateToken, async (req, res, next) => {
 router.post('/authenticate', async (req, res, next) => {
   const username = req.body.username;
   const password = req.body.password;
+  if (!username || !password) return res.json({ success: false, status: 400, msg: 'Please fill out all fields' })
   const user = await authUser(username);
   if (!user.success) return res.json(user);
   const match = await matchPassword(password, user.msg.password);
@@ -139,8 +141,10 @@ router.get('/verify-token', authenticateToken, (req, res, next) => {
 });
 
 router.post('/verify-admin', authenticateToken, (req, res, next) => {
-  if (req.user._id === req.body._id && req.user.accountType === 'admin') return res.json({ status: 200 });
-  if (req.user._id !== req.body._id) return res.json({ status: 403 });
+  const id = req.body._id;
+  if (!id) return res.json({ success: false, status: 400, msg: 'Missing paylaod' });
+  if (req.user._id === id && req.user.accountType === 'admin') return res.json({ status: 200 });
+  if (req.user._id !== id) return res.json({ status: 403 });
   if (req.user.accountType !== 'admin') return res.json({ status: 401 });
   return res.json({ status: 400 });
 });
@@ -150,8 +154,13 @@ router.post('/verify-admin', authenticateToken, (req, res, next) => {
 // ===============
 
 router.put('/edit', authenticateToken, async (req, res, next) => {
-  if (req.body._id !== req.body.targetId) return res.json({ success: false, status: 403, msg: 'Not your account' });
-  const update = { [req.body.target]: req.body.change };
+  const id = req.body._id;
+  const targetId = req.body.targetId;
+  const target = req.body.target;
+  const change = req.body.change;
+  if (!id || !targetId || !target || !change) return res.json({ success: false, status: 400, msg: 'Missing payload' });
+  if (id !== targetId) return res.json({ success: false, status: 403, msg: 'Not your account' });
+  const update = { [target]: change };
   
   User.editUser(req.body.targetId, update, (err, _user) => {
     if (err) throw err;
@@ -162,10 +171,13 @@ router.put('/edit', authenticateToken, async (req, res, next) => {
 });
 
 router.put('/edit-account', authenticateToken, async (req, res, next) => {
-  if (req.body.username !== req.user.username) return res.json({ success: false, status: 406, msg: 'User and token do not match' });
-  const user = await authUser(req.body.username);
+  const username = req.body.username;
+  const password = req.body.password;
+  if (!username || !password) return res.json({ success: false, status: 400, msg: 'Missing payload' });
+  if (username !== req.user.username) return res.json({ success: false, status: 406, msg: 'User and token do not match' });
+  const user = await authUser(username);
   if (!user.success) return res.json(user);
-  const match = await matchPassword(req.body.password, user.msg.password);
+  const match = await matchPassword(password, user.msg.password);
   if (!match.success) return res.json(match);
   const payload = {};
   if (req.body.newPassword) payload.password = req.body.newPassword;
@@ -176,6 +188,8 @@ router.put('/edit-account', authenticateToken, async (req, res, next) => {
     if (!duplicate.success) return res.json(duplicate);
     payload.username = req.body.newUsername;
   };
+
+  if (!Object.keys(payload).length) return res.json({ success: false, status: 400, msg: 'Missing payload' });
   
   User.updateAccount(req.body.username, payload, (err, _user) => {
     if (err) throw err;
@@ -197,6 +211,8 @@ router.put('/edit-account', authenticateToken, async (req, res, next) => {
 // || Search User ||
 // =================
 
+// not yet in use, will have to come back and update checks for payload
+// when it does
 router.get('/search', (req, res, next) => {
   const type = req.query.type;
   const term = type === '_id' ? mongoose.Types.ObjectId(req.query.term)
