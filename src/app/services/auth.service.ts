@@ -189,9 +189,9 @@ export class AuthService {
     return check;
   };
 
-  // ============================
-  // || Change Observable Data ||
-  // ============================
+  // ========================
+  // || Change Observables ||
+  // ========================
 
   changeAuthToken(token: string | null): void {
     this.authTokenSource.next(token);

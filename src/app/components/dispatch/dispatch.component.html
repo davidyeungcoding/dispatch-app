@@ -75,7 +75,13 @@
             <ng-template #guestView>
               <div class="row user-btn-container">
                 <button type="button"
-                  class="btn btn-secondary card-btn"
+                  class="btn btn-secondary card-btn guest-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#sendText"
+                  (click)="onStoreVideoCall(doctor.videoCall)">Text</button>
+
+                <button type="button"
+                  class="btn btn-secondary card-btn guest-btn"
                   (click)="onStartChat(doctor)"><i class="far fa-comment-alt"></i>&nbsp;Chat</button>
               </div>
             </ng-template>
@@ -126,6 +132,53 @@
             <button type="submit"
               class="btn btn-secondary modal-btn">Submit</button>
     
+            <button type="button"
+              class="btn btn-secondary modal-btn"
+              data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade"
+  id="sendText"
+  tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-card">
+      <div class="modal-body">
+        <div class="custom-modal-header">
+          <h5 class="modal-title">Send Text</h5>
+
+          <button type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            aria-label="Close">
+          </button>
+        </div>
+
+        <form #sendTextMessage="ngForm"
+          class="create-form modal-form"
+          (ngSubmit)="onSendTextMessage(sendTextMessage)">
+          <div class="form-group text-field">
+            <input type="text"
+              class="form-control"
+              id="patientPhoneNumber"
+              name="phoneNumber"
+              maxlength="10"
+              ngModel>
+          </div>
+
+          <div class="msg-container"
+            id="textResponseContainer">
+            <p class="error-msg" id="textResponse">{{ textResponse.msg }}</p>
+          </div>
+
+          <div class="custom-modal-footer">
+            <button type="submit"
+              class="btn btn-secondary modal-btn">Submit</button>
+
             <button type="button"
               class="btn btn-secondary modal-btn"
               data-bs-dismiss="modal">Cancel</button>

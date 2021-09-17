@@ -29,9 +29,7 @@ const authenticateToken = (req, res, next) => {
       req.user = _user;
       next();
     });
-  } catch {
-    return res.json({ success: false, status: 400, msg: 'Missing authorization credentials' });
-  };
+  } catch { return res.json({ success: false, status: 400, msg: 'Missing authorization credentials' })};
 };
 
 const authUser = async username => {
@@ -84,31 +82,33 @@ const duplicateCheck = async (username) => {
 // =================
 
 router.post('/create', authenticateToken, async (req, res, next) => {
-  const admin = req.body.admin;
-  const newUser = req.body.newUser;
-  const tokenUser = req.user;
-  if (!admin || !newUser || !tokenUser) return res.json({ success: false, status: 400, msg: 'Missing payload' })
-  if (admin.username !== tokenUser.username) return res.json({ success: false, status: 401, msg: 'Account does not match token' });
-  const adminCheck = await addminCheck(admin.username, admin.password);
-  if (!adminCheck.success) return res.json(adminCheck);
-  const duplicate = await duplicateCheck(newUser.username);
-  if (!duplicate.success) return res.json(duplicate);
-
-  const payload = new userModel({
-    username: newUser.username,
-    password: newUser.password,
-    name: newUser.name,
-    accountType: newUser.accountType
-  });
-
-  if (newUser.accountType === 'doctor') payload.videoCall = '';
-
-  User.createUser(payload, (err, _user) => {
-    if (err) throw err;
-
-    return _user ? res.json({ success: true, status: 200, msg: 'New user created'})
-    : res.json({ success: false, status: 500, msg: 'Unable to create new user'});
-  });
+  try {
+    const admin = req.body.admin;
+    const newUser = req.body.newUser;
+    const tokenUser = req.user;
+    if (!admin || !newUser || !tokenUser) return res.json({ success: false, status: 400, msg: 'Missing payload' })
+    if (admin.username !== tokenUser.username) return res.json({ success: false, status: 401, msg: 'Account does not match token' });
+    const adminCheck = await addminCheck(admin.username, admin.password);
+    if (!adminCheck.success) return res.json(adminCheck);
+    const duplicate = await duplicateCheck(newUser.username);
+    if (!duplicate.success) return res.json(duplicate);
+  
+    const payload = new userModel({
+      username: newUser.username,
+      password: newUser.password,
+      name: newUser.name,
+      accountType: newUser.accountType
+    });
+  
+    if (newUser.accountType === 'doctor') payload.videoCall = '';
+  
+    User.createUser(payload, (err, _user) => {
+      if (err) throw err;
+  
+      return _user ? res.json({ success: true, status: 200, msg: 'New user created'})
+      : res.json({ success: false, status: 500, msg: 'Unable to create new user'});
+    });
+  } catch { return res.json({ success: false, status: 400, msg: 'Unable to create new user at this time' })};
 });
 
 // =======================
@@ -116,24 +116,26 @@ router.post('/create', authenticateToken, async (req, res, next) => {
 // =======================
 
 router.post('/authenticate', async (req, res, next) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  if (!username || !password) return res.json({ success: false, status: 400, msg: 'Please fill out all fields' })
-  const user = await authUser(username);
-  if (!user.success) return res.json(user);
-  const match = await matchPassword(password, user.msg.password);
-  if (!match.success) return res.json(match);
-  const token = jwt.sign(user.msg.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
-  
-  const resUser = {
-    _id: user.msg._id,
-    username: user.msg.username,
-    name: user.msg.name,
-    accountType: user.msg.accountType
-  };
-  
-  if (resUser.accountType === 'doctor') resUser.videoCall = user.msg.videoCall;
-  return res.json({ success: true, status: 200, token: `JWT ${token}`, user: resUser });
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
+    if (!username || !password) return res.json({ success: false, status: 400, msg: 'Please fill out all fields' })
+    const user = await authUser(username);
+    if (!user.success) return res.json(user);
+    const match = await matchPassword(password, user.msg.password);
+    if (!match.success) return res.json(match);
+    const token = jwt.sign(user.msg.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
+    
+    const resUser = {
+      _id: user.msg._id,
+      username: user.msg.username,
+      name: user.msg.name,
+      accountType: user.msg.accountType
+    };
+    
+    if (resUser.accountType === 'doctor') resUser.videoCall = user.msg.videoCall;
+    return res.json({ success: true, status: 200, token: `JWT ${token}`, user: resUser });
+  } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' })};
 });
 
 router.get('/verify-token', authenticateToken, (req, res, next) => {
@@ -141,12 +143,14 @@ router.get('/verify-token', authenticateToken, (req, res, next) => {
 });
 
 router.post('/verify-admin', authenticateToken, (req, res, next) => {
-  const id = req.body._id;
-  if (!id) return res.json({ success: false, status: 400, msg: 'Missing paylaod' });
-  if (req.user._id === id && req.user.accountType === 'admin') return res.json({ status: 200 });
-  if (req.user._id !== id) return res.json({ status: 403 });
-  if (req.user.accountType !== 'admin') return res.json({ status: 401 });
-  return res.json({ status: 400 });
+  try {
+    const id = req.body._id;
+    if (!id) return res.json({ success: false, status: 400, msg: 'Missing paylaod' });
+    if (req.user._id === id && req.user.accountType === 'admin') return res.json({ status: 200 });
+    if (req.user._id !== id) return res.json({ status: 403 });
+    if (req.user.accountType !== 'admin') return res.json({ status: 401 });
+    return res.json({ status: 400 });
+  } catch { return res.json({ success: false, status: 400, msg: 'Unable to verify user' })};
 });
 
 // ===============
@@ -154,57 +158,61 @@ router.post('/verify-admin', authenticateToken, (req, res, next) => {
 // ===============
 
 router.put('/edit', authenticateToken, async (req, res, next) => {
-  const id = req.body._id;
-  const targetId = req.body.targetId;
-  const target = req.body.target;
-  const change = req.body.change;
-  if (!id || !targetId || !target || !change) return res.json({ success: false, status: 400, msg: 'Missing payload' });
-  if (id !== targetId) return res.json({ success: false, status: 403, msg: 'Not your account' });
-  const update = { [target]: change };
-  
-  User.editUser(req.body.targetId, update, (err, _user) => {
-    if (err) throw err;
+  try {
+    const id = req.body._id;
+    const targetId = req.body.targetId;
+    const target = req.body.target;
+    const change = req.body.change;
+    if (!id || !targetId || !target || !change) return res.json({ success: false, status: 400, msg: 'Missing payload' });
+    if (id !== targetId) return res.json({ success: false, status: 403, msg: 'Not your account' });
+    const update = { [target]: change };
+    
+    User.editUser(req.body.targetId, update, (err, _user) => {
+      if (err) throw err;
 
-    return _user ? res.json({ success: true, status: 200, msg: 'User successfully updated' })
-    : res.json({ success: false, status: 403, msg: 'Unable to update user' });
-  });
+      return _user ? res.json({ success: true, status: 200, msg: 'User successfully updated' })
+      : res.json({ success: false, status: 403, msg: 'Unable to update user' });
+    });
+  } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' })};
 });
 
 router.put('/edit-account', authenticateToken, async (req, res, next) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  if (!username || !password) return res.json({ success: false, status: 400, msg: 'Missing payload' });
-  if (username !== req.user.username) return res.json({ success: false, status: 406, msg: 'User and token do not match' });
-  const user = await authUser(username);
-  if (!user.success) return res.json(user);
-  const match = await matchPassword(password, user.msg.password);
-  if (!match.success) return res.json(match);
-  const payload = {};
-  if (req.body.newPassword) payload.password = req.body.newPassword;
-  if (req.body.newName) payload.name = req.body.newName;
-  
-  if (req.body.newUsername) {
-    const duplicate = await duplicateCheck(req.body.newUsername);
-    if (!duplicate.success) return res.json(duplicate);
-    payload.username = req.body.newUsername;
-  };
-
-  if (!Object.keys(payload).length) return res.json({ success: false, status: 400, msg: 'Missing payload' });
-  
-  User.updateAccount(req.body.username, payload, (err, _user) => {
-    if (err) throw err;
-    const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
-    const resUser = {
-      _id: _user._id,
-      accountType: _user.accountType,
-      name: _user.name,
-      username: _user.username
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
+    if (!username || !password) return res.json({ success: false, status: 400, msg: 'Missing payload' });
+    if (username !== req.user.username) return res.json({ success: false, status: 406, msg: 'User and token do not match' });
+    const user = await authUser(username);
+    if (!user.success) return res.json(user);
+    const match = await matchPassword(password, user.msg.password);
+    if (!match.success) return res.json(match);
+    const payload = {};
+    if (req.body.newPassword) payload.password = req.body.newPassword;
+    if (req.body.newName) payload.name = req.body.newName;
+    
+    if (req.body.newUsername) {
+      const duplicate = await duplicateCheck(req.body.newUsername);
+      if (!duplicate.success) return res.json(duplicate);
+      payload.username = req.body.newUsername;
     };
 
-    if (resUser.accountType === 'doctor') resUser.videoCall = _user.videoCall;
-    return res.json(_user ? { success: true, status: 200, msg: _user, token: token }
-    : { success: false, status: 500, msg: 'Unable to update at this time' });
-  });
+    if (!Object.keys(payload).length) return res.json({ success: false, status: 400, msg: 'Missing payload' });
+    
+    User.updateAccount(req.body.username, payload, (err, _user) => {
+      if (err) throw err;
+      const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
+      const resUser = {
+        _id: _user._id,
+        accountType: _user.accountType,
+        name: _user.name,
+        username: _user.username
+      };
+
+      if (resUser.accountType === 'doctor') resUser.videoCall = _user.videoCall;
+      return res.json(_user ? { success: true, status: 200, msg: _user, token: token }
+      : { success: false, status: 500, msg: 'Unable to update at this time' });
+    });
+  } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' })};
 });
 
 // =================

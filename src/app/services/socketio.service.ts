@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { ChatService } from './chat.service';
+import { TextMessageService } from './text-message.service';
 
 import { BehaviorSubject } from 'rxjs';
 import { io } from 'socket.io-client';
@@ -23,7 +24,8 @@ export class SocketioService {
   conversionList = this.conversionListSource.asObservable();
 
   constructor(
-    private chatService: ChatService
+    private chatService: ChatService,
+    private textMessageService: TextMessageService
   ) { }
   
   // ===========
@@ -89,6 +91,10 @@ export class SocketioService {
     this.socket.emit('update-account', payload);
   };
 
+  emitTextMessage(payload: any) {
+    this.socket.emit('send-text', payload);
+  };
+
   // =====================
   // || Receive Updates ||
   // =====================
@@ -117,11 +123,19 @@ export class SocketioService {
     this.socket.on('failed-to-deliver-message', (payload: any) => {
       this.chatService.failedToDeliver(payload);
     });
+
+    this.socket.on('failed-to-send-text', (payload: any) => {
+      this.textMessageService.changeResponseMessage(payload);
+    });
+
+    this.socket.on('sent-text', (payload: any) => {
+      this.textMessageService.processTextResponse(payload);
+    });
   };
 
-  // =======================
-  // || Change Observable ||
-  // =======================
+  // ========================
+  // || Change Observables ||
+  // ========================
 
   changeUserList(list: any): void {
     this.userListSource.next(list);

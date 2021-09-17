@@ -9,6 +9,23 @@ const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 8080;
 
+// =====================
+// || Twilio Messages ||
+// =====================
+
+// Below will send message on reload. To use correctly move to a socket.io
+// event emiter to send text based on button click on frontend
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioClient = require('twilio')(accountSid, authToken);
+
+// twilioClient.messages.create({
+//   body: 'Sent message from Twilio API!',
+//   from: process.env.TWILIO_PHONE_NUMBER,
+//   to: process.env.TWILIO_DEMO_NUMBER
+// }).then(message => console.log(message.sid));
+
 // ===================
 // || DB Connection ||
 // ===================
@@ -120,6 +137,37 @@ io.on('connection', socket => {
     receiver ? io.to(receiver).emit('update-chat', payload)
     : io.to(socket.id).emit('failed-to-deliver-message', payload);
   });
+  
+  socket.on('send-text', payload => { // pending
+    console.log(`=========================||        Send Text        ||========================`);
+    const text = payload.message;
+    const recipient = payload.sendTo;
+    const regex = /^\d{10}$/;
+    const check = regex.test(recipient) && recipient.length === 10;
+
+    if (!text || !recipient || !check) {
+      const resPayload = {
+        success: false,
+        msg: 'Unable to send text message'
+      };
+
+      io.to(socket.id).emit('failed-to-send-text', resPayload);
+      return;
+    };
+
+    // twilioClient.messages.create({
+    //   to: `+1${recipient}`,
+    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   body: text
+    // }); // .then(message => console.log(message.sid));
+
+    const resPayload = {
+      success: true,
+      msg: 'Text was successfully sent'
+    };
+
+    io.to(socket.id).emit('sent-text', resPayload);
+  });
 });
 
 // ================
@@ -139,6 +187,7 @@ app.use(bodyparser.urlencoded({
 // =======================
 
 const users = require('./routes/users');
+// const twilio = require('twilio');
 
 app.use('/users', users);
 

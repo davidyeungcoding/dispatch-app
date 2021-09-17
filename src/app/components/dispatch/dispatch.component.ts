@@ -8,6 +8,7 @@ import { ChatService } from 'src/app/services/chat.service';
 import { Subscription } from 'rxjs';
 import { ChatEntry } from 'src/app/interfaces/chat-entry';
 import { EditAccountService } from 'src/app/services/edit-account.service';
+import { TextMessageService } from 'src/app/services/text-message.service';
 
 @Component({
   selector: 'app-dispatch',
@@ -19,16 +20,19 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   private target: any = {};
   private authToken: string = '';
   private openChats: any = [];
+  private currentLink: string = '';
   userData: any = {};
   userList: any = [];
   doctorList: any = [];
   callLinkError: string = '';
+  textResponse: any = {};
 
   constructor(
     private authService: AuthService,
     private socketioService: SocketioService,
     private chatService: ChatService,
-    private editAccountService: EditAccountService
+    private editAccountService: EditAccountService,
+    private textMessageService: TextMessageService
   ) { }
 
   ngOnInit(): void {
@@ -37,6 +41,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.add(this.socketioService.doctorList.subscribe(_list => this.doctorList = _list));
     this.subscriptions.add(this.authService.authToken.subscribe(_token => this.authToken = _token));
     this.subscriptions.add(this.chatService.openChats.subscribe(_list => this.openChats = _list));
+    this.subscriptions.add(this.textMessageService.responseMessage.subscribe(_res => this.textResponse = _res));
     this.socketioService.emitUserListRequest();
   }
   
@@ -62,6 +67,27 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   storeTarget(target: any): void {
     this.target = target;
+  };
+
+  replaceClass(term: string): void {
+    const included = $('#textResponse')[0].classList.contains(term);
+    if (included) return;
+    const replace = term === 'error-msg' ? 'success-msg' : 'error-msg';
+    $('#textResponse').removeClass(replace);
+    $('#textResponse').addClass(term);
+  };
+
+  testPhoneNumber(contact: string): boolean {
+    const regex = /^\d{10}$/;
+    return regex.test(contact) && contact.length === 10;
+  };
+
+  textError(message: string): void {
+    const error = { success: false, msg: message };
+    this.textMessageService.changeResponseMessage(error);
+    this.replaceClass('error-msg');
+    $('#textResponseContainer').css('display', 'inline');
+    setTimeout(() => { $('#textResponseContainer').css('display', 'none') }, 2500);
   };
 
   // =======================
@@ -133,5 +159,29 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
       this.openChats.push(chatUser);
       this.chatService.changeOpenChats(this.openChats);
     };
+  };
+
+  onStoreVideoCall(link: string): void {
+    this.currentLink = link;
+  };
+
+  onSendTextMessage(form: NgForm): void {
+    $('#textResponseContainer').css('display', 'none');
+    const phoneNumber = form.value.phoneNumber;
+    const message = `Contact your medical consultant at: ${this.currentLink}. Reply STOP to unsubscribe.`;
+    if (!phoneNumber || !phoneNumber.trim()) return this.textError('Please enter a phone number');
+    if (!this.testPhoneNumber(phoneNumber)) return this.textError('Please enter the area code followed by the phone number');
+    this.socketioService.emitTextMessage({ sendTo: phoneNumber, message: message });
+    
+    setTimeout(() => {
+      this.textResponse.success === true ? this.replaceClass('success-msg') : this.replaceClass('error-msg');
+      $('#textResponseContainer').css('display', 'inline');
+    }, 100);
+
+    setTimeout(() => {
+      form.reset();
+      $('#textResponseContainer').css('display', 'none');
+      (<any>$('#sendText')).modal('toggle');
+    }, 1000);
   };
 }
