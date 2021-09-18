@@ -13,18 +13,9 @@ const port = process.env.PORT || 8080;
 // || Twilio Messages ||
 // =====================
 
-// Below will send message on reload. To use correctly move to a socket.io
-// event emiter to send text based on button click on frontend
-
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilioClient = require('twilio')(accountSid, authToken);
-
-// twilioClient.messages.create({
-//   body: 'Sent message from Twilio API!',
-//   from: process.env.TWILIO_PHONE_NUMBER,
-//   to: process.env.TWILIO_DEMO_NUMBER
-// }).then(message => console.log(message.sid));
 
 // ===================
 // || DB Connection ||
@@ -57,7 +48,6 @@ const io = require('socket.io')(server, {
 
 const userList = {};
 const userToSocket = {};
-// const messages = {};
 
 io.on('connection', socket => {
   console.log(`=================||    Connected: ${socket.id}     ||=================`);
@@ -68,12 +58,12 @@ io.on('connection', socket => {
     for (let i = 0; i < Object.keys(userToSocket).length; i++) {
       if (Object.values(userToSocket)[i] === socket.id) {
         delete userToSocket[Object.keys(userToSocket)[i]];
-        return;
+        break;
       };
     };
-
-    console.log(userToSocket)
-    console.log(userList); // delete line
+    
+    console.log(userList);
+    console.log(userToSocket);
     io.emit('user-list-update', userList);
   });
   

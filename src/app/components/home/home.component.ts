@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { AuthService } from 'src/app/services/auth.service';
 import { RedirectService } from 'src/app/services/redirect.service';
 import { SocketioService } from 'src/app/services/socketio.service';
 
+import { Subscription } from 'rxjs';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+  private userData: any = null;
+  private token: string | null = null;
+  private subscriptions: Subscription = new Subscription();
   loginErrorMsg: string = '';
 
   constructor(
@@ -20,6 +25,16 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
+    this.subscriptions.add(this.authService.authToken.subscribe(_token => this.token = _token));
+  }
+
+  ngAfterViewInit(): void {
+    if (this.checkValidUser()) this.redirectService.handleRedirect('dispatch');
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   // ======================
@@ -48,6 +63,10 @@ export class HomeComponent implements OnInit {
   // ========================
   // || Generaal Functions ||
   // ========================
+
+  checkValidUser(): boolean {
+    return !this.userData || !!this.token && this.authService.isExpired(this.token) ? false : true;
+  };
 
   async onLoginSubmit(form: NgForm): Promise<void> {
     const username = form.value.username;

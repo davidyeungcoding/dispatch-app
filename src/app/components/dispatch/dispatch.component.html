@@ -78,7 +78,7 @@
                   class="btn btn-secondary card-btn guest-btn"
                   data-bs-toggle="modal"
                   data-bs-target="#sendText"
-                  (click)="onStoreVideoCall(doctor.videoCall)">Text</button>
+                  (click)="onStoreVideoCall(doctor.videoCall)"><i class="fas fa-mobile-alt"></i>&nbsp;Text</button>
 
                 <button type="button"
                   class="btn btn-secondary card-btn guest-btn"
@@ -149,7 +149,7 @@
     <div class="modal-content modal-card">
       <div class="modal-body">
         <div class="custom-modal-header">
-          <h5 class="modal-title">Send Text</h5>
+          <h5 class="modal-title">Send Contact Link</h5>
 
           <button type="button"
             class="btn-close btn-close-white"
@@ -162,6 +162,8 @@
           class="create-form modal-form"
           (ngSubmit)="onSendTextMessage(sendTextMessage)">
           <div class="form-group text-field">
+            <label for="patientPhoneNumber">Patient's Phone Number:</label>
+
             <input type="text"
               class="form-control"
               id="patientPhoneNumber"
