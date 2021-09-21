@@ -132,6 +132,7 @@ export class EditAccountComponent implements OnInit, OnDestroy {
 
       this.authServcie.changeUserData(_res.msg);
       this.authServcie.changeAuthToken(_res.token);
+      this.authServcie.setLocalStorageUser(this.token, JSON.stringify(this.userData));
       this.socketIoService.emitAccountUpdate(_res.msg);
       $('#successMsgContainer').css('display', 'inline');
       setTimeout(() => this.redirectService.handleRedirect('dispatch'), 1000);
