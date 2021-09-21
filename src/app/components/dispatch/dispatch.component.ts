@@ -124,6 +124,9 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       };
 
+      this.userData.videoCall = link;
+      this.authService.changeUserData(this.userData);
+      localStorage.setItem('user', JSON.stringify(this.userData));
       this.socketioService.emitLink(link);
       $('#callLinkSuccessContainer').css('display', 'inline');
       
