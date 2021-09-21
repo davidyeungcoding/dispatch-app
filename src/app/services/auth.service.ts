@@ -64,11 +64,8 @@ export class AuthService {
     let user = localStorage.getItem('user');
     
     if (user) {
-      try {
-        user = JSON.parse(user);
-      } catch {
-        user = null;
-      };
+      try { user = JSON.parse(user) }
+      catch { user = null };
     };
 
     return user;

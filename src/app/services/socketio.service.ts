@@ -131,6 +131,11 @@ export class SocketioService {
     this.socket.on('sent-text', (payload: any) => {
       this.textMessageService.processTextResponse(payload);
     });
+
+    this.socket.on('force-logout', () => {
+      localStorage.clear();
+      location.reload();
+    });
   };
 
   // ========================

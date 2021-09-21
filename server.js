@@ -80,11 +80,19 @@ io.on('connection', socket => {
   socket.on('login', user => {
     console.log('=================||             New User Login             ||=================');
     console.log(user)
+
+    if (userToSocket[user._id]) {
+      delete userList[userToSocket[user._id]];
+      io.to(userToSocket[user._id]).emit('force-logout');
+      io.emit('user-list-update', userList);
+    };
+
     userList[socket.id] = {
       _id: user._id,
       name: user.name,
       accountType: user.accountType
     };
+
     userToSocket[user._id] = socket.id;
     if (user.accountType === 'doctor') userList[socket.id].videoCall = user.videoCall;
     if (user.accountType !== 'doctor') io.emit('user-list-update', userList);
