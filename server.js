@@ -153,11 +153,11 @@ io.on('connection', socket => {
       return;
     };
 
-    // twilioClient.messages.create({
-    //   to: `+1${recipient}`,
-    //   from: process.env.TWILIO_PHONE_NUMBER,
-    //   body: text
-    // }); // .then(message => console.log(message.sid));
+    twilioClient.messages.create({
+      to: `+1${recipient}`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      body: text
+    }); // .then(message => console.log(message.sid));
 
     const resPayload = {
       success: true,
@@ -173,8 +173,8 @@ io.on('connection', socket => {
 // ================
 
 app.use(cors());
-app.use(express.static(path.join(__dirname, 'src'))); // dev
-// app.use(express.static(path.join(__dirname, '/dist/dispatch-app'))); // production
+// app.use(express.static(path.join(__dirname, 'src'))); // dev
+app.use(express.static(path.join(__dirname, '/dist/dispatch-app'))); // production
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({
   extended: false
@@ -185,7 +185,6 @@ app.use(bodyparser.urlencoded({
 // =======================
 
 const users = require('./routes/users');
-// const twilio = require('twilio');
 
 app.use('/users', users);
 
