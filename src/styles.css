@@ -103,6 +103,21 @@ p, button, a, label, span {
 }
 
 /* ============ */
+/* || Tables || */
+/* ============ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--color-text-light);
+}
+
+td, th {
+  border: 1px solid var(--color-text-light);
+  padding: .5rem;
+}
+
+/* ============ */
 /* || Modals || */
 /* ============ */
 

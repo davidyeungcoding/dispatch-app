@@ -8,12 +8,14 @@ import { EditAccountComponent } from './components/edit-account/edit-account.com
 
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
+import { UserManagementComponent } from './components/user-management/user-management.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'dispatch', canActivate: [AuthGuard], component: DispatchComponent },
-  { path: 'create-account', canActivate: [AdminGuard], component: CreateAccountComponent},
+  { path: 'create-account', canActivate: [AdminGuard], component: CreateAccountComponent },
   { path: 'edit-account', canActivate: [AuthGuard], component: EditAccountComponent },
+  { path: 'user-management', canActivate: [AdminGuard], component: UserManagementComponent },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', component: HomeComponent }
 ];

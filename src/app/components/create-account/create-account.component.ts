@@ -110,7 +110,7 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.redirectService.handleRedirect('dispatch');
-    }, 1500);
+    }, 1000);
   };
 
   onCancelCreate(): void {

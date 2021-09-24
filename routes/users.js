@@ -169,8 +169,9 @@ router.put('/edit', authenticateToken, async (req, res, next) => {
     
     User.editUser(req.body.targetId, update, (err, _user) => {
       if (err) throw err;
+      const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
 
-      return _user ? res.json({ success: true, status: 200, msg: 'User successfully updated' })
+      return _user ? res.json({ success: true, status: 200, msg: 'User successfully updated', token: token })
       : res.json({ success: false, status: 403, msg: 'Unable to update user' });
     });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' })};
@@ -231,5 +232,17 @@ router.get('/search', (req, res, next) => {
 
     return _users ? res.json({ success: true, msg: _users })
     : res.json({ success: false, msg: 'Unable to search for user' });
+  });
+});
+
+router.get('/full-user-list', (req, res, next) => {
+  console.log('full-user-list')
+  return res.json('test')
+  User.search((err, _list) => {
+    if (err) throw err;
+    console.log(_list)
+
+    return _list ? res.json({ success: true, status: 200, msg: _list })
+    : res.json({ success: false, status: 404, msg: 'Unable to retrieve list' });
   });
 });

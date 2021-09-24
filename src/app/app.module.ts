@@ -12,6 +12,7 @@ import { NavComponent } from './components/nav/nav.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { EditAccountComponent } from './components/edit-account/edit-account.component';
+import { UserManagementComponent } from './components/user-management/user-management.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { EditAccountComponent } from './components/edit-account/edit-account.com
     NavComponent,
     CreateAccountComponent,
     ChatComponent,
-    EditAccountComponent
+    EditAccountComponent,
+    UserManagementComponent
   ],
   imports: [
     BrowserModule,

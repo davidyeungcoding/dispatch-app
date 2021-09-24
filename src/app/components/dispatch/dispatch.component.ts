@@ -107,6 +107,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!link) {
       this.callLinkError = 'Please enter a link in the above field';
       $('#callLinkErrorContainer').css('display', 'inline');
+      setTimeout(() => { $('#callLinkErrorContainer').css('display', 'none') }, 1500);
       return;
     };
 
@@ -126,7 +127,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.userData.videoCall = link;
       this.authService.changeUserData(this.userData);
-      localStorage.setItem('user', JSON.stringify(this.userData));
+      this.authService.setLocalStorageUser(_user.token, JSON.stringify(this.userData));
       this.socketioService.emitLink(link);
       $('#callLinkSuccessContainer').css('display', 'inline');
       
