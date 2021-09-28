@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const passport = require('passport');
 const mongoose = require('mongoose');
 
 module.exports = router;
@@ -18,14 +17,70 @@ const User = require('../models/user');
 // || Shared Functions ||
 // ======================
 
+const buildPayloadForToken = user => {
+  const payload = {
+    _id: user._id,
+    username: user.username,
+    name: user.name,
+    accountType: user.accountType
+  };
+
+  if (payload.accountType === 'doctor') payload.videoCall = user.videoCall;
+  return payload;
+};
+
+const generateAuthToken = user => {
+  const parsedUser = buildPayloadForToken(user);
+  return jwt.sign(parsedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+};
+
+const generateRefreshToken = user => {
+  const parsedUser = buildPayloadForToken(user);
+  return jwt.sign(parsedUser, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
+};
+
+const getRefreshToken = async username => {
+  const token = await new Promise(resolve => {
+    User.refreshTokenSearch(username, (err, _token) => {
+      if (err) throw err;
+      return resolve(_token[0].refreshToken);
+    });
+  });
+  return token;
+};
+
+const authenticateRefreshToken = token => {
+  const validToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, _user) => {
+    return err ? false : true;
+  });
+  return validToken;
+};
+
+const handleRefreshAuthToken = async token => {
+  const refreshToken = await getRefreshToken(token.username);
+  if (!refreshToken) return false;
+  const validRefreshToken = authenticateRefreshToken(refreshToken);
+  if (!validRefreshToken) return false;
+  return generateAuthToken(token);
+};
+
 const authenticateToken = (req, res, next) => {
   try {
     const authHeader = req.headers['authorization'].split(' ');
     const token = authHeader ? authHeader[authHeader.length - 1] : null;
     if (!token) return res.json({ success: false, status: 401, msg: 'Missing authorization credentials' });
   
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, _user) => {
-      if (err) return res.json({ success: false, status: 403, msg: 'User is not authorized for access' });
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, _user) => {
+      if (err && err.name !== 'TokenExpiredError') return res.json({ success: false, status: 403, msg: 'User is not authorized for access' });
+      
+      if (err && err.name === 'TokenExpiredError') {
+        const tokenUser = jwt.decode(token);
+        const resToken = await handleRefreshAuthToken(tokenUser);
+        if (!resToken) return res.json({ success: false, status: 403, msg: 'User is not authorized for access' });
+        res.token = `JWT ${resToken}`;
+        _user = tokenUser;
+      };
+      
       req.user = _user;
       next();
     });
@@ -124,7 +179,7 @@ router.post('/authenticate', async (req, res, next) => {
     if (!user.success) return res.json(user);
     const match = await matchPassword(password, user.msg.password);
     if (!match.success) return res.json(match);
-    const token = jwt.sign(user.msg.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
+    const token = generateAuthToken(user.msg.toJSON());
     
     const resUser = {
       _id: user.msg._id,
@@ -134,11 +189,17 @@ router.post('/authenticate', async (req, res, next) => {
     };
     
     if (resUser.accountType === 'doctor') resUser.videoCall = user.msg.videoCall;
+    const refreshToken = generateRefreshToken(resUser);
+
+    User.addRefreshToken(resUser._id, refreshToken, (err, _user) => {
+      if (err) return res.json({ success: false, status: 500, msg: 'Unagle to log in at this time' });
+    });
+
     return res.json({ success: true, status: 200, token: `JWT ${token}`, user: resUser });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' })};
 });
 
-router.get('/verify-token', authenticateToken, (req, res, next) => {
+router.get('/verify-token', authenticateToken, async (req, res, next) => {
   return res.json({ status: 200 });
 });
 
@@ -151,6 +212,16 @@ router.post('/verify-admin', authenticateToken, (req, res, next) => {
     if (req.user.accountType !== 'admin') return res.json({ status: 401 });
     return res.json({ status: 400 });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to verify user' })};
+});
+
+router.put('/clear-refresh-token', (req, res, next) => {
+  const _id = req.query._id;
+  console.log(_id)
+
+  User.clearRefreshToken(_id, (err, _user) => {
+    if (err) throw err;
+    return res.json({ status: 200 });
+  });
 });
 
 // ===============
@@ -169,7 +240,7 @@ router.put('/edit', authenticateToken, async (req, res, next) => {
     
     User.editUser(req.body.targetId, update, (err, _user) => {
       if (err) throw err;
-      const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
+      const token = generateAuthToken(_user.toJSON());
 
       return _user ? res.json({ success: true, status: 200, msg: 'User successfully updated', token: token })
       : res.json({ success: false, status: 403, msg: 'Unable to update user' });
@@ -201,7 +272,7 @@ router.put('/edit-account', authenticateToken, async (req, res, next) => {
     
     User.updateAccount(req.body.username, payload, (err, _user) => {
       if (err) throw err;
-      const token = jwt.sign(_user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '8h' });
+      const token = generateAuthToken(_user.toJSON());
       const resUser = {
         _id: _user._id,
         accountType: _user.accountType,
@@ -236,11 +307,8 @@ router.get('/search', (req, res, next) => {
 });
 
 router.get('/full-user-list', (req, res, next) => {
-  console.log('full-user-list')
-  return res.json('test')
-  User.search((err, _list) => {
+  User.getAll((err, _list) => {
     if (err) throw err;
-    console.log(_list)
 
     return _list ? res.json({ success: true, status: 200, msg: _list })
     : res.json({ success: false, status: 404, msg: 'Unable to retrieve list' });

@@ -80,6 +80,8 @@ io.on('connection', socket => {
   socket.on('login', user => {
     console.log('=================||             New User Login             ||=================');
     console.log(user)
+    // console.log(userToSocket)
+    // console.log(`userToSocket[user._id] || ${!!userToSocket[user._id]}`)
 
     if (userToSocket[user._id]) {
       delete userList[userToSocket[user._id]];

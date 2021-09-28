@@ -14,7 +14,9 @@ import { Subscription } from 'rxjs';
 export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private token: string = '';
-  accountsList: any = [];
+  private currentOrder: string = 'name';
+  private reverse: boolean = false;
+  accountList: any = [];
 
   constructor(
     private redirectService: RedirectService,
@@ -23,20 +25,70 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   ) { }
 
   ngOnInit(): void {
-    this.subscriptions.add(this.searchService.accountList.subscribe(_list => this.accountsList = _list));
+    this.subscriptions.add(this.searchService.accountList.subscribe(_list => this.accountList = _list));
     this.subscriptions.add(this.authService.authToken.subscribe(_token => this.token = _token));
+    this.getAccountList(this.token);
   }
 
   ngAfterViewInit(): void {
-    this.searchService.getFullAccountList(this.token).subscribe(_list => console.log(_list));
-    console.log(this.accountsList)
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
+  // ======================
+  // || Helper Functions ||
+  // ======================
+
+  sortList(list: any, term: string): any {
+    return list.sort((a: any, b: any) => {
+      const parseA = !!a[term] ? a[term].toUpperCase() : '';
+      const parseB = !!b[term] ? b[term].toUpperCase() : '';
+      
+      return parseA < parseB ? -1
+      : parseA > parseB ? 1
+      : 0;
+    });
+  };
+
+  assignActiveSort(term: string, match: boolean): void {
+    this.reverse ? $(`#${this.currentOrder}Reverse`).removeClass('active-sort')
+    : $(`#${this.currentOrder}Normal`).removeClass('active-sort');
+    
+    match && !this.reverse ? $(`#${term}Reverse`).addClass('active-sort')
+    : $(`#${term}Normal`).addClass('active-sort');
+  };
+
+  // =======================
+  // || General Functions ||
+  // =======================
+
+  getAccountList(token: string): void {
+    this.searchService.getFullAccountList(token).subscribe(_list => {
+      this.accountList = this.sortList(_list.msg, 'name');
+    });
+  };
+
   onCancel(): void {
     this.redirectService.handleRedirect('dispatch');
   };
+
+  onSortBy(term: string): void {
+    if (this.currentOrder === term) {
+      this.assignActiveSort(term, true);
+      this.reverse = !this.reverse;
+      this.accountList.reverse();
+      return
+    };
+    
+    this.assignActiveSort(term, false);
+    this.reverse = false;
+    this.currentOrder = term;
+    this.sortList(this.accountList, term);
+  };
+
+  onDeleteAccount(user: any): void {
+    console.log(user)
+  }
 }

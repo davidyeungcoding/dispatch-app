@@ -4,16 +4,37 @@
   --window-control-color: 200;
   --color-body-background: hsl(var(--primary-color), 15%, 17%);
   --color-card-background: hsl(var(--card-primary-color), 10%, 29%);
+  --color-window-control: hsl(var(--window-control-color), 10%, 20%);
+  --color-section-background: hsl(var(--card-primary-color), 0%, 14%);
+
+  /* =========== */
+  /* || Table || */
+  /* =========== */
+
+  --color-table-background: hsl(var(--primary-color), 0%, 7%);
+
+  /* ========== */
+  /* || Chat || */
+  /* ========== */
+
   --color-chat-background: hsl(208, 100%, 97%);
   --color-chat-primary: hsl(196, 12%, 37%);
   --color-chat-secondary: hsl(227, 12%, 37%);
-  --color-window-control: hsl(var(--window-control-color), 10%, 20%);
-  --color-section-background: hsl(var(--card-primary-color), 0%, 14%);
+
+  /* ========== */
+  /* || text || */
+  /* ========== */
+
   --color-text-dark: hsl(0, 0%, 0%);
   --color-text-light: hsl(0, 0%, 100%);
   --color-text-confirm: hsl(100, 43%, 51%);
   --color-text-busy: hsl(55, 53%, 51%);
   --color-text-warning: hsl(0, 100%, 45%);
+
+  /* ================ */
+  /* || Box Shadow || */
+  /* ================ */
+
   --box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.25);
 }
 
@@ -108,13 +129,29 @@ p, button, a, label, span {
 
 table {
   width: 100%;
-  border-collapse: collapse;
   color: var(--color-text-light);
+  position: relative;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th {
+  top: 0;
+  position: sticky;
+  background-color: var(--color-body-background);
 }
 
 td, th {
   border: 1px solid var(--color-text-light);
   padding: .5rem;
+}
+
+th:hover {
+  cursor: pointer;
+}
+
+tr:nth-of-type(even) {
+  background-color: var(--color-chat-primary);
 }
 
 /* ============ */

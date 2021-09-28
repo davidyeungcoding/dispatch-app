@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
   videoCall: {
     type: String,
     required: false
+  },
+  refreshToken: {
+    type: String,
+    default: ''
   }
 });
 
@@ -36,6 +40,12 @@ const userSchema = new mongoose.Schema({
 
 module.exports.userSchema = userSchema;
 module.exports.userModel = new mongoose.model('User', userSchema);
+
+// ======================
+// || Shared Variables ||
+// ======================
+
+const normalExclude = { password: 0, refreshToken: 0 };
 
 // =================
 // || Create User ||
@@ -66,6 +76,14 @@ module.exports.comparePassword = (password, hash, callback) => {
   });
 };
 
+module.exports.addRefreshToken = (id, token, callback) => {
+  this.userModel.update({ _id: id }, { $set: { refreshToken: token } }, callback);
+};
+
+module.exports.clearRefreshToken = (id, callback) => {
+  this.userModel.update({ _id: id }, { $set: { refreshToken: '' } }, callback);
+};
+
 // ===============
 // || Edit User ||
 // ===============
@@ -76,10 +94,7 @@ module.exports.editUser = (id, update, callback) => {
 };
 
 module.exports.updateAccount = (username, update, callback) => {
-  const options = {
-    new: true,
-    useFindAndModify: false
-  };
+  const options = { new: true };
 
   if (update.password) {
     bcrypt.genSalt(10, (err, salt) => {
@@ -96,8 +111,17 @@ module.exports.updateAccount = (username, update, callback) => {
 // || Search User ||
 // =================
 
+module.exports.refreshTokenSearch = (username, callback) => {
+  // this.userModel.aggregate([{ $match: { username: username } }, { $project: { refreshToken: 1 } }], callback);
+  this.userModel.aggregate([{ $match: { username: username } }, { $project: { refreshToken: 1 } }], callback);
+  // this.userModel.find({username: username}, callback)
+};
+
 module.exports.search = (type, term, callback) => {
   const query = { [`${type}`]: term };
-  const fields = { password: 0 };
-  this.userModel.aggregate([{ $match: query }, { $project: fields }], callback);
+  this.userModel.aggregate([{ $match: query }, { $project: normalExclude }], callback);
+};
+
+module.exports.getAll = callback => {
+  this.userModel.aggregate([{ $match: {} }, { $project: normalExclude }], callback);
 };

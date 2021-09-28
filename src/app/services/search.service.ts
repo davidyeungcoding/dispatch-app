@@ -49,7 +49,6 @@ export class SearchService {
 
   getFullAccountList(token: string) {
     const httpOptions = this.buildHeader(token);
-    console.log('getFullAcountList')
 
     return this.http.get(`${this.api}/full-user-list`, httpOptions).pipe(
       catchError(err => of(err))
