@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    if (this.checkValidUser()) this.redirectService.handleRedirect('dispatch');
+    this.checkValidUser();
   }
 
   ngOnDestroy(): void {
@@ -64,8 +64,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // || Generaal Functions ||
   // ========================
 
-  checkValidUser(): boolean {
-    return !this.userData || !!this.token && this.authService.isExpired(this.token) ? false : true;
+  async checkValidUser() {
+    const expiredToken = this.token ? await this.authService.isExpired(this.token) : true;
+    if (this.userData && !expiredToken) this.redirectService.handleRedirect('dispatch');
   };
 
   async onLoginSubmit(form: NgForm): Promise<void> {

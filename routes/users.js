@@ -31,12 +31,12 @@ const buildPayloadForToken = user => {
 
 const generateAuthToken = user => {
   const parsedUser = buildPayloadForToken(user);
-  return jwt.sign(parsedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+  return jwt.sign(parsedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5s' });
 };
 
 const generateRefreshToken = user => {
   const parsedUser = buildPayloadForToken(user);
-  return jwt.sign(parsedUser, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
+  return jwt.sign(parsedUser, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '15s' });
 };
 
 const getRefreshToken = async username => {
@@ -57,6 +57,7 @@ const authenticateRefreshToken = token => {
 };
 
 const handleRefreshAuthToken = async token => {
+  console.log('handleRefreshAuthToken')
   const refreshToken = await getRefreshToken(token.username);
   if (!refreshToken) return false;
   const validRefreshToken = authenticateRefreshToken(refreshToken);
@@ -71,9 +72,9 @@ const authenticateToken = (req, res, next) => {
     if (!token) return res.json({ success: false, status: 401, msg: 'Missing authorization credentials' });
   
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, _user) => {
-      if (err && err.name !== 'TokenExpiredError') return res.json({ success: false, status: 403, msg: 'User is not authorized for access' });
-      
-      if (err && err.name === 'TokenExpiredError') {
+      if (err && err.name !== 'TokenExpiredError') {
+        return res.json({ success: false, status: 403, msg: 'User is not authorized for access' });
+      } else if (err && err.name === 'TokenExpiredError') {
         const tokenUser = jwt.decode(token);
         const resToken = await handleRefreshAuthToken(tokenUser);
         if (!resToken) return res.json({ success: false, status: 403, msg: 'User is not authorized for access' });
@@ -85,6 +86,19 @@ const authenticateToken = (req, res, next) => {
       next();
     });
   } catch { return res.json({ success: false, status: 400, msg: 'Missing authorization credentials' })};
+};
+
+const assignRefreshToken = async user => {
+  const refreshToken = await generateRefreshToken(user.username);
+
+  const refreshTokenStatus = await new Promise(resolve => {
+    User.addRefreshToken(user._id, refreshToken, (err, _user) => {
+      if (err) return resolve({ success: false, status: 500, msg: 'Unable to log in at this time' });
+      return resolve({ success: true, status: 200, msg: 'Successfully added refresh token' });
+    });
+  });
+
+  return refreshTokenStatus;
 };
 
 const authUser = async username => {
@@ -189,18 +203,17 @@ router.post('/authenticate', async (req, res, next) => {
     };
     
     if (resUser.accountType === 'doctor') resUser.videoCall = user.msg.videoCall;
-    const refreshToken = generateRefreshToken(resUser);
-
-    User.addRefreshToken(resUser._id, refreshToken, (err, _user) => {
-      if (err) return res.json({ success: false, status: 500, msg: 'Unagle to log in at this time' });
-    });
+    const refreshTokenStatus = await assignRefreshToken(resUser);
+    if (!refreshTokenStatus.success) res.json(refreshTokenStatus);
 
     return res.json({ success: true, status: 200, token: `JWT ${token}`, user: resUser });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' })};
 });
 
 router.get('/verify-token', authenticateToken, async (req, res, next) => {
-  return res.json({ status: 200 });
+  const response = { status: 200 };
+  if (res.token) response.token = res.token;
+  return res.json(response);
 });
 
 router.post('/verify-admin', authenticateToken, (req, res, next) => {
@@ -214,14 +227,23 @@ router.post('/verify-admin', authenticateToken, (req, res, next) => {
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to verify user' })};
 });
 
-router.put('/clear-refresh-token', (req, res, next) => {
-  const _id = req.query._id;
-  console.log(_id)
+router.get('/logout', (req, res, next) => {
+  try {
+    const _id = req.query._id;
+    if (_id.length !== 24) return res.json({ status: 400 });
+  
+    User.clearRefreshToken(_id, (err, _user) => {
+      if (err) throw err;
+      return res.json({ status: 200 });
+    });
+  } catch { return res.json({ status: 400 })};
+});
 
-  User.clearRefreshToken(_id, (err, _user) => {
-    if (err) throw err;
-    return res.json({ status: 200 });
-  });
+router.get('/request-new-token', async (req, res, next) => {
+  const user = JSON.parse(req.query.user);
+  const newToken = await handleRefreshAuthToken(user);
+  return newToken ? res.json({ success: true, status: 200, msg: 'Successfully generated new token', token: newToken })
+  : res.json({ success: false, status: 400, msg: 'Unable to generate new token' });
 });
 
 // ===============
@@ -292,7 +314,8 @@ router.put('/edit-account', authenticateToken, async (req, res, next) => {
 // =================
 
 // not yet in use, will have to come back and update checks for payload
-// when it does
+// when it does.
+// validation for _id needs to be a 24 char string
 router.get('/search', (req, res, next) => {
   const type = req.query.type;
   const term = type === '_id' ? mongoose.Types.ObjectId(req.query.term)

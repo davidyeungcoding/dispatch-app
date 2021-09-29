@@ -38,47 +38,6 @@ export class AuthService {
     private chatService: ChatService
   ) { }
 
-  // ======================
-  // || Helper Functions ||
-  // ======================
-
-  buildHeader(token: string) {
-    const validateHeader = {
-      headers: new HttpHeaders({
-        'Authorization': token,
-        'Content-Type': 'application/json'
-      })
-    };
-    return validateHeader;
-  };
-
-  adminCheckParser(id: string, token: string): Promise<boolean> {
-    return new Promise(resolve => {
-      this.verifyAdmin({ _id: id }, token).subscribe(_status => {
-        return resolve(_status.status === 200 ? true : false);
-      });
-    });
-  };
-
-  parseLocalStorageUser(): any {
-    let user = localStorage.getItem('user');
-    
-    if (user) {
-      try { user = JSON.parse(user) }
-      catch { user = null };
-    };
-
-    return user;
-  };
-
-  compareToken(token: string): Promise<boolean> {
-    return new Promise(resolve => {
-      this.validateToken(token).subscribe(res => {
-        return resolve(res.status === 200 ? true : false);
-      });
-    });
-  };
-
   // =====================
   // || Router Requests ||
   // =====================
@@ -117,6 +76,60 @@ export class AuthService {
     );
   };
 
+  onLogout(id: string) {
+    return this.http.get(`${this.api}/logout?_id=${id}`).pipe(
+      catchError(err => of(err))
+    );
+  };
+
+  requestNewToken(user: string) {
+    return this.http.get(`${this.api}/request-new-token?user=${user}`).pipe(
+      catchError(err => of(err))
+    );
+  };
+
+  // ======================
+  // || Helper Functions ||
+  // ======================
+
+  buildHeader(token: string) {
+    const validateHeader = {
+      headers: new HttpHeaders({
+        'Authorization': token,
+        'Content-Type': 'application/json'
+      })
+    };
+    return validateHeader;
+  };
+
+  adminCheckParser(id: string, token: string): Promise<boolean> {
+    return new Promise(resolve => {
+      this.verifyAdmin({ _id: id }, token).subscribe(_status => {
+        return resolve(_status.status === 200 ? true : false);
+      });
+    });
+  };
+
+  parseLocalStorageUser(): any {
+    let user = localStorage.getItem('user');
+    
+    if (user) {
+      try { user = JSON.parse(user) }
+      catch { user = null };
+    };
+
+    return user;
+  };
+
+  compareToken(token: string): Promise<boolean> {
+    return new Promise(resolve => {
+      this.validateToken(token).subscribe(res => {
+        if (res.token) localStorage.setItem('id_token', res.token);
+        return resolve(res.status === 200 ? true : false);
+      });
+    });
+  };
+
   // ======================
   // || Shared Functions ||
   // ======================
@@ -126,14 +139,30 @@ export class AuthService {
     localStorage.setItem('user', user);
   };
 
-  isExpired(token: string): boolean {
-    return this.jwt.isTokenExpired(token);
+  async isExpired(token: string): Promise<any> {
+    const expired = this.jwt.isTokenExpired(token);
+    if (!expired) return expired;
+
+    const valid = await new Promise(resolve => {
+      this.requestNewToken(JSON.stringify(this.userDataSource.value)).subscribe(res => {
+        if (!res.success) return resolve(true);
+        localStorage.setItem('id_token', res.token);
+        return resolve(false);
+      });
+    });
+
+    return valid;
   };
 
   logout(): void {
     const user = this.userDataSource.value ? this.userDataSource.value
     : this.parseLocalStorageUser();
-    if (user) this.socketioService.emitLogout(user);
+
+    if (user) {
+      this.socketioService.emitLogout(user);
+      this.onLogout(user._id).subscribe(_user => {});
+    };
+
     this.chatService.changeOpenChats([]);
     this.redirectService.handleRedirect('home');
     this.changeAuthToken(null);
@@ -165,8 +194,9 @@ export class AuthService {
     : localStorage.getItem('id_token');
     if (!token) return this.redirectService.falseCheckRedirect('home');
     const valid = await this.compareToken(token);
+    const expired = await this.isExpired(token);
 
-    if (this.isExpired(token) || !valid) {
+    if (expired || !valid) {
       this.logout();
       return false;
     };

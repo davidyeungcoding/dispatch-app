@@ -77,11 +77,11 @@ module.exports.comparePassword = (password, hash, callback) => {
 };
 
 module.exports.addRefreshToken = (id, token, callback) => {
-  this.userModel.update({ _id: id }, { $set: { refreshToken: token } }, callback);
+  this.userModel.findByIdAndUpdate({ _id: id }, { $set: { refreshToken: token } }, callback);
 };
 
 module.exports.clearRefreshToken = (id, callback) => {
-  this.userModel.update({ _id: id }, { $set: { refreshToken: '' } }, callback);
+  this.userModel.findByIdAndUpdate({ _id: id }, { $set: { refreshToken: '' } }, callback);
 };
 
 // ===============
@@ -112,9 +112,7 @@ module.exports.updateAccount = (username, update, callback) => {
 // =================
 
 module.exports.refreshTokenSearch = (username, callback) => {
-  // this.userModel.aggregate([{ $match: { username: username } }, { $project: { refreshToken: 1 } }], callback);
   this.userModel.aggregate([{ $match: { username: username } }, { $project: { refreshToken: 1 } }], callback);
-  // this.userModel.find({username: username}, callback)
 };
 
 module.exports.search = (type, term, callback) => {
