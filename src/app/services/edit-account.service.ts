@@ -33,10 +33,10 @@ export class EditAccountService {
   // || Router Requests ||
   // =====================
 
-  editUser(payload: any, token: string) {
+  editCallLink(payload: any, token: string) {
     const validateHeader = this.buildHeader(token);
 
-    return this.http.put(`${this.api}/edit`, payload, validateHeader).pipe(
+    return this.http.put(`${this.api}/edit-call-link`, payload, validateHeader).pipe(
       catchError(err => of(err))
     );
   };

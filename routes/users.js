@@ -57,7 +57,6 @@ const authenticateRefreshToken = token => {
 };
 
 const handleRefreshAuthToken = async token => {
-  console.log('handleRefreshAuthToken')
   const refreshToken = await getRefreshToken(token.username);
   if (!refreshToken) return false;
   const validRefreshToken = authenticateRefreshToken(refreshToken);
@@ -78,7 +77,7 @@ const authenticateToken = (req, res, next) => {
         const tokenUser = jwt.decode(token);
         const resToken = await handleRefreshAuthToken(tokenUser);
         if (!resToken) return res.json({ success: false, status: 403, msg: 'User is not authorized for access' });
-        res.token = `JWT ${resToken}`;
+        req.token = `JWT ${resToken}`;
         _user = tokenUser;
       };
       
@@ -155,6 +154,7 @@ router.post('/create', authenticateToken, async (req, res, next) => {
     const admin = req.body.admin;
     const newUser = req.body.newUser;
     const tokenUser = req.user;
+    const newToken = req.token ? req.token : null;
     if (!admin || !newUser || !tokenUser) return res.json({ success: false, status: 400, msg: 'Missing payload' })
     if (admin.username !== tokenUser.username) return res.json({ success: false, status: 401, msg: 'Account does not match token' });
     const adminCheck = await addminCheck(admin.username, admin.password);
@@ -173,9 +173,10 @@ router.post('/create', authenticateToken, async (req, res, next) => {
   
     User.createUser(payload, (err, _user) => {
       if (err) throw err;
-  
-      return _user ? res.json({ success: true, status: 200, msg: 'New user created'})
-      : res.json({ success: false, status: 500, msg: 'Unable to create new user'});
+      const response = _user ? { success: true, status: 200, msg: 'New user created' }
+      : { success: false, status: 500, msg: 'Unable to create new user' };
+      if (newToken) response.token = newToken;
+      return res.json(response);
     });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to create new user at this time' })};
 });
@@ -212,17 +213,19 @@ router.post('/authenticate', async (req, res, next) => {
 
 router.get('/verify-token', authenticateToken, async (req, res, next) => {
   const response = { status: 200 };
-  if (res.token) response.token = res.token;
+  if (req.token) response.token = req.token;
   return res.json(response);
 });
 
 router.post('/verify-admin', authenticateToken, (req, res, next) => {
   try {
     const id = req.body._id;
-    if (!id) return res.json({ success: false, status: 400, msg: 'Missing paylaod' });
-    if (req.user._id === id && req.user.accountType === 'admin') return res.json({ status: 200 });
-    if (req.user._id !== id) return res.json({ status: 403 });
-    if (req.user.accountType !== 'admin') return res.json({ status: 401 });
+    if (!id || id.length !== 24) return res.json({ success: false, status: 400, msg: 'Invalid request' });
+    if (req.user._id !== id) return res.json({ success: false, status: 403, msg: 'User does not match request' });
+    if (req.user.accountType !== 'admin') return res.json({ success: false, status: 401, msg: 'User not an admin' });
+    const response = { status: 200 };
+    if (req.token) response.token = req.token;
+    if (req.user._id === id && req.user.accountType === 'admin') return res.json(response);
     return res.json({ status: 400 });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to verify user' })};
 });
@@ -240,30 +243,32 @@ router.get('/logout', (req, res, next) => {
 });
 
 router.get('/request-new-token', async (req, res, next) => {
-  const user = JSON.parse(req.query.user);
-  const newToken = await handleRefreshAuthToken(user);
-  return newToken ? res.json({ success: true, status: 200, msg: 'Successfully generated new token', token: newToken })
-  : res.json({ success: false, status: 400, msg: 'Unable to generate new token' });
+  try {
+    const user = JSON.parse(req.query.user);
+    const newToken = await handleRefreshAuthToken(user);
+    return newToken ? res.json({ success: true, status: 200, msg: 'Successfully generated new token', token: newToken })
+    : res.json({ success: false, status: 400, msg: 'Unable to generate new token' });
+  } catch { return res.json({ success: false, status: 400, msg: 'Unable to generate new token' }) };
 });
 
 // ===============
 // || Edit User ||
 // ===============
 
-router.put('/edit', authenticateToken, async (req, res, next) => {
+router.put('/edit-call-link', authenticateToken, async (req, res, next) => {
   try {
     const id = req.body._id;
     const targetId = req.body.targetId;
+    if (id.length !== 24 || targetId.length !== 24) return res.json({ success: false, status: 400, msg: 'Invalid Request' });
     const target = req.body.target;
     const change = req.body.change;
     if (!id || !targetId || !target || !change) return res.json({ success: false, status: 400, msg: 'Missing payload' });
     if (id !== targetId) return res.json({ success: false, status: 403, msg: 'Not your account' });
     const update = { [target]: change };
     
-    User.editUser(req.body.targetId, update, (err, _user) => {
+    User.editUser(targetId, update, (err, _user) => {
       if (err) throw err;
       const token = generateAuthToken(_user.toJSON());
-
       return _user ? res.json({ success: true, status: 200, msg: 'User successfully updated', token: token })
       : res.json({ success: false, status: 403, msg: 'Unable to update user' });
     });

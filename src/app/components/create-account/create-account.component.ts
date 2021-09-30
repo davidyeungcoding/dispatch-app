@@ -69,7 +69,8 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
   sendCreateRequest(payload: any): Promise<any> {
     return new Promise(resolve => {
       this.authService.createUser(payload, this.token).subscribe(_res => {
-        resolve(_res);
+        if (_res.token) this.authService.changeAuthToken(_res.token);
+        return resolve(_res);
       });
     });
   };

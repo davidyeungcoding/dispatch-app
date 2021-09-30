@@ -118,8 +118,20 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
       change: link
     };
 
-    this.editAccountService.editUser(payload, this.authToken).subscribe(_user => {
+    this.editAccountService.editCallLink(payload, this.authToken).subscribe(_user => {
       if (!_user.success) {
+        if (_user.status === 401 || _user.msg === 'User is not authorized for access') {
+          this.callLinkError = 'Authorization has timed out. Please log back on and try again.';
+          $('#callLinkErrorContainer').css('display', 'inline');
+
+          setTimeout(() => {
+            (<any>$('#editCallLink')).modal('toggle');
+            this.authService.logout();
+          }, 2000);
+
+          return;
+        };
+
         this.callLinkError = _user.msg;
         $('#callLinkErrorContainer').css('display', 'inline');
         return;
@@ -127,7 +139,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.userData.videoCall = link;
       this.authService.changeUserData(this.userData);
-      this.authService.setLocalStorageUser(_user.token, JSON.stringify(this.userData));
+      this.authService.changeAuthToken(_user.token);
       this.socketioService.emitLink(link);
       $('#callLinkSuccessContainer').css('display', 'inline');
       

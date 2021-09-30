@@ -105,6 +105,7 @@ export class AuthService {
   adminCheckParser(id: string, token: string): Promise<boolean> {
     return new Promise(resolve => {
       this.verifyAdmin({ _id: id }, token).subscribe(_status => {
+        if (_status.token) localStorage.setItem('id_token', _status.token);
         return resolve(_status.status === 200 ? true : false);
       });
     });
@@ -124,7 +125,7 @@ export class AuthService {
   compareToken(token: string): Promise<boolean> {
     return new Promise(resolve => {
       this.validateToken(token).subscribe(res => {
-        if (res.token) localStorage.setItem('id_token', res.token);
+        if (res.token) this.changeAuthToken(res.token);
         return resolve(res.status === 200 ? true : false);
       });
     });
@@ -143,15 +144,15 @@ export class AuthService {
     const expired = this.jwt.isTokenExpired(token);
     if (!expired) return expired;
 
-    const valid = await new Promise(resolve => {
+    const expiredCheck = await new Promise(resolve => {
       this.requestNewToken(JSON.stringify(this.userDataSource.value)).subscribe(res => {
         if (!res.success) return resolve(true);
-        localStorage.setItem('id_token', res.token);
+        this.changeAuthToken(res.token);
         return resolve(false);
       });
     });
 
-    return valid;
+    return expiredCheck;
   };
 
   logout(): void {
@@ -222,6 +223,7 @@ export class AuthService {
 
   changeAuthToken(token: string | null): void {
     this.authTokenSource.next(token);
+    if (token) localStorage.setItem('id_token', token);
   };
 
   changeUserData(user: any): void {
@@ -239,5 +241,6 @@ export class AuthService {
     };
 
     this.userDataSource.next(payload);
+    localStorage.setItem('user', JSON.stringify(payload));
   };
 }
