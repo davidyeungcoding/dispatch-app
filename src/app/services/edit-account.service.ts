@@ -36,7 +36,7 @@ export class EditAccountService {
   editCallLink(payload: any, token: string) {
     const validateHeader = this.buildHeader(token);
 
-    return this.http.put(`${this.api}/edit-call-link`, payload, validateHeader).pipe(
+    return this.http.put(`${this.api}/change-one`, payload, validateHeader).pipe(
       catchError(err => of(err))
     );
   };
@@ -45,6 +45,14 @@ export class EditAccountService {
     const validateHeader = this.buildHeader(token);
 
     return this.http.put(`${this.api}/edit-account`, payload, validateHeader).pipe(
+      catchError(err => of(err))
+    );
+  };
+
+  deleteUser(payload: any, token: string) {
+    const validateHeader = this.buildHeader(token);
+
+    return this.http.post(`${this.api}/delete-user`, payload, validateHeader).pipe(
       catchError(err => of(err))
     );
   };

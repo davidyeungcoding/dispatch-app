@@ -223,7 +223,7 @@ export class AuthService {
 
   changeAuthToken(token: string | null): void {
     this.authTokenSource.next(token);
-    if (token) localStorage.setItem('id_token', token);
+    if (token && token !== localStorage.getItem('id_token')) localStorage.setItem('id_token', token);
   };
 
   changeUserData(user: any): void {
@@ -241,6 +241,7 @@ export class AuthService {
     };
 
     this.userDataSource.next(payload);
-    localStorage.setItem('user', JSON.stringify(payload));
+    const stringUser = JSON.stringify(payload);
+    if (stringUser !== localStorage.getItem('user')) localStorage.setItem('user', stringUser);
   };
 }

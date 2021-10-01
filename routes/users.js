@@ -31,12 +31,12 @@ const buildPayloadForToken = user => {
 
 const generateAuthToken = user => {
   const parsedUser = buildPayloadForToken(user);
-  return jwt.sign(parsedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5s' });
+  return jwt.sign(parsedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 };
 
 const generateRefreshToken = user => {
   const parsedUser = buildPayloadForToken(user);
-  return jwt.sign(parsedUser, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '15s' });
+  return jwt.sign(parsedUser, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '3d' });
 };
 
 const getRefreshToken = async username => {
@@ -124,7 +124,7 @@ const matchPassword = async (password, hash) => {
   : { success: false, status: 401, msg: 'Username and password mismatch' };
 };
 
-const addminCheck = async (username, password) => {
+const adminCheck = async (username, password) => {
   const user = await authUser(username);
   if (!user.success) return user;
   const match = await matchPassword(password, user.msg.password);
@@ -154,11 +154,10 @@ router.post('/create', authenticateToken, async (req, res, next) => {
     const admin = req.body.admin;
     const newUser = req.body.newUser;
     const tokenUser = req.user;
-    const newToken = req.token ? req.token : null;
     if (!admin || !newUser || !tokenUser) return res.json({ success: false, status: 400, msg: 'Missing payload' })
     if (admin.username !== tokenUser.username) return res.json({ success: false, status: 401, msg: 'Account does not match token' });
-    const adminCheck = await addminCheck(admin.username, admin.password);
-    if (!adminCheck.success) return res.json(adminCheck);
+    const checkAdmin = await adminCheck(admin.username, admin.password);
+    if (!checkAdmin.success) return res.json(checkAdmin);
     const duplicate = await duplicateCheck(newUser.username);
     if (!duplicate.success) return res.json(duplicate);
   
@@ -175,7 +174,7 @@ router.post('/create', authenticateToken, async (req, res, next) => {
       if (err) throw err;
       const response = _user ? { success: true, status: 200, msg: 'New user created' }
       : { success: false, status: 500, msg: 'Unable to create new user' };
-      if (newToken) response.token = newToken;
+      if (req.token) response.token = req.token;
       return res.json(response);
     });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to create new user at this time' })};
@@ -255,7 +254,7 @@ router.get('/request-new-token', async (req, res, next) => {
 // || Edit User ||
 // ===============
 
-router.put('/edit-call-link', authenticateToken, async (req, res, next) => {
+router.put('/change-one', authenticateToken, async (req, res, next) => {
   try {
     const id = req.body._id;
     const targetId = req.body.targetId;
@@ -266,7 +265,7 @@ router.put('/edit-call-link', authenticateToken, async (req, res, next) => {
     if (id !== targetId) return res.json({ success: false, status: 403, msg: 'Not your account' });
     const update = { [target]: change };
     
-    User.editUser(targetId, update, (err, _user) => {
+    User.changeOne(targetId, update, (err, _user) => {
       if (err) throw err;
       const token = generateAuthToken(_user.toJSON());
       return _user ? res.json({ success: true, status: 200, msg: 'User successfully updated', token: token })
@@ -308,10 +307,35 @@ router.put('/edit-account', authenticateToken, async (req, res, next) => {
       };
 
       if (resUser.accountType === 'doctor') resUser.videoCall = _user.videoCall;
-      return res.json(_user ? { success: true, status: 200, msg: _user, token: token }
+      return res.json(_user ? { success: true, status: 200, msg: resUser, token: token }
       : { success: false, status: 500, msg: 'Unable to update at this time' });
     });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' })};
+});
+
+// =================
+// || Delete User ||
+// =================
+
+router.post('/delete-user', authenticateToken, async (req, res, next) => {
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
+    const targetId = req.body.targetId;
+    const tokenUser = req.user;
+    if (!username || !password || !targetId || targetId.length !== 24) return res.json({ success: false, status: 400, msg: 'Missing payload' });
+    if (username !== tokenUser.username) return res.json({ success: false, status: 401, msg: 'User does not match token' });
+    const checkAdmin = await adminCheck(username, password);
+    if (!checkAdmin.success) return res.json(checkAdmin);
+
+    User.deleteUser(targetId, (err, _res) => {
+      if (err) throw err;
+      const response = _res ? { success: true, status: 200, msg: 'User has been purged' }
+      : { success: false, status: 404, msg: 'User not found' };
+      if (req.token) response.token = req.token;
+      return res.json(response);
+    });
+  } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' }) };
 });
 
 // =================

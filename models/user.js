@@ -88,7 +88,7 @@ module.exports.clearRefreshToken = (id, callback) => {
 // || Edit User ||
 // ===============
 
-module.exports.editUser = (id, update, callback) => {
+module.exports.changeOne = (id, update, callback) => {
   const options = { new: true };
   this.userModel.findByIdAndUpdate(id, update, options, callback);
 };
@@ -105,6 +105,14 @@ module.exports.updateAccount = (username, update, callback) => {
       });
     });
   } else this.userModel.findOneAndUpdate({ username: username }, { $set: update }, options, callback);
+};
+
+// =================
+// || Delete User ||
+// =================
+
+module.exports.deleteUser = (id, callback) => {
+  this.userModel.remove({ _id: id }, callback);
 };
 
 // =================

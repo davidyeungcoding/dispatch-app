@@ -46,10 +46,6 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   
   ngAfterViewInit(): void {
-    // console.log('======================================')
-    // console.log(this.userList);
-    // console.log('======================================')
-    // console.log(this.userData)
   }
 
   ngOnDestroy(): void {
@@ -59,11 +55,6 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   // ======================
   // || Helper Functions ||
   // ======================
-
-  clearModalEntry(form: NgForm): void {
-    form.reset({ callLink: '' });
-    $('#callLink').val('');
-  };
 
   storeTarget(target: any): void {
     this.target = target;
@@ -144,7 +135,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
       $('#callLinkSuccessContainer').css('display', 'inline');
       
       setTimeout(() => {
-        this.clearModalEntry(form);
+        form.reset({ callLink: '' });
         $('#callLinkSuccessContainer').css('display', 'none');
         (<any>$('#editCallLink')).modal('toggle');
       }, 1000);
@@ -195,7 +186,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 100);
 
     setTimeout(() => {
-      form.reset();
+      form.reset({ callLink: '' });
       $('#textResponseContainer').css('display', 'none');
       (<any>$('#sendText')).modal('toggle');
     }, 1000);

@@ -13,7 +13,7 @@
 }
 
 .table-container {
-  overflow: scroll;
+  overflow: auto;
   max-height: 65vh;
   min-width: 280px;
   margin: auto;

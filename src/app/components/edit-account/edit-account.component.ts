@@ -44,7 +44,13 @@ export class EditAccountComponent implements OnInit, OnDestroy {
   // ======================
 
   resetForm(form: NgForm): void {
-    form.reset({ username: form.value.username.trim() })
+    form.reset({
+      username: form.value.username.trim(),
+      password: '',
+      newUsername: form.value.newUsername.trim(),
+      newPassword: '',
+      newName: form.value.newName.trim()
+    });
   };
 
   checkRequiredFields(form: NgForm): boolean {
@@ -111,7 +117,7 @@ export class EditAccountComponent implements OnInit, OnDestroy {
     if (payload.username !== this.userData.username) {
       this.errorMsg = 'You may only change your own account information';
       $('#errorMsgContainer').css('display', 'inline');
-      form.reset({ username: '' });
+      this.resetForm(form);
       return;
     };
 
@@ -132,7 +138,6 @@ export class EditAccountComponent implements OnInit, OnDestroy {
 
       this.authServcie.changeUserData(_res.msg);
       this.authServcie.changeAuthToken(_res.token);
-      this.authServcie.setLocalStorageUser(this.token, JSON.stringify(this.userData));
       this.socketIoService.emitAccountUpdate(_res.msg);
       $('#successMsgContainer').css('display', 'inline');
       setTimeout(() => this.redirectService.handleRedirect('dispatch'), 1000);

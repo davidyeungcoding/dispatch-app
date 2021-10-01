@@ -158,6 +158,10 @@ tr:nth-of-type(even) {
 /* || Modals || */
 /* ============ */
 
+.msg-container {
+  text-align: center;
+}
+
 .modal-card {
   background-color: var(--color-card-background);
 }
@@ -174,6 +178,44 @@ tr:nth-of-type(even) {
 .custom-modal-footer {
   display: flex;
   justify-content: flex-end;
+}
+
+.modal-btn {
+  width: 30%;
+  margin-left: 10px;
+}
+
+.modal-btn:nth-of-type(1) {
+  margin-left: 0;
+}
+
+/* ================ */
+/* || Scroll Bar || */
+/* ================ */
+
+::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(218, 30%, 20%);
+  border-radius: 100vw;
+  margin: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(218, 50%, 40%);
+  border-radius: 100vw;
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  background: hsl(218, 40%, 30%);
+}
+
+::-webkit-scrollbar-corner {
+  opacity: 0%;
 }
 
 /* ============ */

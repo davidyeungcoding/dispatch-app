@@ -41,12 +41,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // || Helper Functions ||
   // ======================
 
-  clearForm(form: NgForm): void {
-    form.reset({ username: form.value.username.trim() });
-  };
-
   loginError(form: NgForm, msg: string): void {
-    this.clearForm(form);
+    form.reset({ username: form.value.username.trim(), password: '' });
     this.loginErrorMsg = msg;
     $('#loginErrorMsgContainer').css('display', 'inline');
   };
