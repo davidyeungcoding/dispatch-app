@@ -1,0 +1,42 @@
+<form #confirmDeletion="ngForm"
+  class="create-form modal-form"
+  (ngSubmit)="onDeleteAccount(confirmDeletion)">
+  <div class="form-group text-field">
+    <label for="username">Admin Username:</label>
+
+    <input type="text"
+      class="form-control"
+      id="username"
+      name="username"
+      ngModel>
+  </div>
+
+  <div class="form-group text-field">
+    <label for="password">Admin Password:</label>
+
+    <input type="password"
+      class="form-control"
+      id="password"
+      name="password"
+      ngModel>
+  </div>
+
+  <div class="msg-container"
+    id="deleteError">
+    <p class="error-msg">{{ errorMessage }}</p>
+  </div>
+
+  <div class="msg-container"
+    id="deleteSuccess">
+    <p class="success-msg">{{ successMessage }}</p>
+  </div>
+
+  <div class="custom-modal-footer">
+    <button type="submit"
+      class="btn btn-secondary modal-btn">Submit</button>
+
+    <button type="button"
+      class="btn btn-secondary modal-btn"
+      data-bs-dismiss="modal">Cancel</button>
+  </div>
+</form>

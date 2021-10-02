@@ -1,0 +1,12 @@
+.edit-row {
+  display: flex;
+  align-items: center;
+}
+
+.edit-btn {
+  color: var(--color-text-light);
+}
+
+.edit-title {
+  margin: 0;
+}

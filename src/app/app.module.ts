@@ -13,6 +13,8 @@ import { CreateAccountComponent } from './components/create-account/create-accou
 import { ChatComponent } from './components/chat/chat.component';
 import { EditAccountComponent } from './components/edit-account/edit-account.component';
 import { UserManagementComponent } from './components/user-management/user-management.component';
+import { DeleteUserComponent } from './components/modals/delete-user/delete-user.component';
+import { EditUserComponent } from './components/modals/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { UserManagementComponent } from './components/user-management/user-manag
     CreateAccountComponent,
     ChatComponent,
     EditAccountComponent,
-    UserManagementComponent
+    UserManagementComponent,
+    DeleteUserComponent,
+    EditUserComponent
   ],
   imports: [
     BrowserModule,

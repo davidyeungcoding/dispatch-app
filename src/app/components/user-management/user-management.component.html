@@ -81,7 +81,9 @@
           <td class="btn-data">
             <button type="button"
               class="btn table-btn-ctrl"
-              (click)="onEditUser(user)"><i class="far fa-edit"></i></button>
+              data-bs-toggle="modal"
+              data-bs-target="#editUser"
+              (click)="onMarkedForEdit(user)"><i class="far fa-edit"></i></button>
           </td>
   
           <td class="btn-data">
@@ -120,48 +122,31 @@
             aria-label="Close"></button>
         </div>
 
-        <form #confirmDeletion="ngForm"
-          class="create-form modal-form"
-          (ngSubmit)="onDeleteAccount(confirmDeletion)">
-          <div class="form-group text-field">
-            <label for="username">Admin Username:</label>
+        <app-delete-user
+          [targetDelete]="targetDelete"
+          [accountList]="accountList">
+        </app-delete-user>
+      </div>
+    </div>
+  </div>
+</div>
 
-            <input type="text"
-              class="form-control"
-              id="username"
-              name="username"
-              ngModel>
-          </div>
+<div class="modal fade"
+  id="editUser"
+  tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-card">
+      <div class="modal-body">
+        <div class="custom-modal-header">
+          <h5 class="modal-title">Edit User</h5>
 
-          <div class="form-group text-field">
-            <label for="password">Admin Password:</label>
+          <button type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
 
-            <input type="password"
-              class="form-control"
-              id="password"
-              name="password"
-              ngModel>
-          </div>
-
-          <div class="msg-container"
-            id="deleteError">
-            <p class="error-msg">{{ errorMessage }}</p>
-          </div>
-
-          <div class="msg-container"
-            id="deleteSuccess">
-            <p class="success-msg">{{ successMessage }}</p>
-          </div>
-
-          <div class="custom-modal-footer">
-            <button type="submit"
-              class="btn btn-secondary modal-btn">Submit</button>
-
-            <button type="button"
-              class="btn btn-secondary modal-btn"
-              data-bs-dismiss="modal">Cancel</button>
-          </div>
-        </form>
+        <app-edit-user [targetEdit]="targetEdit"></app-edit-user>
       </div>
     </div>
   </div>

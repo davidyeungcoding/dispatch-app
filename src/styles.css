@@ -67,6 +67,10 @@ p, button, a, label, span {
   word-wrap: break-word;
 }
 
+.proper-name {
+  text-transform: capitalize;
+}
+
 /* ================= */
 /* || Back Button || */
 /* ================= */

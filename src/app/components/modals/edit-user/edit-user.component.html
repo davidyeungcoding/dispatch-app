@@ -1,0 +1,30 @@
+<form #editUser="ngForm"
+  class="creat-form modal-form"
+  (ngSubmit)="onSubmitChange(editUser)">
+  <div *ngIf="targetEdit"
+    class="container">
+    <div class="edit-row">
+      <button type="button"
+        class="btn edit-btn"><i class="far fa-edit"></i></button>
+        <h4 class="proper-name edit-title">Name: {{ targetEdit.name }}</h4>
+    </div>
+
+    <div class="edit-row">
+      <button type="button"
+        class="btn edit-btn"><i class="far fa-edit"></i></button>
+        <h4 class="proper-name edit-title">Username: {{ targetEdit.username }}</h4>
+    </div>
+    
+    <div class="edit-row">
+      <button type="button"
+        class="btn edit-btn"><i class="far fa-edit"></i></button>
+        <h4 class="proper-name edit-title">Account Type: {{ targetEdit.accountType }}</h4>
+    </div>
+    
+    <div class="edit-row">
+      <button type="button"
+        class="btn edit-btn"><i class="far fa-edit"></i></button>
+        <h4 class="proper-name edit-title">Video Call: {{ targetEdit.videoCall }}</h4>
+    </div>
+  </div>
+</form>
