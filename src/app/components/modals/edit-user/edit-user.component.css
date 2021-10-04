@@ -1,3 +1,31 @@
+/* ================= */
+/* || Modal Group || */
+/* ================= */
+
+.edit-group {
+  margin-bottom: 15px;
+}
+
+/* ================ */
+/* || Edit Group || */
+/* ================ */
+
+.edit-input {
+  margin-top: 10px;
+}
+
+.edit-content-group {
+  margin-bottom: 10px;
+}
+
+.edit-content-group:last-of-type {
+  margin: 0;
+}
+
+.edit-label {
+  margin: 0;
+}
+
 .edit-row {
   display: flex;
   align-items: center;
@@ -9,4 +37,12 @@
 
 .edit-title {
   margin: 0;
+}
+
+/* ================ */
+/* || Form Group || */
+/* ================ */
+
+.form-input {
+  display: none;
 }

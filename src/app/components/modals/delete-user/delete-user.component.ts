@@ -111,7 +111,6 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
       setTimeout(() => {
         $('#deleteSuccess').css('display', 'none');
         form.reset({ username: '', password: '' });
-        this.targetDelete = null;
         (<any>$('#confirmDeletion')).modal('hide');
       }, 1000);
     });

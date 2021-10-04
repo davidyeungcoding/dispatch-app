@@ -16,6 +16,9 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   private token: string = '';
   private currentOrder: string = 'name';
   private reverse: boolean = false;
+  activeName: boolean = false;
+  activeUsername: boolean = false;
+  activeVideoCall: boolean = false;
   targetEdit: any = null;
   targetDelete: any = null;
   errorMessage: string = '';
@@ -64,6 +67,12 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
     : $(`#${term}Normal`).addClass('active-sort');
   };
 
+  resetActive(): void {
+    this.activeName = false;
+    this.activeUsername = false;
+    this.activeVideoCall = false;
+  };
+
   // =======================
   // || General Functions ||
   // =======================
@@ -97,6 +106,9 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   };
 
   onMarkedForEdit(user: any): void {
+    $('.msg-container').css('display', 'none');
     this.targetEdit = user;
+    this.resetActive();
+    $('.edit-input').addClass('form-input');
   };
 }

@@ -2,29 +2,115 @@
   class="creat-form modal-form"
   (ngSubmit)="onSubmitChange(editUser)">
   <div *ngIf="targetEdit"
-    class="container">
-    <div class="edit-row">
-      <button type="button"
-        class="btn edit-btn"><i class="far fa-edit"></i></button>
-        <h4 class="proper-name edit-title">Name: {{ targetEdit.name }}</h4>
+    class="container edit-group">
+
+    <div class="edit-content-group">
+      <h6 class="edit-label">Name:</h6>
+  
+      <div class="edit-row">
+        <button type="button"
+          class="btn edit-btn"
+          (click)="makeVisible('name')"><i class="far fa-edit"></i></button>
+          <h4 class="proper-name edit-title">{{ targetEdit.name }}</h4>
+      </div>
+
+      <input type="text"
+        class="form-control edit-input form-input"
+        id="name"
+        name="name"
+        placeholder="Name"
+        ngModel>
     </div>
 
-    <div class="edit-row">
-      <button type="button"
-        class="btn edit-btn"><i class="far fa-edit"></i></button>
-        <h4 class="proper-name edit-title">Username: {{ targetEdit.username }}</h4>
+    <div class="edit-content-group">
+      <h6 class="edit-label">Username:</h6>
+  
+      <div class="edit-row">
+        <button type="button"
+          class="btn edit-btn"
+          (click)="makeVisible('userName')"><i class="far fa-edit"></i></button>
+          <h4 class="proper-name edit-title">{{ targetEdit.username }}</h4>
+      </div>
+
+      <input type="text"
+        class="form-control edit-input form-input"
+        id="userName"
+        name="userName"
+        placeholder="Username"
+        ngModel>
     </div>
+
+    <div class="edit-content-group">
+      <h6 class="edit-label">Account Type:</h6>
+      
+      <div class="edit-row">
+        <button type="button"
+          class="btn edit-btn"><i class="far fa-edit"></i></button>
+          <h4 class="proper-name edit-title">{{ targetEdit.accountType }}</h4>
+      </div>
+    </div>
+
+    <div *ngIf="targetEdit.videoCall" class="edit-content-group">
+      <h6 class="edit-label">Video Call:</h6>
+      
+      <div class="edit-row">
+        <button type="button"
+          class="btn edit-btn"
+          (click)="makeVisible('videoCall')"><i class="far fa-edit"></i></button>
+          <h4 class="edit-title">{{ targetEdit.videoCall }}</h4>
+      </div>
+
+      <input type="text"
+        class="form-control edit-input form-input"
+        id="videoCall"
+        name="videoCall"
+        placeholder="{{ targetEdit.videoCall }}"
+        ngModel>
+    </div>
+  </div>
+
+  <div class="container edit-group">
+    <h4>Admin Verification</h4>
+
+    <div class="form-group text-field">
+      <label for="editAdminUsername">Username:</label>
+
+      <input type="text"
+        class="form-control"
+        id="editAdminUsername"
+        name="editAdminUsername"
+        placeholder="Username"
+        ngModel>
+    </div>
+
+    <div class="form-group text-field">
+      <label for="editAdminPassword">Password:</label>
+
+      <input type="password"
+        class="form-control"
+        id="editAdminPassword"
+        name="editAdminPassword"
+        placeholder="Password"
+        ngModel>
+    </div>
+  </div>
+
+  <div class="msg-container"
+    id="editError">
+    <p class="error-msg">{{ editErrorMessage }}</p>
+  </div>
+
+  <div class="msg-container"
+    id="editSuccess">
+    <p class="success-msg">{{ editSuccessMessage }}</p>
+  </div>
+
+  <div class="custom-modal-footer">
+    <button type="submit"
+      class="btn btn-secondary modal-btn">Submit</button>
     
-    <div class="edit-row">
-      <button type="button"
-        class="btn edit-btn"><i class="far fa-edit"></i></button>
-        <h4 class="proper-name edit-title">Account Type: {{ targetEdit.accountType }}</h4>
-    </div>
-    
-    <div class="edit-row">
-      <button type="button"
-        class="btn edit-btn"><i class="far fa-edit"></i></button>
-        <h4 class="proper-name edit-title">Video Call: {{ targetEdit.videoCall }}</h4>
-    </div>
+    <button type="button"
+      class="btn btn-secondary modal-btn"
+      data-bs-dismiss="modal">Cancel</button>
   </div>
 </form>
