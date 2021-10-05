@@ -1,22 +1,38 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+
+import { EditAccountService } from 'src/app/services/edit-account.service';
+
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-edit-user',
   templateUrl: './edit-user.component.html',
   styleUrls: ['./edit-user.component.css']
 })
-export class EditUserComponent implements OnInit {
+export class EditUserComponent implements OnInit, OnDestroy {
   @Input() targetEdit: any;
-  @Input() activeName: any;
-  @Input() activeUsername: any;
-  @Input() activeVideoCall: any;
+  private subscriptions: Subscription = new Subscription();
+  activeName: boolean = false;
+  activeUsername: boolean = false;
+  activeVideoCall: boolean = false;
+  activeAccountType: boolean = false;
   editErrorMessage: string = '';
   editSuccessMessage: string = '';
 
-  constructor() { }
+  constructor(
+    private editAccountService: EditAccountService
+  ) { }
 
   ngOnInit(): void {
+    this.subscriptions.add(this.editAccountService.activeName.subscribe(_activeName => this.activeName = _activeName));
+    this.subscriptions.add(this.editAccountService.activeUsername.subscribe(_activeUsername => this.activeUsername = _activeUsername));
+    this.subscriptions.add(this.editAccountService.activeVideoCall.subscribe(_activeVideoCall => this.activeVideoCall = _activeVideoCall));
+    this.subscriptions.add(this.editAccountService.activeAccountType.subscribe(_activeAccountType => this.activeAccountType = _activeAccountType));
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   // ======================
@@ -27,7 +43,7 @@ export class EditUserComponent implements OnInit {
     const payload: any = {
       name: form.value.name.trim(),
       userName: form.value.userName.trim(),
-      // accountType: form.value.accountType,
+      accountType: form.value.accountType,
       editAdminUsername: form.value.editAdminUsername.trim(),
       editAdminPassword: ''
     };
@@ -40,7 +56,7 @@ export class EditUserComponent implements OnInit {
     const payload: any = {
       name: '',
       userName: '',
-      // accountType: form.value.accountType,
+      accountType: '',
       editAdminUsername: '',
       editAdminPassword: ''
     };
@@ -49,8 +65,8 @@ export class EditUserComponent implements OnInit {
     form.reset(payload);
   };
 
-  checkForChanges(name: string, username: string): boolean { // need to come back and add accounting for account type
-    if (name && this.activeName || username && this.activeUsername) return true;
+  checkForChanges(name: string, username: string, accountType: string): boolean {
+    if (name && this.activeName || username && this.activeUsername || accountType && this.activeAccountType) return true;
     this.editErrorMessage = 'No changes detected';
     return false;
   };
@@ -73,16 +89,15 @@ export class EditUserComponent implements OnInit {
   // =======================
 
   onSubmitChange(form: NgForm): void {
-    console.log(form.value);
     $('.msg-container').css('display', 'none');
     const adminUsername = form.value.editAdminUsername.trim();
     const adminPassword = form.value.editAdminPassword.trim();
     const name = form.value.name.trim();
     const username = form.value.userName.trim();
-    // const accountType = form.value.editAccountType;
+    const accountType = form.value.accountType;
     let validForm = true;
     
-    if (!this.checkForChanges(name, username)) {
+    if (!this.checkForChanges(name, username, accountType)) {
       validForm = this.targetEdit.accountType === 'doctor'
       && this.doctorFormCheck(form) ? true : false;
     };
@@ -96,6 +111,18 @@ export class EditUserComponent implements OnInit {
       return;
     };
 
+    const payload: any = {
+      user: {},
+      admin: {
+        username: adminUsername,
+        password: adminPassword
+      }
+    };
+
+    if (this.activeName && name) payload.user.name = name;
+    if (this.activeUsername && username) payload.user.username = username;
+    if (this.activeAccountType && accountType) payload.user.accountType = accountType;
+    if (this.activeVideoCall) payload.user.videoCall = form.value.videoCall.trim();
     this.editSuccessMessage = 'User successfully udpated';
     $('#editSuccess').css('display', 'inline');
 
@@ -112,13 +139,16 @@ export class EditUserComponent implements OnInit {
 
     switch (target) {
       case 'name':
-        this.activeName = !this.activeName;
+        this.editAccountService.changeActiveName(!this.activeName);
         break;
       case 'userName':
-        this.activeUsername = !this.activeUsername;
+        this.editAccountService.changeActiveUsername(!this.activeUsername);
         break;
       case 'videoCall':
-        this.activeVideoCall = !this.activeVideoCall;
+        this.editAccountService.changeActiveVideoCall(!this.activeVideoCall);
+        break;
+      case 'accountType':
+        this.editAccountService.changeActiveAccountType(!this.activeAccountType);
         break;
     };
   };

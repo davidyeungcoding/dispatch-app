@@ -3,6 +3,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { RedirectService } from 'src/app/services/redirect.service';
 import { SearchService } from 'src/app/services/search.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { EditAccountService } from 'src/app/services/edit-account.service';
 
 import { Subscription } from 'rxjs';
 
@@ -19,6 +20,7 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   activeName: boolean = false;
   activeUsername: boolean = false;
   activeVideoCall: boolean = false;
+  activeAccountType: boolean = false;
   targetEdit: any = null;
   targetDelete: any = null;
   errorMessage: string = '';
@@ -28,7 +30,8 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   constructor(
     private redirectService: RedirectService,
     private searchService: SearchService,
-    private authService: AuthService
+    private authService: AuthService,
+    private editAccountService: EditAccountService
   ) { }
 
   ngOnInit(): void {
@@ -67,12 +70,6 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
     : $(`#${term}Normal`).addClass('active-sort');
   };
 
-  resetActive(): void {
-    this.activeName = false;
-    this.activeUsername = false;
-    this.activeVideoCall = false;
-  };
-
   // =======================
   // || General Functions ||
   // =======================
@@ -108,7 +105,7 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   onMarkedForEdit(user: any): void {
     $('.msg-container').css('display', 'none');
     this.targetEdit = user;
-    this.resetActive();
+    this.editAccountService.resetActive();
     $('.edit-input').addClass('form-input');
   };
 }

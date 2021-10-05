@@ -2,31 +2,6 @@
 /* || Form || */
 /* ========== */
 
-.radio-control-container {
-  display: flex;
-  justify-content: space-evenly;
-  margin: 22px 0;
-}
-
-.radio-group {
-  display: flex;
-  align-items: center;
-}
-
-input[type=radio] {
-  -ms-transform: scale(1.5);
-  -webkit-transform: scale(1.5);
-  transform: scale(1.5);
-}
-
-.radio-label {
-  margin-left: 8px;
-}
-
-.msg-container {
-  text-align: center;
-}
-
 .form-btn-container {
   margin-top: 1rem;
 }

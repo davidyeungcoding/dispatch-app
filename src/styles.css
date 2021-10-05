@@ -42,10 +42,6 @@
 /* || Message || */
 /* ============= */
 
-.msg-container {
-  display: none;
-}
-
 .error-msg {
   color: var(--color-text-warning);
 }
@@ -127,6 +123,27 @@ p, button, a, label, span {
   width: 35%;
 }
 
+.radio-control-container {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 22px 0;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+}
+
+input[type=radio] {
+  -ms-transform: scale(1.5);
+  -webkit-transform: scale(1.5);
+  transform: scale(1.5);
+}
+
+.radio-label {
+  margin-left: 8px;
+}
+
 /* ============ */
 /* || Tables || */
 /* ============ */
@@ -163,6 +180,7 @@ tr:nth-of-type(even) {
 /* ============ */
 
 .msg-container {
+  display: none;
   text-align: center;
 }
 

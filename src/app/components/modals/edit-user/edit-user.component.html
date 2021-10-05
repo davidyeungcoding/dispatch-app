@@ -40,17 +40,7 @@
         ngModel>
     </div>
 
-    <div class="edit-content-group">
-      <h6 class="edit-label">Account Type:</h6>
-      
-      <div class="edit-row">
-        <button type="button"
-          class="btn edit-btn"><i class="far fa-edit"></i></button>
-          <h4 class="proper-name edit-title">{{ targetEdit.accountType }}</h4>
-      </div>
-    </div>
-
-    <div *ngIf="targetEdit.videoCall" class="edit-content-group">
+    <div *ngIf="targetEdit.accountType === 'doctor'" class="edit-content-group">
       <h6 class="edit-label">Video Call:</h6>
       
       <div class="edit-row">
@@ -66,6 +56,50 @@
         name="videoCall"
         placeholder="{{ targetEdit.videoCall }}"
         ngModel>
+    </div>
+
+    <div class="edit-content-group">
+      <h6 class="edit-label">Account Type:</h6>
+      
+      <div class="edit-row">
+        <button type="button"
+          class="btn edit-btn"
+          (click)="makeVisible('accountType')"><i class="far fa-edit"></i></button>
+          <h4 class="proper-name edit-title">{{ targetEdit.accountType }}</h4>
+      </div>
+
+      <div class="radio-control-container edit-input form-input"
+        id="accountType">
+        <div class="radio-group">
+          <input type="radio"
+            id="dispatch"
+            name="accountType"
+            value="dispatch"
+            ngModel>
+
+          <label class="radio-label" for="dispatch">Dispatch</label>
+        </div>
+
+        <div class="radio-group">
+          <input type="radio"
+            id="doctor"
+            name="accountType"
+            value="doctor"
+            ngModel>
+
+          <label class="radio-label" for="doctor">Doctor</label>
+        </div>
+
+        <div class="radio-group">
+          <input type="radio"
+            id="admin"
+            name="accountType"
+            value="admin"
+            ngModel>
+
+          <label class="radio-label" for="admin">Admin</label>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -111,6 +145,7 @@
     
     <button type="button"
       class="btn btn-secondary modal-btn"
-      data-bs-dismiss="modal">Cancel</button>
+      data-bs-dismiss="modal"
+      (click)="clearForm(editUser)">Cancel</button>
   </div>
 </form>
