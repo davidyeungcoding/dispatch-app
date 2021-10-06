@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, Input } from '@angular/cor
 import { NgForm } from '@angular/forms';
 
 import { AuthService } from 'src/app/services/auth.service';
+import { SocketioService } from 'src/app/services/socketio.service';
 import { EditAccountService } from 'src/app/services/edit-account.service';
 
 import { Subscription } from 'rxjs';
@@ -22,6 +23,7 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private authService: AuthService,
+    private socketioService: SocketioService,
     private editAccountService: EditAccountService
   ) { }
 
@@ -103,6 +105,7 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       };
 
+      this.socketioService.emitDeleteUser(this.targetDelete._id);
       if (_res.token) this.authService.changeAuthToken(_res.token);
       this.removeUserFromList(payload.targetId);
       this.successMessage = _res.msg;

@@ -138,7 +138,7 @@ io.on('connection', socket => {
     : io.to(socket.id).emit('failed-to-deliver-message', payload);
   });
   
-  socket.on('send-text', payload => { // pending
+  socket.on('send-text', payload => {
     console.log(`=========================||        Send Text        ||========================`);
     const text = payload.message;
     const recipient = payload.sendTo;
@@ -167,6 +167,15 @@ io.on('connection', socket => {
     };
 
     io.to(socket.id).emit('sent-text', resPayload);
+  });
+
+  socket.on('delete-user', id => {
+    console.log(`========================||        Delete User        ||=======================`);
+    if (!userToSocket[id]) return;
+    io.to(userToSocket[id]).emit('force-logout');
+    delete userList[userToSocket[id]];
+    delete userToSocket[id];
+    io.emit('user-list-update', userList);
   });
 });
 

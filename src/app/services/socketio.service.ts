@@ -95,6 +95,10 @@ export class SocketioService {
     this.socket.emit('send-text', payload);
   };
 
+  emitDeleteUser(id: string) {
+    this.socket.emit('delete-user', id);
+  };
+
   // =====================
   // || Receive Updates ||
   // =====================
