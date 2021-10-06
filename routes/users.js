@@ -68,7 +68,7 @@ const authenticateToken = (req, res, next) => {
   try {
     const authHeader = req.headers['authorization'].split(' ');
     const token = authHeader ? authHeader[authHeader.length - 1] : null;
-    if (!token) return res.json({ success: false, status: 401, msg: 'Missing authorization credentials' });
+    if (!token) return res.json({ success: false, status: 400, msg: 'Missing authorization credentials' });
   
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, _user) => {
       if (err && err.name !== 'TokenExpiredError') {
@@ -311,6 +311,49 @@ router.put('/edit-account', authenticateToken, async (req, res, next) => {
       : { success: false, status: 500, msg: 'Unable to update at this time' });
     });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' })};
+});
+
+router.put('/update-user', authenticateToken, async (req, res, next) => {
+  try {
+    const admin = req.body.admin;
+    const editUser = req.body.user;
+    if (!admin || !editUser || editUser._id.length !== 24) return res.json({ success: false, status: 400, msg: 'Invalid request' });
+    const newToken = req.token ? req.token : null;
+    const tokenUser = req.user;
+    if (tokenUser.username !== admin.username) return res.json({ success: false, status: 401, msg: 'Unauthorized access' });
+    const checkAdmin = await adminCheck(admin.username, admin.password);
+    if (!checkAdmin.success) return res.json(checkAdmin);
+    const payload = {};
+    if (editUser.name) payload.name = editUser.name;
+    
+    if (editUser.username) {
+      const duplicate = await duplicateCheck(editUser.username);
+      if (!duplicate.success) return res.json(duplicate);
+      payload.username = editUser.username;
+    };
+
+    if (editUser.videoCall) payload.videoCall = editUser.videoCall;
+    if (editUser.accountType) payload.accountType = editUser.accountType;
+    if (!Object.keys(payload).length) return res.json({ success: false, status: 400, msg: 'No changes detected' });
+    
+
+    User.updateUser(editUser._id, payload, (err, _user) => {
+      if (err) throw err;
+
+      const resUser = {
+        _id: _user._id,
+        name: _user.name,
+        username: _user.username,
+        accountType: _user.accountType
+      };
+
+      if (resUser.accountType === 'doctor') resUser.videoCall = _user.videoCall;
+      const response = _user ? { success: true, status: 200, msg: 'User successfully updated', user: resUser }
+      : { success: false, status: 400, msg: 'Unable to find user to change' };
+      if (newToken) response.token = newToken;
+      return res.json(response);
+    });
+  } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request as is' }) };
 });
 
 // =================

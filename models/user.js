@@ -107,6 +107,11 @@ module.exports.updateAccount = (username, update, callback) => {
   } else this.userModel.findOneAndUpdate({ username: username }, { $set: update }, options, callback);
 };
 
+module.exports.updateUser = (id, update, callback) => {
+  const options = { new: true };
+  this.userModel.findByIdAndUpdate(id, { $set: update }, options, callback);
+};
+
 // =================
 // || Delete User ||
 // =================

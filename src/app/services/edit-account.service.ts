@@ -70,6 +70,14 @@ export class EditAccountService {
     );
   };
 
+  updateUser(payload: any, token: string) {
+    const validateHeader = this.buildHeader(token);
+
+    return this.http.put(`${this.api}/update-user`, payload, validateHeader).pipe(
+      catchError(err => of(err))
+    );
+  };
+
   // ========================
   // || Change Observables ||
   // ========================

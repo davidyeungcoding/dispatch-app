@@ -2,6 +2,9 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { EditAccountService } from 'src/app/services/edit-account.service';
+import { RedirectService } from 'src/app/services/redirect.service';
+import { SearchService } from 'src/app/services/search.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 import { Subscription } from 'rxjs';
 
@@ -12,16 +15,21 @@ import { Subscription } from 'rxjs';
 })
 export class EditUserComponent implements OnInit, OnDestroy {
   @Input() targetEdit: any;
+  @Input() accountList: any;
   private subscriptions: Subscription = new Subscription();
+  private token: string = '';
+  private userData: any = null;
   activeName: boolean = false;
   activeUsername: boolean = false;
   activeVideoCall: boolean = false;
   activeAccountType: boolean = false;
   editErrorMessage: string = '';
-  editSuccessMessage: string = '';
+  editSuccessMessage: string = 'User successfully udpated';
 
   constructor(
-    private editAccountService: EditAccountService
+    private editAccountService: EditAccountService,
+    private redirectService: RedirectService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -29,6 +37,8 @@ export class EditUserComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this.editAccountService.activeUsername.subscribe(_activeUsername => this.activeUsername = _activeUsername));
     this.subscriptions.add(this.editAccountService.activeVideoCall.subscribe(_activeVideoCall => this.activeVideoCall = _activeVideoCall));
     this.subscriptions.add(this.editAccountService.activeAccountType.subscribe(_activeAccountType => this.activeAccountType = _activeAccountType));
+    this.subscriptions.add(this.authService.authToken.subscribe(_token => this.token = _token));
+    this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
   }
 
   ngOnDestroy(): void {
@@ -84,6 +94,30 @@ export class EditUserComponent implements OnInit, OnDestroy {
     return true;
   };
 
+  buildPayload(form: NgForm, name: string, username: string, accountType: string,
+    adminUsername: string, adminPassword: string): any {
+    const payload: any = {
+      user: {
+        _id: this.targetEdit._id
+      },
+      admin: {
+        username: adminUsername,
+        password: adminPassword
+      }
+    };
+
+    if (this.activeName && name) payload.user.name = name;
+    if (this.activeUsername && username) payload.user.username = username;
+    if (this.activeAccountType && accountType) payload.user.accountType = accountType;
+    if (this.activeVideoCall) payload.user.videoCall = form.value.videoCall.trim();
+    return payload;
+  };
+
+  replaceUser(user: any): void {
+    const index = this.accountList.findIndex((element: any) => element._id === this.targetEdit._id);
+    this.accountList[index] = user;
+  };
+
   // =======================
   // || General Functions ||
   // =======================
@@ -111,26 +145,41 @@ export class EditUserComponent implements OnInit, OnDestroy {
       return;
     };
 
-    const payload: any = {
-      user: {},
-      admin: {
-        username: adminUsername,
-        password: adminPassword
-      }
-    };
+    const payload = this.buildPayload(form, name, username, accountType, adminUsername, adminPassword);
 
-    if (this.activeName && name) payload.user.name = name;
-    if (this.activeUsername && username) payload.user.username = username;
-    if (this.activeAccountType && accountType) payload.user.accountType = accountType;
-    if (this.activeVideoCall) payload.user.videoCall = form.value.videoCall.trim();
-    this.editSuccessMessage = 'User successfully udpated';
-    $('#editSuccess').css('display', 'inline');
+    this.editAccountService.updateUser(payload, this.token).subscribe(_user => {
+      if (_user.token) this.authService.changeAuthToken(_user.token);
 
-    setTimeout(() => {
-      $('#editSuccess').css('display', 'none');
-      this.clearForm(form);
-      (<any>$('#editUser')).modal('hide');
-    }, 1000);
+      if (!_user.success) {
+        this.editErrorMessage = _user.msg;
+        $('#editError').css('display', 'inline');
+
+        if (_user.status === 400) {
+          setTimeout(() => {
+            (<any>$('#editUser')).modal('hide');
+            this.authService.logout();
+          }, 2000);
+        } else if (_user.status === 401 && _user.msg !== 'Username and password mismatch') {
+          setTimeout(() => {
+            (<any>$('#editUser')).modal('hide');
+            this.redirectService.handleRedirect('dispatch');
+          }, 2000);
+        };
+
+        return;
+      };
+
+      // insert socketio update
+      if (this.targetEdit._id === this.userData._id) this.authService.changeUserData(_user.user);
+      this.replaceUser(_user.user);
+      $('#editSuccess').css('display', 'inline');
+  
+      setTimeout(() => {
+        $('#editSuccess').css('display', 'none');
+        this.clearForm(form);
+        (<any>$('#editUser')).modal('hide');
+      }, 1000);
+    });
   };
 
   makeVisible(target: string): void {
