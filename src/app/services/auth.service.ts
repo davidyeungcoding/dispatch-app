@@ -5,6 +5,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { RedirectService } from './redirect.service';
 import { SocketioService } from './socketio.service';
 import { ChatService } from './chat.service';
+import { EditAccountService } from './edit-account.service';
 
 import { catchError } from 'rxjs/operators';
 import { BehaviorSubject, of } from 'rxjs';
@@ -35,7 +36,8 @@ export class AuthService {
     private http: HttpClient,
     private redirectService: RedirectService,
     private socketioService: SocketioService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private editAccountService: EditAccountService
   ) { }
 
   // =====================
@@ -78,12 +80,6 @@ export class AuthService {
 
   onLogout(id: string) {
     return this.http.get(`${this.api}/logout?_id=${id}`).pipe(
-      catchError(err => of(err))
-    );
-  };
-
-  requestNewToken(user: string) {
-    return this.http.get(`${this.api}/request-new-token?user=${user}`).pipe(
       catchError(err => of(err))
     );
   };
@@ -145,7 +141,12 @@ export class AuthService {
     if (!expired) return expired;
 
     const expiredCheck = await new Promise(resolve => {
-      this.requestNewToken(JSON.stringify(this.userDataSource.value)).subscribe(res => {
+      const payload = {
+        user: this.userDataSource.value,
+        token: this.authTokenSource.value
+      };
+
+      this.editAccountService.requestNewToken(payload).subscribe(res => {
         if (!res.success) return resolve(true);
         this.changeAuthToken(res.token);
         return resolve(false);

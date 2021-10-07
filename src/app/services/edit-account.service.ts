@@ -78,8 +78,10 @@ export class EditAccountService {
     );
   };
 
-  requestNewToken(user: string) {
-    return this.http.get(`${this.api}/request-new-token?user=${user}`).pipe(
+  requestNewToken(payload: any) {
+    const validateHeader = this.buildHeader(payload.token);
+
+    return this.http.post(`${this.api}/request-new-token`, payload.user, validateHeader).pipe(
       catchError(err => of(err))
     );
   };

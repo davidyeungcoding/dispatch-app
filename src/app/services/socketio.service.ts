@@ -150,7 +150,18 @@ export class SocketioService {
     this.socket.on('receive-user-update', (user: any) => {
       localStorage.setItem('user', JSON.stringify(user));
 
-      this.editAccountService.requestNewToken(JSON.stringify(user)).subscribe(_token => {
+      if (!localStorage.getItem('id_token')) {
+        localStorage.clear();
+        location.reload();
+        return;
+      };
+      
+      const payload = {
+        user: user,
+        token: localStorage.getItem('id_token')
+      };
+
+      this.editAccountService.requestNewToken(payload).subscribe(_token => {
         _token.success ? localStorage.setItem('id_token', _token.token)
         : localStorage.clear();
         location.reload();

@@ -241,10 +241,13 @@ router.get('/logout', (req, res, next) => {
   } catch { return res.json({ status: 400 })};
 });
 
-router.get('/request-new-token', async (req, res, next) => {
+router.post('/request-new-token', authenticateToken, async (req, res, next) => {
   try {
-    const user = JSON.parse(req.query.user);
-    const newToken = await handleRefreshAuthToken(user);
+    let _user = req.body;
+    if (typeof(_user) === 'string') _user = JSON.parse(_user);
+    if (_user._id.length !== 24) return res.json({ success: false, status: 400, msg: 'Invalid request' });
+    if (_user._id !== req.user._id) return res.json({ success: false, status: 403, msg: 'User does not match request' });
+    const newToken = await handleRefreshAuthToken(_user);
     return newToken ? res.json({ success: true, status: 200, msg: 'Successfully generated new token', token: newToken })
     : res.json({ success: false, status: 400, msg: 'Unable to generate new token' });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to generate new token' }) };
