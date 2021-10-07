@@ -177,6 +177,14 @@ io.on('connection', socket => {
     delete userToSocket[id];
     io.emit('user-list-update', userList);
   });
+
+  socket.on('send-user-update', user => {
+    console.log(`========================||        User Update        ||=======================`);
+    if (!userToSocket[user._id]) return;
+    if (userToSocket[user._id] !== socket.id) io.to(userToSocket[user._id]).emit('receive-user-update', user);
+    userList[userToSocket[user._id]] = user;
+    io.emit('user-list-update', userList);
+  });
 });
 
 // ================

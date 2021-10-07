@@ -3,8 +3,8 @@ import { NgForm } from '@angular/forms';
 
 import { EditAccountService } from 'src/app/services/edit-account.service';
 import { RedirectService } from 'src/app/services/redirect.service';
-import { SearchService } from 'src/app/services/search.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { SocketioService } from 'src/app/services/socketio.service';
 
 import { Subscription } from 'rxjs';
 
@@ -29,6 +29,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
   constructor(
     private editAccountService: EditAccountService,
     private redirectService: RedirectService,
+    private socketioService: SocketioService,
     private authService: AuthService
   ) { }
 
@@ -95,12 +96,13 @@ export class EditUserComponent implements OnInit, OnDestroy {
   };
 
   buildPayload(form: NgForm, name: string, username: string, accountType: string,
-    adminUsername: string, adminPassword: string): any {
+  adminUsername: string, adminPassword: string): any {
     const payload: any = {
       user: {
         _id: this.targetEdit._id
       },
       admin: {
+        _id: this.userData._id,
         username: adminUsername,
         password: adminPassword
       }
@@ -169,8 +171,8 @@ export class EditUserComponent implements OnInit, OnDestroy {
         return;
       };
 
-      // insert socketio update
       if (this.targetEdit._id === this.userData._id) this.authService.changeUserData(_user.user);
+      this.socketioService.emitSendUserUpdate(_user.user);
       this.replaceUser(_user.user);
       $('#editSuccess').css('display', 'inline');
   

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { ChatService } from './chat.service';
 import { TextMessageService } from './text-message.service';
+import { EditAccountService } from './edit-account.service';
 
 import { BehaviorSubject } from 'rxjs';
 import { io } from 'socket.io-client';
@@ -10,7 +11,7 @@ import { io } from 'socket.io-client';
   providedIn: 'root'
 })
 export class SocketioService {
-  socket: any;
+  private socket: any;
 
   // =================
   // || Observables ||
@@ -25,6 +26,7 @@ export class SocketioService {
 
   constructor(
     private chatService: ChatService,
+    private editAccountService: EditAccountService,
     private textMessageService: TextMessageService
   ) { }
   
@@ -99,6 +101,10 @@ export class SocketioService {
     this.socket.emit('delete-user', id);
   };
 
+  emitSendUserUpdate(user: any) {
+    this.socket.emit('send-user-update', user);
+  };
+
   // =====================
   // || Receive Updates ||
   // =====================
@@ -139,6 +145,16 @@ export class SocketioService {
     this.socket.on('force-logout', () => {
       localStorage.clear();
       location.reload();
+    });
+
+    this.socket.on('receive-user-update', (user: any) => {
+      localStorage.setItem('user', JSON.stringify(user));
+
+      this.editAccountService.requestNewToken(JSON.stringify(user)).subscribe(_token => {
+        _token.success ? localStorage.setItem('id_token', _token.token)
+        : localStorage.clear();
+        location.reload();
+      });
     });
   };
 

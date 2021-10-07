@@ -350,7 +350,10 @@ router.put('/update-user', authenticateToken, async (req, res, next) => {
       if (resUser.accountType === 'doctor') resUser.videoCall = _user.videoCall;
       const response = _user ? { success: true, status: 200, msg: 'User successfully updated', user: resUser }
       : { success: false, status: 400, msg: 'Unable to find user to change' };
-      if (newToken) response.token = newToken;
+      response.token = resUser._id === admin._id ? generateAuthToken(resUser)
+      : !!newToken ? newToken
+      : null;
+
       return res.json(response);
     });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request as is' }) };

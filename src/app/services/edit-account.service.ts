@@ -78,6 +78,12 @@ export class EditAccountService {
     );
   };
 
+  requestNewToken(user: string) {
+    return this.http.get(`${this.api}/request-new-token?user=${user}`).pipe(
+      catchError(err => of(err))
+    );
+  };
+
   // ========================
   // || Change Observables ||
   // ========================
