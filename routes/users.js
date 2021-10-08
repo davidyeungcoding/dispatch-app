@@ -39,9 +39,9 @@ const generateRefreshToken = user => {
   return jwt.sign(parsedUser, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '3d' });
 };
 
-const getRefreshToken = async username => {
+const getRefreshToken = async id => {
   const token = await new Promise(resolve => {
-    User.refreshTokenSearch(username, (err, _token) => {
+    User.refreshTokenSearch(id, (err, _token) => {
       if (err) throw err;
       return resolve(_token[0].refreshToken);
     });
@@ -57,7 +57,7 @@ const authenticateRefreshToken = token => {
 };
 
 const handleRefreshAuthToken = async token => {
-  const refreshToken = await getRefreshToken(token.username);
+  const refreshToken = await getRefreshToken(mongoose.Types.ObjectId(token._id));
   if (!refreshToken) return false;
   const validRefreshToken = authenticateRefreshToken(refreshToken);
   if (!validRefreshToken) return false;

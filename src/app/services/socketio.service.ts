@@ -35,8 +35,8 @@ export class SocketioService {
   // ===========
 
   setupSocketConnection(): void {
-    this.socket = io('http://localhost:3000'); // dev
-    // this.socket = io(); // production
+    // this.socket = io('http://localhost:3000'); // dev
+    this.socket = io(); // production
   };
 
   // ======================
@@ -164,7 +164,10 @@ export class SocketioService {
       this.editAccountService.requestNewToken(payload).subscribe(_token => {
         _token.success ? localStorage.setItem('id_token', _token.token)
         : localStorage.clear();
-        location.reload();
+        // not necessary to reload, as changes will be in local storage,
+        // but any changes by user will use outdated data as user is 
+        // referenced from userData
+        location.reload(); // user will lose all logs with this
       });
     });
   };

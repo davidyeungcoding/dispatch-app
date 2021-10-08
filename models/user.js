@@ -124,8 +124,8 @@ module.exports.deleteUser = (id, callback) => {
 // || Search User ||
 // =================
 
-module.exports.refreshTokenSearch = (username, callback) => {
-  this.userModel.aggregate([{ $match: { username: username } }, { $project: { refreshToken: 1 } }], callback);
+module.exports.refreshTokenSearch = (id, callback) => {
+  this.userModel.aggregate([{ $match: { _id: id } }, { $project: { refreshToken: 1 } }], callback);
 };
 
 module.exports.search = (type, term, callback) => {
