@@ -244,6 +244,10 @@ tr:nth-of-type(even) {
 /* || Global || */
 /* ============ */
 
+.hide-content {
+  display: none;
+}
+
 .nav-offset {
   margin-top: 108px;
 }

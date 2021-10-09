@@ -108,6 +108,6 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
     $('.msg-container').css('display', 'none');
     this.targetEdit = user;
     this.editAccountService.resetActive();
-    $('.edit-input').addClass('form-input');
+    $('.edit-input').addClass('hide-content');
   };
 }

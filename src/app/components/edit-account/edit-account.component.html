@@ -39,17 +39,16 @@
       </div>
     </div>
 
-    <div *ngIf="username">
-      <div class="form-group text-field">
-        <label for="newUsername">New Username:</label>
-  
-        <input type="text"
-          class="form-control"
-          id="newUsername"
-          name="newUsername"
-          placeholder="New Username"
-          ngModel>
-      </div>
+    <div class="form-group text-field hide-content"
+      id="formGroupNewUsername">
+      <label for="newUsername">New Username:</label>
+
+      <input type="text"
+        class="form-control"
+        id="newUsername"
+        name="newUsername"
+        placeholder="New Username"
+        ngModel>
     </div>
 
     <div class="form-group text-field">
@@ -75,17 +74,16 @@
       </div>
     </div>
 
-    <div *ngIf="password">
-      <div class="form-group text-field">
-        <label for="newPassword">New Password:</label>
-  
-        <input type="password"
-          class="form-control"
-          id="newPassword"
-          name="newPassword"
-          placeholder="New Password"
-          ngModel>
-      </div>
+    <div class="form-group text-field hide-content"
+      id="formGroupNewPassword">
+      <label for="newPassword">New Password:</label>
+
+      <input type="password"
+        class="form-control"
+        id="newPassword"
+        name="newPassword"
+        placeholder="New Password"
+        ngModel>
     </div>
 
     <div class="form-group text-field">
@@ -100,17 +98,16 @@
       </div>
     </div>
 
-    <div *ngIf="name">
-      <div class="form-group text-field">
-        <label for="newName">New Name:</label>
-  
-        <input type="text"
-          class="form-control"
-          id="newName"
-          name="newName"
-          placeholder="New Name"
-          ngModel>
-      </div>
+    <div class="form-group text-field hide-content"
+      id="formGroupNewName">
+      <label for="newName">New Name:</label>
+
+      <input type="text"
+        class="form-control"
+        id="newName"
+        name="newName"
+        placeholder="New Name"
+        ngModel>
     </div>
 
     <div class="msg-container" id="errorMsgContainer">

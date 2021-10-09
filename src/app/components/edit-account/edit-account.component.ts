@@ -56,16 +56,16 @@ export class EditAccountComponent implements OnInit, OnDestroy {
   };
 
   checkRequiredFields(form: NgForm): boolean {
-    const username = form.value.username;
-    const password = form.value.password;
+    const username = form.value.username.trim();
+    const password = form.value.password.trim();
 
-    if (!username || !username.trim() || !password || !password.trim()) {
-      if (!username || !username.trim()) $('#usernameErrContainer').css('display', 'inline');
+    if (!username || !password) {
+      if (!username) $('#usernameErrContainer').css('display', 'inline');
       $('#passwordErrContainer').css('display', 'inline');
       this.resetForm(form);
       return false;
     };
-
+    
     return true;
   };
 
@@ -83,13 +83,13 @@ export class EditAccountComponent implements OnInit, OnDestroy {
 
   buildPayload(form: NgForm): any {
     const payload: any = {
-      username: form.value.username,
-      password: form.value.password
+      username: form.value.username.trim(),
+      password: form.value.password.trim()
     };
 
-    if (form.value.newUsername && form.value.newUsername.trim()) payload.newUsername = form.value.newUsername;
-    if (form.value.newPassword && form.value.newPassword.trim()) payload.newPassword = form.value.newPassword;
-    if (form.value.newName && form.value.newName.trim()) payload.newName = form.value.newName;
+    if (this.username && form.value.newUsername.trim()) payload.newUsername = form.value.newUsername;
+    if (this.password && form.value.newPassword.trim()) payload.newPassword = form.value.newPassword;
+    if (this.name && form.value.newName.trim()) payload.newName = form.value.newName;
     return payload;
   };
 
@@ -98,6 +98,10 @@ export class EditAccountComponent implements OnInit, OnDestroy {
   // =======================
 
   onShowContent(input: string): void {
+    const target = input[0].toUpperCase() + input.substr(1);
+    $(`#formGroupNew${target}`)[0].classList.contains('hide-content') ? $(`#formGroupNew${target}`).removeClass('hide-content')
+    : $(`#formGroupNew${target}`).addClass('hide-content');
+
     switch (input) {
       case 'username':
         this.username = !this.username;

@@ -189,8 +189,8 @@ export class EditUserComponent implements OnInit, OnDestroy {
   };
 
   makeVisible(target: string): void {
-    $(`#${target}`)[0].classList.contains('form-input') ? $(`#${target}`).removeClass('form-input')
-    : $(`#${target}`).addClass('form-input');
+    $(`#${target}`)[0].classList.contains('hide-content') ? $(`#${target}`).removeClass('hide-content')
+    : $(`#${target}`).addClass('hide-content');
 
     switch (target) {
       case 'name':
