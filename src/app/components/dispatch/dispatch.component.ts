@@ -4,11 +4,12 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { SocketioService } from 'src/app/services/socketio.service';
 import { ChatService } from 'src/app/services/chat.service';
+import { EditAccountService } from 'src/app/services/edit-account.service';
+import { TextMessageService } from 'src/app/services/text-message.service';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 import { Subscription } from 'rxjs';
 import { ChatEntry } from 'src/app/interfaces/chat-entry';
-import { EditAccountService } from 'src/app/services/edit-account.service';
-import { TextMessageService } from 'src/app/services/text-message.service';
 
 @Component({
   selector: 'app-dispatch',
@@ -32,14 +33,15 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     private socketioService: SocketioService,
     private chatService: ChatService,
     private editAccountService: EditAccountService,
-    private textMessageService: TextMessageService
+    private textMessageService: TextMessageService,
+    private userDataService: UserDataService
   ) { }
 
   ngOnInit(): void {
-    this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
+    this.subscriptions.add(this.userDataService.userData.subscribe(_user => this.userData = _user));
     this.subscriptions.add(this.socketioService.userList.subscribe(_list => this.userList = _list));
     this.subscriptions.add(this.socketioService.doctorList.subscribe(_list => this.doctorList = _list));
-    this.subscriptions.add(this.authService.authToken.subscribe(_token => this.authToken = _token));
+    this.subscriptions.add(this.userDataService.authToken.subscribe(_token => this.authToken = _token));
     this.subscriptions.add(this.chatService.openChats.subscribe(_list => this.openChats = _list));
     this.subscriptions.add(this.textMessageService.responseMessage.subscribe(_res => this.textResponse = _res));
     this.socketioService.emitUserListRequest();
@@ -117,7 +119,8 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
 
           setTimeout(() => {
             (<any>$('#editCallLink')).modal('toggle');
-            this.authService.logout();
+            const user = this.userData ? this.userData : this.authService.parseLocalStorageUser();
+            this.authService.logout(user);
           }, 2000);
 
           return;
@@ -129,8 +132,8 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
       };
 
       this.userData.videoCall = link;
-      this.authService.changeUserData(this.userData);
-      this.authService.changeAuthToken(_user.token);
+      this.userDataService.changeUserData(this.userData);
+      this.userDataService.changeAuthToken(_user.token);
       this.socketioService.emitLink(link);
       $('#callLinkSuccessContainer').css('display', 'inline');
       

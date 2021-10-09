@@ -4,6 +4,7 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { RedirectService } from 'src/app/services/redirect.service';
 import { SocketioService } from 'src/app/services/socketio.service';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 import { Subscription } from 'rxjs';
 
@@ -21,12 +22,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private redirectService: RedirectService,
-    private socketioService: SocketioService
+    private socketioService: SocketioService,
+    private userDataService: UserDataService
   ) { }
 
   ngOnInit(): void {
-    this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
-    this.subscriptions.add(this.authService.authToken.subscribe(_token => this.token = _token));
+    this.subscriptions.add(this.userDataService.userData.subscribe(_user => this.userData = _user));
+    this.subscriptions.add(this.userDataService.authToken.subscribe(_token => this.token = _token));
   }
 
   ngAfterViewInit(): void {
@@ -61,7 +63,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // ========================
 
   async checkValidUser() {
-    const expiredToken = this.token ? await this.authService.isExpired(this.token) : true;
+    const expiredToken = this.token ? await this.authService.isExpired(this.token, this.userData) : true;
     if (this.userData && !expiredToken) this.redirectService.handleRedirect('dispatch');
   };
 
@@ -84,8 +86,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!res.user) return this.loginError(form, 'Username and password do not match');
     this.socketioService.emitLogin(res.user);
     this.authService.setLocalStorageUser(res.token, JSON.stringify(res.user));
-    this.authService.changeAuthToken(res.token);
-    this.authService.changeUserData(res.user);
+    this.userDataService.changeAuthToken(res.token);
+    this.userDataService.changeUserData(res.user);
     this.redirectService.handleRedirect('dispatch');
   };
 }

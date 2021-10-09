@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ChatService } from './chat.service';
 import { TextMessageService } from './text-message.service';
 import { EditAccountService } from './edit-account.service';
+import { UserDataService } from './user-data.service';
 
 import { BehaviorSubject } from 'rxjs';
 import { io } from 'socket.io-client';
@@ -27,7 +28,8 @@ export class SocketioService {
   constructor(
     private chatService: ChatService,
     private editAccountService: EditAccountService,
-    private textMessageService: TextMessageService
+    private textMessageService: TextMessageService,
+    private userDataService: UserDataService
   ) { }
   
   // ===========
@@ -35,8 +37,8 @@ export class SocketioService {
   // ===========
 
   setupSocketConnection(): void {
-    // this.socket = io('http://localhost:3000'); // dev
-    this.socket = io(); // production
+    this.socket = io('http://localhost:3000'); // dev
+    // this.socket = io(); // production
   };
 
   // ======================
@@ -148,26 +150,19 @@ export class SocketioService {
     });
 
     this.socket.on('receive-user-update', (user: any) => {
-      localStorage.setItem('user', JSON.stringify(user));
-
-      if (!localStorage.getItem('id_token')) {
+      if (!localStorage.getItem('id_token' || !localStorage.getItem('user'))) {
         localStorage.clear();
         location.reload();
         return;
       };
       
-      const payload = {
-        user: user,
-        token: localStorage.getItem('id_token')
-      };
+      this.userDataService.changeUserData(user);
+      const payload = { user: user, token: localStorage.getItem('id_token') };
 
       this.editAccountService.requestNewToken(payload).subscribe(_token => {
-        _token.success ? localStorage.setItem('id_token', _token.token)
-        : localStorage.clear();
-        // not necessary to reload, as changes will be in local storage,
-        // but any changes by user will use outdated data as user is 
-        // referenced from userData
-        location.reload(); // user will lose all logs with this
+        if (_token.success) return this.userDataService.changeAuthToken(_token.token);
+        localStorage.clear();
+        location.reload();
       });
     });
   };

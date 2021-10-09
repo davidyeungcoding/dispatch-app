@@ -323,7 +323,7 @@ router.put('/update-user', authenticateToken, async (req, res, next) => {
     if (!admin || !editUser || editUser._id.length !== 24) return res.json({ success: false, status: 400, msg: 'Invalid request' });
     const newToken = req.token ? req.token : null;
     const tokenUser = req.user;
-    if (tokenUser.username !== admin.username) return res.json({ success: false, status: 401, msg: 'Unauthorized access' });
+    if (tokenUser.username !== admin.username) return res.json({ success: false, status: 401, msg: 'Entered credentials does not match recorded data' });
     const checkAdmin = await adminCheck(admin.username, admin.password);
     if (!checkAdmin.success) return res.json(checkAdmin);
     const payload = {};

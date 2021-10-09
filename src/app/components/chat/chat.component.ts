@@ -4,6 +4,7 @@ import { NgForm } from '@angular/forms';
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketioService } from 'src/app/services/socketio.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 import { Subscription } from 'rxjs';
 import { ChatMessage } from 'src/app/interfaces/chat-message';
@@ -22,12 +23,13 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor(
     private chatService: ChatService,
     private socketioService: SocketioService,
-    private authService: AuthService
+    private authService: AuthService,
+    private userDataService: UserDataService
   ) { }
 
   ngOnInit(): void {
     this.subscriptions.add(this.chatService.openChats.subscribe(_list => this.openChats = _list));
-    this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
+    this.subscriptions.add(this.userDataService.userData.subscribe(_user => this.userData = _user));
   }
 
   ngOnDestroy(): void {

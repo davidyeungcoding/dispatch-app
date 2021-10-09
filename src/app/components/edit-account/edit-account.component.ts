@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { RedirectService } from 'src/app/services/redirect.service';
 import { EditAccountService } from 'src/app/services/edit-account.service';
 import { SocketioService } from 'src/app/services/socketio.service';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 import { Subscription } from 'rxjs';
 
@@ -27,12 +28,13 @@ export class EditAccountComponent implements OnInit, OnDestroy {
     private authServcie: AuthService,
     private redirectService: RedirectService,
     private editAccountService: EditAccountService,
-    private socketIoService: SocketioService
+    private socketIoService: SocketioService,
+    private userDataService: UserDataService
   ) { }
 
   ngOnInit(): void {
-    this.subscriptions.add(this.authServcie.userData.subscribe(_user => this.userData = _user));
-    this.subscriptions.add(this.authServcie.authToken.subscribe(_token => this.token = _token));
+    this.subscriptions.add(this.userDataService.userData.subscribe(_user => this.userData = _user));
+    this.subscriptions.add(this.userDataService.authToken.subscribe(_token => this.token = _token));
   }
 
   ngOnDestroy(): void {
@@ -127,7 +129,8 @@ export class EditAccountComponent implements OnInit, OnDestroy {
       if (_res.status === 406) {
         this.errorMsg = 'Invalid user access';
         $('#errorMsgContainer').css('display', 'inline');
-        setTimeout(() => this.authServcie.logout(), 1500);
+        const user = this.userData ? this.userData : this.authServcie.parseLocalStorageUser();
+        setTimeout(() => this.authServcie.logout(user), 1500);
         return;
       } else if (_res.status !== 200) {
         this.resetForm(form);
@@ -136,8 +139,8 @@ export class EditAccountComponent implements OnInit, OnDestroy {
         return;
       };
 
-      this.authServcie.changeUserData(_res.msg);
-      this.authServcie.changeAuthToken(_res.token);
+      this.userDataService.changeUserData(_res.msg);
+      this.userDataService.changeAuthToken(_res.token);
       this.socketIoService.emitAccountUpdate(_res.msg);
       $('#successMsgContainer').css('display', 'inline');
       setTimeout(() => this.redirectService.handleRedirect('dispatch'), 1000);

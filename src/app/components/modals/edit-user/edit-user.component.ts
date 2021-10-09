@@ -5,6 +5,7 @@ import { EditAccountService } from 'src/app/services/edit-account.service';
 import { RedirectService } from 'src/app/services/redirect.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { SocketioService } from 'src/app/services/socketio.service';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 import { Subscription } from 'rxjs';
 
@@ -30,7 +31,8 @@ export class EditUserComponent implements OnInit, OnDestroy {
     private editAccountService: EditAccountService,
     private redirectService: RedirectService,
     private socketioService: SocketioService,
-    private authService: AuthService
+    private authService: AuthService,
+    private userDataService: UserDataService
   ) { }
 
   ngOnInit(): void {
@@ -38,8 +40,8 @@ export class EditUserComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this.editAccountService.activeUsername.subscribe(_activeUsername => this.activeUsername = _activeUsername));
     this.subscriptions.add(this.editAccountService.activeVideoCall.subscribe(_activeVideoCall => this.activeVideoCall = _activeVideoCall));
     this.subscriptions.add(this.editAccountService.activeAccountType.subscribe(_activeAccountType => this.activeAccountType = _activeAccountType));
-    this.subscriptions.add(this.authService.authToken.subscribe(_token => this.token = _token));
-    this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
+    this.subscriptions.add(this.userDataService.authToken.subscribe(_token => this.token = _token));
+    this.subscriptions.add(this.userDataService.userData.subscribe(_user => this.userData = _user));
   }
 
   ngOnDestroy(): void {
@@ -150,7 +152,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
     const payload = this.buildPayload(form, name, username, accountType, adminUsername, adminPassword);
 
     this.editAccountService.updateUser(payload, this.token).subscribe(_user => {
-      if (_user.token) this.authService.changeAuthToken(_user.token);
+      if (_user.token) this.userDataService.changeAuthToken(_user.token);
 
       if (!_user.success) {
         this.editErrorMessage = _user.msg;
@@ -159,19 +161,21 @@ export class EditUserComponent implements OnInit, OnDestroy {
         if (_user.status === 400) {
           setTimeout(() => {
             (<any>$('#editUser')).modal('hide');
-            this.authService.logout();
+            const user = this.userData ? this.userData : this.authService.parseLocalStorageUser();
+            this.authService.logout(user);
           }, 2000);
-        } else if (_user.status === 401 && _user.msg !== 'Username and password mismatch') {
+        } else if (_user.status === 401 && _user.msg !== 'Username and password mismatch'
+        && _user.msg !== 'Entered credentials does not match recorded data') {
           setTimeout(() => {
             (<any>$('#editUser')).modal('hide');
             this.redirectService.handleRedirect('dispatch');
           }, 2000);
-        };
+        } else this.resetForm(form);
 
         return;
       };
 
-      if (this.targetEdit._id === this.userData._id) this.authService.changeUserData(_user.user);
+      if (this.targetEdit._id === this.userData._id) this.userDataService.changeUserData(_user.user);
       this.socketioService.emitSendUserUpdate(_user.user);
       this.replaceUser(_user.user);
       $('#editSuccess').css('display', 'inline');

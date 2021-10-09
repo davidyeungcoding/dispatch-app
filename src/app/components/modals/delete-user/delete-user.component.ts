@@ -4,6 +4,7 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { SocketioService } from 'src/app/services/socketio.service';
 import { EditAccountService } from 'src/app/services/edit-account.service';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 import { Subscription } from 'rxjs';
 
@@ -24,12 +25,13 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private authService: AuthService,
     private socketioService: SocketioService,
-    private editAccountService: EditAccountService
+    private editAccountService: EditAccountService,
+    private userDataService: UserDataService
   ) { }
 
   ngOnInit(): void {
-    this.subscriptions.add(this.authService.userData.subscribe(_user => this.userData = _user));
-    this.subscriptions.add(this.authService.authToken.subscribe(_token => this.token = _token));
+    this.subscriptions.add(this.userDataService.userData.subscribe(_user => this.userData = _user));
+    this.subscriptions.add(this.userDataService.authToken.subscribe(_token => this.token = _token));
   }
   
   ngAfterViewInit(): void {
@@ -106,7 +108,7 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
       };
 
       this.socketioService.emitDeleteUser(this.targetDelete._id);
-      if (_res.token) this.authService.changeAuthToken(_res.token);
+      if (_res.token) this.userDataService.changeAuthToken(_res.token);
       this.removeUserFromList(payload.targetId);
       this.successMessage = _res.msg;
       $('#deleteSuccess').css('display', 'inline');

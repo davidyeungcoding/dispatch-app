@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 
 import { AuthService } from 'src/app/services/auth.service';
 import { RedirectService } from 'src/app/services/redirect.service';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 import { Subscription } from 'rxjs';
 
@@ -14,17 +15,20 @@ import { Subscription } from 'rxjs';
 export class CreateAccountComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private token: string = '';
+  private userData: any = null;
   createErrorMsg: string = '';
   createSuccessMsg: string = '';
   successfulUserCreation: string = 'Successfully create new user';
 
   constructor(
     private authService: AuthService,
-    private redirectService: RedirectService
+    private redirectService: RedirectService,
+    private userDataService: UserDataService
   ) { }
 
   ngOnInit(): void {
-    this.subscriptions.add(this.authService.authToken.subscribe(_token => this.token = _token));
+    this.subscriptions.add(this.userDataService.authToken.subscribe(_token => this.token = _token));
+    this.subscriptions.add(this.userDataService.userData.subscribe(_user => this.userData = _user));
   }
 
   ngOnDestroy(): void {
@@ -69,7 +73,7 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
   sendCreateRequest(payload: any): Promise<any> {
     return new Promise(resolve => {
       this.authService.createUser(payload, this.token).subscribe(_res => {
-        if (_res.token) this.authService.changeAuthToken(_res.token);
+        if (_res.token) this.userDataService.changeAuthToken(_res.token);
         return resolve(_res);
       });
     });
@@ -101,7 +105,8 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
     if (!status.success) {
       this.createErrorMsg = status.msg;
       $('#createErrorMsgContainer').css('display', 'inline');
-      if (status.status === 400) setTimeout(() => this.authService.logout(), 2000);
+      const user = this.userData ? this.userData : this.authService.parseLocalStorageUser()
+      if (status.status === 400) setTimeout(() => this.authService.logout(user), 2000);
       this.resetForm(form);
       return;
     };

@@ -6,6 +6,7 @@ import { RedirectService } from './redirect.service';
 import { SocketioService } from './socketio.service';
 import { ChatService } from './chat.service';
 import { EditAccountService } from './edit-account.service';
+import { UserDataService } from './user-data.service';
 
 import { catchError } from 'rxjs/operators';
 import { BehaviorSubject, of } from 'rxjs';
@@ -14,8 +15,8 @@ import { BehaviorSubject, of } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  // private api = 'http://localhost:3000/users'; // dev
-  private api = 'users'; // production
+  private api = 'http://localhost:3000/users'; // dev
+  // private api = 'users'; // production
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -27,17 +28,18 @@ export class AuthService {
   // || Observables ||
   // =================
 
-  private authTokenSource = new BehaviorSubject<any>(null);
-  authToken = this.authTokenSource.asObservable();
-  private userDataSource = new BehaviorSubject<any>(null);
-  userData = this.userDataSource.asObservable();
+  // private authTokenSource = new BehaviorSubject<any>(null);
+  // authToken = this.authTokenSource.asObservable();
+  // private userDataSource = new BehaviorSubject<any>(null);
+  // userData = this.userDataSource.asObservable();
 
   constructor(
     private http: HttpClient,
     private redirectService: RedirectService,
     private socketioService: SocketioService,
     private chatService: ChatService,
-    private editAccountService: EditAccountService
+    private editAccountService: EditAccountService,
+    private userDataService: UserDataService
   ) { }
 
   // =====================
@@ -121,7 +123,7 @@ export class AuthService {
   compareToken(token: string): Promise<boolean> {
     return new Promise(resolve => {
       this.validateToken(token).subscribe(res => {
-        if (res.token) this.changeAuthToken(res.token);
+        if (res.token) this.userDataService.changeAuthToken(res.token);
         return resolve(res.status === 200 ? true : false);
       });
     });
@@ -136,19 +138,19 @@ export class AuthService {
     localStorage.setItem('user', user);
   };
 
-  async isExpired(token: string): Promise<any> {
+  async isExpired(token: string, user: any): Promise<any> {
     const expired = this.jwt.isTokenExpired(token);
     if (!expired) return expired;
 
     const expiredCheck = await new Promise(resolve => {
       const payload = {
-        user: this.userDataSource.value,
-        token: this.authTokenSource.value
+        user: user,
+        token: token
       };
 
       this.editAccountService.requestNewToken(payload).subscribe(res => {
         if (!res.success) return resolve(true);
-        this.changeAuthToken(res.token);
+        this.userDataService.changeAuthToken(res.token);
         return resolve(false);
       });
     });
@@ -156,10 +158,7 @@ export class AuthService {
     return expiredCheck;
   };
 
-  logout(): void {
-    const user = this.userDataSource.value ? this.userDataSource.value
-    : this.parseLocalStorageUser();
-
+  logout(user: any): void {
     if (user) {
       this.socketioService.emitLogout(user);
       this.onLogout(user._id).subscribe(_user => {});
@@ -167,54 +166,48 @@ export class AuthService {
 
     this.chatService.changeOpenChats([]);
     this.redirectService.handleRedirect('home');
-    this.changeAuthToken(null);
-    this.changeUserData(null);
+    this.userDataService.changeAuthToken(null);
+    this.userDataService.changeUserData(null);
     localStorage.clear();
   };
 
-  onReload(): void {
-    if (this.userDataSource.value && this.authTokenSource.value) return;
+  onReload(user: any, token: string): void {
+    if (user && token) return;
     const localUser = this.parseLocalStorageUser();
     const localToken = localStorage.getItem('id_token');
 
     if (localUser && localToken) {
-      this.changeAuthToken(localStorage.getItem('id_token'));
-      this.changeUserData(localUser);
-      this.socketioService.emitLogin(this.userDataSource.value);
+      this.userDataService.changeAuthToken(localStorage.getItem('id_token'));
+      this.userDataService.changeUserData(localUser);
+      this.socketioService.emitLogin(localUser);
       return;
     };
     
-    this.logout();
+    this.logout(user);
   };
 
   // =======================
   // || Auth Guard Checks ||
   // =======================
 
-  async handleDispatchCheck(): Promise<boolean> {
-    const token = this.authTokenSource.value ? this.authTokenSource.value
-    : localStorage.getItem('id_token');
+  async handleDispatchCheck(token: string, user: any): Promise<boolean> {
     if (!token) return this.redirectService.falseCheckRedirect('home');
     const valid = await this.compareToken(token);
-    const expired = await this.isExpired(token);
+    const expired = await this.isExpired(token, user);
 
     if (expired || !valid) {
-      this.logout();
+      this.logout(user);
       return false;
     };
 
     return true;
   };
 
-  async handleAdminCheck(): Promise<boolean> {
-    const token = this.authTokenSource.value ? this.authTokenSource.value
-    : localStorage.getItem('id_token');
-    let user = this.userDataSource.value ? this.userDataSource.value
-    : localStorage.getItem('user');
+  async handleAdminCheck(token: string, user: any): Promise<boolean> {
     if (!user || !token) return this.redirectService.falseCheckRedirect('home');
     if (typeof(user) === 'string') user = JSON.parse(user);
     const check = await this.adminCheckParser(user._id, token);
-    if (!check) this.logout();
+    if (!check) this.logout(user);
     return check;
   };
 
@@ -222,27 +215,27 @@ export class AuthService {
   // || Change Observables ||
   // ========================
 
-  changeAuthToken(token: string | null): void {
-    this.authTokenSource.next(token);
-    if (token && token !== localStorage.getItem('id_token')) localStorage.setItem('id_token', token);
-  };
+  // changeAuthToken(token: string | null): void {
+  //   this.authTokenSource.next(token);
+  //   if (token && token !== localStorage.getItem('id_token')) localStorage.setItem('id_token', token);
+  // };
 
-  changeUserData(user: any): void {
-    if (!user) return this.userDataSource.next(null);
-    let payload: any = {
-      _id: user._id,
-      username: user.username,
-      name: user.name,
-      accountType: user.accountType
-    };
+  // changeUserData(user: any): void {
+  //   if (!user) return this.userDataSource.next(null);
+  //   let payload: any = {
+  //     _id: user._id,
+  //     username: user.username,
+  //     name: user.name,
+  //     accountType: user.accountType
+  //   };
 
-    if (user.accountType === 'doctor') {
-      payload.status = user.status,
-      payload.videoCall = user.videoCall
-    };
+  //   if (user.accountType === 'doctor') {
+  //     payload.status = user.status,
+  //     payload.videoCall = user.videoCall
+  //   };
 
-    this.userDataSource.next(payload);
-    const stringUser = JSON.stringify(payload);
-    if (stringUser !== localStorage.getItem('user')) localStorage.setItem('user', stringUser);
-  };
+  //   this.userDataSource.next(payload);
+  //   const stringUser = JSON.stringify(payload);
+  //   if (stringUser !== localStorage.getItem('user')) localStorage.setItem('user', stringUser);
+  // };
 }

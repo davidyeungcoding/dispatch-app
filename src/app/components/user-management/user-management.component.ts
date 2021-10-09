@@ -4,6 +4,7 @@ import { RedirectService } from 'src/app/services/redirect.service';
 import { SearchService } from 'src/app/services/search.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { EditAccountService } from 'src/app/services/edit-account.service';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 import { Subscription } from 'rxjs';
 
@@ -31,12 +32,13 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
     private redirectService: RedirectService,
     private searchService: SearchService,
     private authService: AuthService,
-    private editAccountService: EditAccountService
+    private editAccountService: EditAccountService,
+    private userDataService: UserDataService
   ) { }
 
   ngOnInit(): void {
     this.subscriptions.add(this.searchService.accountList.subscribe(_list => this.accountList = _list));
-    this.subscriptions.add(this.authService.authToken.subscribe(_token => this.token = _token));
+    this.subscriptions.add(this.userDataService.authToken.subscribe(_token => this.token = _token));
     this.getAccountList(this.token);
   }
 
