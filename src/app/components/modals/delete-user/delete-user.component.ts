@@ -86,41 +86,6 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
   // =======================
   // || General Functions ||
   // =======================
-  
-  // onDeleteAccount(form: NgForm): void {
-  //   if (this.onDeleteOwnAccount(form)) return;
-  //   $('.msg-container').css('display', 'none');
-  //   const username = form.value.username.trim();
-  //   const password = form.value.password.trim();
-  //   if (this.checkFilledForm(form, username, password)) return;
-
-  //   const payload = {
-  //     username: username,
-  //     password: password,
-  //     targetId: this.targetAccount._id
-  //   };
-
-  //   this.editAccountService.deleteUser(payload, this.token).subscribe(_res => {
-  //     if (!_res.success) {
-  //       this.errorMessage = _res.msg;
-  //       $('#confirmError').css('display', 'inline');
-  //       form.reset({ username: username, password: '' });
-  //       return;
-  //     };
-
-  //     this.socketioService.emitDeleteUser(this.targetAccount._id);
-  //     if (_res.token) this.userDataService.changeAuthToken(_res.token);
-  //     this.removeUserFromList(payload.targetId);
-  //     this.successMessage = _res.msg;
-  //     $('#confirmSuccess').css('display', 'inline');
-
-  //     setTimeout(() => {
-  //       $('#confirmSuccess').css('display', 'none');
-  //       form.reset({ username: '', password: '' });
-  //       (<any>$('#confirmModal')).modal('hide');
-  //     }, 1000);
-  //   });
-  // };
 
   onDeleteAccount(form: NgForm, payload: any): void {
     if (this.onDeleteOwnAccount(form)) return;
