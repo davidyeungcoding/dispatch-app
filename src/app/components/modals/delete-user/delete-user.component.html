@@ -1,6 +1,7 @@
-<form #confirmDeletion="ngForm"
+<form #confirmForm="ngForm"
   class="create-form modal-form"
-  (ngSubmit)="onDeleteAccount(confirmDeletion)">
+  (ngSubmit)="onSubmitConfirm(confirmForm)">
+  <!-- (ngSubmit)="onDeleteAccount(confirmForm)"> -->
   <div class="form-group text-field">
     <label for="username">Admin Username:</label>
 
@@ -22,12 +23,12 @@
   </div>
 
   <div class="msg-container"
-    id="deleteError">
+    id="confirmError">
     <p class="error-msg">{{ errorMessage }}</p>
   </div>
 
   <div class="msg-container"
-    id="deleteSuccess">
+    id="confirmSuccess">
     <p class="success-msg">{{ successMessage }}</p>
   </div>
 

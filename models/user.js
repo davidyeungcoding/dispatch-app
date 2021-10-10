@@ -93,6 +93,16 @@ module.exports.changeOne = (id, update, callback) => {
   this.userModel.findByIdAndUpdate(id, update, options, callback);
 };
 
+module.exports.resetPassword = (id, newPassword, callback) => {
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(newPassword, salt, (err, hash) => {
+      if (err) throw err;
+      newPassword = hash;
+      this.userModel.findByIdAndUpdate(id, { $set: { password: newPassword } }, callback);
+    });
+  });
+};
+
 module.exports.updateAccount = (username, update, callback) => {
   const options = { new: true };
 

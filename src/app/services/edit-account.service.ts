@@ -8,8 +8,8 @@ import { BehaviorSubject, of } from 'rxjs';
   providedIn: 'root'
 })
 export class EditAccountService {
-  // private api = 'http://localhost:3000/users'; // dev
-  private api = 'users'; // production
+  private api = 'http://localhost:3000/users'; // dev
+  // private api = 'users'; // production
 
   // ================
   // || Observable ||
@@ -82,6 +82,14 @@ export class EditAccountService {
     const validateHeader = this.buildHeader(payload.token);
 
     return this.http.post(`${this.api}/request-new-token`, payload.user, validateHeader).pipe(
+      catchError(err => of(err))
+    );
+  };
+
+  resetPassword(payload: any, token: string) {
+    const validateHeader = this.buildHeader(token);
+
+    return this.http.put(`${this.api}/reset-password`, payload, validateHeader).pipe(
       catchError(err => of(err))
     );
   };

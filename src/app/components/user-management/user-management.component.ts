@@ -23,7 +23,8 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   activeVideoCall: boolean = false;
   activeAccountType: boolean = false;
   targetEdit: any = null;
-  targetDelete: any = null;
+  targetAccount: any = null;
+  action: string = '';
   errorMessage: string = '';
   successMessage: string = '';
   accountList: any = [];
@@ -100,8 +101,10 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
     this.sortList(this.accountList, term);
   };
 
-  onMarkedForDeletion(user: any): void {
-    this.targetDelete = user;
+  onMarkeUser(user: any, action: string): void {
+    $('.msg-container').css('display', 'none');
+    this.targetAccount = user;
+    this.action = action;
   };
 
   onMarkedForEdit(user: any): void {

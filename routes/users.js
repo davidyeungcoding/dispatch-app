@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 module.exports = router;
 
@@ -275,6 +276,28 @@ router.put('/change-one', authenticateToken, async (req, res, next) => {
       : res.json({ success: false, status: 403, msg: 'Unable to update user' });
     });
   } catch { return res.json({ success: false, status: 400, msg: 'Unable to process request at this time' })};
+});
+
+router.put('/reset-password', authenticateToken, async (req, res, next) => {
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
+    const targetId = req.body.targetId;
+    if (!username || !password || !targetId || targetId.length !== 24) return res.json({ success: false, status: 400, msg: 'Invalid request' });
+    const tokenUser = req.user;
+    if (tokenUser.username !== username) return res.json({ success: false, status: 401, msg: 'Entered credentials does not match recorded data' });
+    const checkAdmin = await adminCheck(username, password);
+    if (!checkAdmin.success) return res.json(checkAdmin);
+    const newPassword = crypto.randomBytes(10).toString('hex');
+
+    User.resetPassword(targetId, newPassword, (err, _res) => {
+      if (err) throw err;
+      const response = _res ? { success: true, status: 200, msg: `Password reset: ${newPassword}` }
+      : { success: false, status: 400, msg: 'User not found' };
+      if (req.token) response.token = req.token;
+      return res.json(response);
+    })
+  } catch { res.json({ success: false, status: 400, msg: 'Unable to complete request at this time' }) };
 });
 
 router.put('/edit-account', authenticateToken, async (req, res, next) => {

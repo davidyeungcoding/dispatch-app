@@ -19,6 +19,8 @@
   
           <th class="btn-header">Delete</th>
   
+          <th class="btn-header">Password</th>
+  
           <th (click)="onSortBy('name')">
             <div class="table-header-group">
               <span class="table-header-title">Name</span>
@@ -90,8 +92,16 @@
             <button type="button"
               class="btn table-btn-ctrl"
               data-bs-toggle="modal"
-              data-bs-target="#confirmDeletion"
-              (click)="onMarkedForDeletion(user)"><i class="far fa-trash-alt"></i></button>
+              data-bs-target="#confirmModal"
+              (click)="onMarkeUser(user, 'delete')"><i class="far fa-trash-alt"></i></button>
+          </td>
+  
+          <td class="btn-data">
+            <button type="button"
+              class="btn btn-secondary table-btn-ctrl"
+              data-bs-toggle="modal"
+              data-bs-target="#confirmModal"
+              (click)="onMarkeUser(user, 'reset')">Reset</button>
           </td>
   
           <td class="proper-name">{{ user.name }}</td>
@@ -108,7 +118,7 @@
 </div>
 
 <div class="modal fade"
-  id="confirmDeletion"
+  id="confirmModal"
   tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content modal-card">
@@ -123,7 +133,8 @@
         </div>
 
         <app-delete-user
-          [targetDelete]="targetDelete"
+          [targetAccount]="targetAccount"
+          [action]="action"
           [accountList]="accountList">
         </app-delete-user>
       </div>

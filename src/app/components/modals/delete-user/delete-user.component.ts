@@ -14,8 +14,9 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./delete-user.component.css']
 })
 export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() targetDelete: any;
+  @Input() targetAccount: any;
   @Input() accountList: any;
+  @Input() action: any;
   private subscriptions: Subscription = new Subscription();
   private userData: any = null;
   private token: string = '';
@@ -46,14 +47,14 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
   // ======================
 
   onDeleteOwnAccount(form: NgForm): boolean {
-    if (this.userData._id === this.targetDelete._id) {
+    if (this.userData._id === this.targetAccount._id) {
       this.errorMessage = 'Cannot delete your own account';
-      $('#deleteError').css('display', 'inline');
+      $('#confirmError').css('display', 'inline');
 
       setTimeout(() => {
         form.reset({ username: '', password: '' });
-        $('#deleteError').css('display', 'none');
-        (<any>$('#confirmDeletion')).modal('hide');
+        $('#confirmError').css('display', 'none');
+        (<any>$('#confirmModal')).modal('hide');
       }, 1500);
 
       return true;
@@ -76,7 +77,7 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
   checkFilledForm(form: NgForm, username: string, password: string): boolean {
     if (!username || !password) {
       this.errorMessage = 'Please be sure to fill out all fields';
-      $('#deleteError').css('display', 'inline');
+      $('#confirmError').css('display', 'inline');
       form.reset({ username: username, password: '' });
       return true;
     } else return false;
@@ -86,8 +87,83 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
   // || General Functions ||
   // =======================
   
-  onDeleteAccount(form: NgForm): void {
+  // onDeleteAccount(form: NgForm): void {
+  //   if (this.onDeleteOwnAccount(form)) return;
+  //   $('.msg-container').css('display', 'none');
+  //   const username = form.value.username.trim();
+  //   const password = form.value.password.trim();
+  //   if (this.checkFilledForm(form, username, password)) return;
+
+  //   const payload = {
+  //     username: username,
+  //     password: password,
+  //     targetId: this.targetAccount._id
+  //   };
+
+  //   this.editAccountService.deleteUser(payload, this.token).subscribe(_res => {
+  //     if (!_res.success) {
+  //       this.errorMessage = _res.msg;
+  //       $('#confirmError').css('display', 'inline');
+  //       form.reset({ username: username, password: '' });
+  //       return;
+  //     };
+
+  //     this.socketioService.emitDeleteUser(this.targetAccount._id);
+  //     if (_res.token) this.userDataService.changeAuthToken(_res.token);
+  //     this.removeUserFromList(payload.targetId);
+  //     this.successMessage = _res.msg;
+  //     $('#confirmSuccess').css('display', 'inline');
+
+  //     setTimeout(() => {
+  //       $('#confirmSuccess').css('display', 'none');
+  //       form.reset({ username: '', password: '' });
+  //       (<any>$('#confirmModal')).modal('hide');
+  //     }, 1000);
+  //   });
+  // };
+
+  onDeleteAccount(form: NgForm, payload: any): void {
     if (this.onDeleteOwnAccount(form)) return;
+
+    this.editAccountService.deleteUser(payload, this.token).subscribe(_res => {
+      if (!_res.success) {
+        this.errorMessage = _res.msg;
+        $('#confirmError').css('display', 'inline');
+        form.reset({ username: payload.username, password: '' });
+        return;
+      };
+
+      this.socketioService.emitDeleteUser(this.targetAccount._id);
+      if (_res.token) this.userDataService.changeAuthToken(_res.token);
+      this.removeUserFromList(payload.targetId);
+      this.successMessage = _res.msg;
+      $('#confirmSuccess').css('display', 'inline');
+
+      setTimeout(() => {
+        $('#confirmSuccess').css('display', 'none');
+        form.reset({ username: '', password: '' });
+        (<any>$('#confirmModal')).modal('hide');
+      }, 1000);
+    });
+  };
+
+  onResetPassword(form: NgForm, payload: any): void {
+    this.editAccountService.resetPassword(payload, this.token).subscribe(_res => {
+      if (!_res.success) {
+        this.errorMessage = _res.msg;
+        $('#confirmError').css('display', 'inline');
+        form.reset({ username: payload.username, password: '' });
+        return;
+      };
+
+      if (_res.toekn) this.userDataService.changeAuthToken(_res.token);
+      this.successMessage = _res.msg;
+      $('#confirmSuccess').css('display', 'inline');
+      form.reset({ username: '', password: '' });
+    });
+  };
+
+  onSubmitConfirm(form: NgForm): void {
     $('.msg-container').css('display', 'none');
     const username = form.value.username.trim();
     const password = form.value.password.trim();
@@ -96,28 +172,16 @@ export class DeleteUserComponent implements OnInit, OnDestroy, AfterViewInit {
     const payload = {
       username: username,
       password: password,
-      targetId: this.targetDelete._id
+      targetId: this.targetAccount._id
     };
 
-    this.editAccountService.deleteUser(payload, this.token).subscribe(_res => {
-      if (!_res.success) {
-        this.errorMessage = _res.msg;
-        $('#deleteError').css('display', 'inline');
-        form.reset({ username: username, password: '' });
-        return;
-      };
-
-      this.socketioService.emitDeleteUser(this.targetDelete._id);
-      if (_res.token) this.userDataService.changeAuthToken(_res.token);
-      this.removeUserFromList(payload.targetId);
-      this.successMessage = _res.msg;
-      $('#deleteSuccess').css('display', 'inline');
-
-      setTimeout(() => {
-        $('#deleteSuccess').css('display', 'none');
-        form.reset({ username: '', password: '' });
-        (<any>$('#confirmDeletion')).modal('hide');
-      }, 1000);
-    });
+    switch (this.action) {
+      case 'delete':
+        this.onDeleteAccount(form, payload);
+        break;
+      case 'reset':
+        this.onResetPassword(form, payload);
+        break;
+    };
   };
 }
