@@ -1,3 +1,62 @@
+/* ================================ */
+/* || Dispatch Navigation Button || */
+/* ================================ */
+
+.dispatch-nav-btn {
+  display: none;
+}
+
+.dispatch-nav-btn {
+  position: fixed;
+  top: 50vh;
+  height: 125px;
+  width: 30px;
+  padding: 0;
+}
+
+#dispatch-btn-left {
+  left: 0;
+}
+
+#dispatch-btn-right {
+  right: 0;
+}
+
+@media screen and (max-width: 767px) {
+  .dispatch-nav-btn {
+    display: inline;
+  }
+}
+
+/* ==================== */
+/* || Dispatch Group || */
+/* ==================== */
+
+#dispatchScrollContent {
+  scroll-behavior: smooth;
+}
+
+.dispatch-dispatch, .dispatch-doctor {
+  width: 50%;
+}
+
+@media screen and (max-width: 767px) {
+  .dispatch-container {
+    overflow: auto;
+    min-width: 100vw;
+  }
+  
+  #dispatchRow {
+    width: 200vw;
+  }
+
+  .dispatch-dispatch, .dispatch-doctor {
+    width: 100vw;
+    padding: 0 5%;
+  }
+}
+
+
 /* ========== */
 /* || Card || */
 /* ========== */

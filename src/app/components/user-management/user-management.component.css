@@ -2,8 +2,13 @@
 /* || Table || */
 /* =========== */
 
+.table-back-btn {
+  padding: 15px 0;
+}
+
 .table-container-container {
-  padding: 50px;
+  padding: 0 50px 50px;
+  margin-bottom: 20px;
   background-color: var(--color-table-background);
   border-radius: 35px;
 }

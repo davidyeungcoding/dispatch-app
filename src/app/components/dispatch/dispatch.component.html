@@ -1,8 +1,18 @@
 <app-nav></app-nav>
 
-<div class="container nav-offset">
-  <div class="row">
-    <div class="col">
+<div class="container dispatch-container nav-offset" id="dispatchScrollContent">
+  <button type="button"
+    class="btn btn-secondary dispatch-nav-btn"
+    id="dispatch-btn-left"
+    (click)="onScroll('left')"><i class="fas fa-chevron-circle-left"></i></button>
+
+  <button type="button"
+    class="btn btn-secondary dispatch-nav-btn"
+    id="dispatch-btn-right"
+    (click)="onScroll('right')"><i class="fas fa-chevron-circle-right"></i></button>
+
+  <div class="row" id="dispatchRow">
+    <div class="col dispatch-dispatch">
       <div *ngFor="let user of userList">
         <div class="row user-card">
           <div class="col">
@@ -22,7 +32,7 @@
       </div>
     </div>
   
-    <div class="col">
+    <div class="col dispatch-doctor">
       <div *ngFor="let doctor of doctorList">
         <div class="row user-card">
           <div class="col">

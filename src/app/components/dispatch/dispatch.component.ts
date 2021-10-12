@@ -194,4 +194,15 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
       (<any>$('#sendText')).modal('toggle');
     }, 1000);
   };
+
+  onScroll(direction: string): void {
+    switch (direction) {
+      case 'left':
+        $('#dispatchScrollContent')[0].scrollLeft = 0;
+        break;
+      case 'right':
+        $('#dispatchScrollContent')[0].scrollLeft = 767;
+        break;
+    };
+  };
 }
