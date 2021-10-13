@@ -249,7 +249,7 @@ tr:nth-of-type(even) {
 }
 
 .nav-offset {
-  margin-top: 108px;
+  padding-top: 108px;
 }
 
 html {

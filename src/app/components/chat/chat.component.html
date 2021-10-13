@@ -59,7 +59,7 @@
         <div id="buffer"></div>
       </div>
   
-      <div class="chat-text-area">
+      <div class="chat-text-area" id="{{ conversation._id }}TextArea">
         <form #chatMessageForm="ngForm"
           class="chat-msg-form"
           (ngSubmit)="onSendMessage(conversation, chatMessageForm)">

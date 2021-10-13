@@ -16,7 +16,7 @@
       <div *ngFor="let user of userList">
         <div class="row user-card">
           <div class="col">
-            <div class="row">
+            <div class="row card-headers">
               <h4 class="user-title">{{ user.name }}</h4>
 
               <h6 class="user-title">{{ user.accountType }}</h6>
@@ -36,10 +36,8 @@
       <div *ngFor="let doctor of doctorList">
         <div class="row user-card">
           <div class="col">
-            <div class="row">
+            <div class="row card-headers">
               <h4 class="user-title">{{ doctor.name }}</h4>
-              
-              <h6 class="user-title">{{ doctor.accountType }}</h6>
               
               <h6 *ngIf="doctor.status === 'available'; else unavailable" class="user-title available">{{ doctor.status }}</h6>
 
@@ -54,6 +52,7 @@
                 class="btn btn-secondary btn-input-btn"
                 data-bs-toggle="modal"
                 data-bs-target="#editCallLink"
+                title="Edit"
                 (click)="storeTarget(doctor)">
                 <i class="far fa-edit"></i>
               </button>
@@ -61,6 +60,7 @@
               <ng-template #copyButton>
                 <button type="button"
                   class="btn btn-secondary btn-input-btn"
+                  title="Copy"
                   (click)="onCopyLink(doctor.videoCall)">
                   <i class="far fa-copy"></i>
                 </button>
@@ -71,19 +71,12 @@
 
             <div *ngIf="doctor._id === userData._id; else guestView" class="row btn-container">
               <button type="button"
-                class="btn btn-secondary card-btn"
-                (click)="onChangeStatus('available')">Available</button>
-
-              <button type="button"
-                class="btn btn-secondary card-btn"
-                (click)="onChangeStatus('busy')">Busy</button>
-
-              <button type="button"
-                class="btn btn-secondary card-btn"><i class="far fa-comment-alt"></i>&nbsp;Chat</button>
-              </div>
+                class="btn btn-secondary card-btn user-title"
+                (click)="onChangeStatus()">{{ btnStatus }}</button>
+            </div>
               
             <ng-template #guestView>
-              <div class="row user-btn-container">
+              <div class="row btn-container">
                 <button type="button"
                   class="btn btn-secondary card-btn guest-btn"
                   data-bs-toggle="modal"

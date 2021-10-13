@@ -27,6 +27,8 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   doctorList: any = [];
   callLinkError: string = '';
   textResponse: any = {};
+  doctorStatus: string = 'available';
+  btnStatus: string = 'busy';
 
   constructor(
     private authService: AuthService,
@@ -87,10 +89,10 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
   // || General Functions ||
   // =======================
 
-  onChangeStatus(status: string): void {
-    if (this.userData.status === status) return;
-    this.userData.status = status;
-    this.socketioService.emitStatus(status);
+  onChangeStatus(): void {
+    [this.btnStatus, this.doctorStatus] = [this.doctorStatus, this.btnStatus];
+    this.userData.status = this.doctorStatus;
+    this.socketioService.emitStatus(this.doctorStatus);
   };
 
   onChangeCallLink(form: NgForm): void {

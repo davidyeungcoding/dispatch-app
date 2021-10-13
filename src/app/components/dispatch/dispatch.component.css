@@ -16,10 +16,12 @@
 
 #dispatch-btn-left {
   left: 0;
+  border-radius: 0 5px 5px 0;
 }
 
 #dispatch-btn-right {
   right: 0;
+  border-radius: 5px 0 0 5px;
 }
 
 @media screen and (max-width: 767px) {
@@ -31,6 +33,10 @@
 /* ==================== */
 /* || Dispatch Group || */
 /* ==================== */
+
+.dispatch-container {
+  height: 100vh;
+}
 
 #dispatchScrollContent {
   scroll-behavior: smooth;
@@ -68,6 +74,10 @@
   margin: 10px 0;
 }
 
+.card-headers {
+  justify-content: space-evenly;
+}
+
 .user-title {
   color: var(--color-text-light);
   width: fit-content;
@@ -90,25 +100,52 @@
 }
 
 .btn-input-btn {
-  width: 10%;
+  width: 15%;
 }
 
 .btn-input-input {
   color: var(--color-text-light);
-  width: 90%;
+  width: 85%;
   padding: 10px 15px;
   margin: 0;
   background-color: var(--color-section-background);
 }
 
+@media screen and (max-width: 767px) {
+  .btn-input-btn {
+    width: 10%;
+  }
+
+  .btn-input-input {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .btn-input-btn {
+    width: 15%;
+    padding: 0;
+  }
+
+  .btn-input-input {
+    width: 85%;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .card-headers {
+    flex-direction: column;
+  }
+
+  .user-title {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* ================== */
 /* || Card Control || */
 /* ================== */
-
-.user-btn-container {
-  display: flex;
-  justify-content: flex-end;
-}
 
 .btn-container {
   display: flex;
@@ -116,7 +153,7 @@
 }
 
 .card-btn {
-  width: 30%;
+  width: 46%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,6 +170,17 @@
 
 .guest-btn:last-child {
   margin-right: 0;
+}
+
+@media screen and (max-width: 400px) {
+  .card-btn {
+    width: 100%;
+    margin: 0 0 10px 0;
+  }
+
+  .card-btn:last-of-type {
+    margin: 0;
+  }
 }
 
 /* =========== */
