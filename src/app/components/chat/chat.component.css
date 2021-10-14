@@ -12,6 +12,7 @@
   width: 225px;
   margin: 0 10px;
   background-color:var(--color-chat-background);
+  align-self: flex-end;
 }
 
 .chat-box:first-child {

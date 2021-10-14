@@ -95,16 +95,16 @@ export class ChatComponent implements OnInit, OnDestroy {
   };
 
   onResize(conversation: ChatEntry): void {
-    // const node = $(`#${conversation._id}MinimizeContent`);
-    // conversation.minimize ? node.css('display', 'none') : node.css('display', 'inline');
     const id = conversation._id;
+
     if (conversation.minimize) {
-      $(`#${id}ChatBox`).css('height', '36');
       $(`#${id}MinimizeContent`).css('display', 'none');
+      $(`#${id}ChatBox`).css('height', '36px');
     } else {
-      $(`#${id}ChatBox`).css('height', '296');
       $(`#${id}MinimizeContent`).css('display', 'inline');
-    }
+      $(`#${id}ChatBox`).css('height', '296px');
+    };
+
     conversation.minimize = !conversation.minimize;
   };
 
