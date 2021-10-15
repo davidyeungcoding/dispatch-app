@@ -35,6 +35,7 @@
 /* ==================== */
 
 .dispatch-container {
+  overflow: hidden;
   height: 100vh;
 }
 
@@ -42,13 +43,14 @@
   scroll-behavior: smooth;
 }
 
-.dispatch-dispatch, .dispatch-doctor {
+.dispatch-group {
   width: 50%;
+  height: 80vh;
+  overflow-y: auto;
 }
 
 @media screen and (max-width: 767px) {
   .dispatch-container {
-    overflow: auto;
     min-width: 100vw;
   }
   
@@ -56,7 +58,7 @@
     width: 200vw;
   }
 
-  .dispatch-dispatch, .dispatch-doctor {
+  .dispatch-group {
     width: 100vw;
     padding: 0 5%;
   }
@@ -71,7 +73,7 @@
   background-color: var(--color-card-background);
   padding: 20px;
   border-radius: 5px;
-  margin: 10px 0;
+  margin: 15px 0;
 }
 
 .card-headers {
@@ -79,11 +81,20 @@
 }
 
 .user-title {
-  color: var(--color-text-light);
   width: fit-content;
   text-transform: capitalize;
   display: flex;
   align-self: flex-end;
+}
+
+.card-name {
+  overflow: hidden;
+  background: linear-gradient(to right,
+    var(--color-text-light) 90%,
+    var(--color-card-background) 100%
+  );
+  background-clip: text;
+  color: transparent;
 }
 
 .available {

@@ -180,9 +180,14 @@ io.on('connection', socket => {
 
   socket.on('send-user-update', user => {
     console.log(`========================||        User Update        ||=======================`);
+    const targetUser = userList[userToSocket[user._id]];
+    targetUser.name = user.name;
+    targetUser.username = user.username;
+    targetUser.accountType = user.accountType;
+    if (user.accountType === 'doctor' && user.videoCall) targetUser.videoCall = user.videoCall;
     if (!userToSocket[user._id]) return;
-    if (userToSocket[user._id] !== socket.id) io.to(userToSocket[user._id]).emit('receive-user-update', user);
-    userList[userToSocket[user._id]] = user;
+    if (userToSocket[user._id] !== socket.id) io.to(userToSocket[user._id]).emit('receive-user-update', targetUser);
+    userList[userToSocket[user._id]] = targetUser;
     io.emit('user-list-update', userList);
   });
 });
@@ -192,8 +197,8 @@ io.on('connection', socket => {
 // ================
 
 app.use(cors());
-// app.use(express.static(path.join(__dirname, 'src'))); // dev
-app.use(express.static(path.join(__dirname, '/dist/dispatch-app'))); // production
+app.use(express.static(path.join(__dirname, 'src'))); // dev
+// app.use(express.static(path.join(__dirname, '/dist/dispatch-app'))); // production
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({
   extended: false

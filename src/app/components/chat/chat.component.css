@@ -48,6 +48,13 @@
 .chat-name {
   text-transform: capitalize;
   margin: 0 0 0 10px;
+  overflow: hidden;
+  background: linear-gradient(to right,
+    var(--color-text-light) 95%,
+    var(--color-window-control) 100%
+  );
+  background-clip: text;
+  color: transparent;
 }
 
 .control-btn-container {
