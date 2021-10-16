@@ -110,36 +110,7 @@
             aria-label="Close"></button>
         </div>
 
-        <form #changeCallLink="ngForm"
-          class="create-form modal-form"
-          (ngSubmit)="onChangeCallLink(changeCallLink)">
-          <div class="form-group text-field">
-            <input type="text"
-              class="form-control"
-              id="callLink"
-              name="callLink"
-              ngModel>
-          </div>
-
-          <div class="msg-container"
-            id="callLinkErrorContainer">
-            <p class="error-msg">{{ callLinkError }}</p>
-          </div>
-
-          <div class="msg-container"
-            id="callLinkSuccessContainer">
-            <p class="success-msg">Link successfully updated</p>
-          </div>
-
-          <div class="custom-modal-footer">
-            <button type="submit"
-              class="btn btn-secondary modal-btn">Submit</button>
-    
-            <button type="button"
-              class="btn btn-secondary modal-btn"
-              data-bs-dismiss="modal">Cancel</button>
-          </div>
-        </form>
+        <app-video-call [target]="target"></app-video-call>
       </div>
     </div>
   </div>
@@ -161,7 +132,8 @@
           </button>
         </div>
 
-        <form #sendTextMessage="ngForm"
+        <app-send-text [currentLink]="currentLink"></app-send-text>
+        <!-- <form #sendTextMessage="ngForm"
           class="create-form modal-form"
           (ngSubmit)="onSendTextMessage(sendTextMessage)">
           <div class="form-group text-field">
@@ -188,7 +160,7 @@
               class="btn btn-secondary modal-btn"
               data-bs-dismiss="modal">Cancel</button>
           </div>
-        </form>
+        </form> -->
       </div>
     </div>
   </div>

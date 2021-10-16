@@ -85,6 +85,12 @@ p, button, a, label, span {
   color: var(--color-text-light);
 }
 
+@media screen and (max-width: 767px) {
+  .back-btn-container {
+    padding: 0;
+  }
+}
+
 /* =========== */
 /* || Forms || */
 /* =========== */
@@ -120,7 +126,7 @@ p, button, a, label, span {
 }
 
 .form-btn {
-  width: 35%;
+  width: 45%;
 }
 
 .radio-control-container {
@@ -142,6 +148,30 @@ input[type=radio] {
 
 .radio-label {
   margin-left: 8px;
+}
+
+@media screen and (max-width: 767px) {
+  .form-container {
+    padding: 0 10%;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .form-container {
+    padding: 0 5%;
+  }
+
+  .form-btn-container {
+    flex-direction: column;
+  }
+
+  .form-btn {
+    width: 100%;
+  }
+
+  .form-btn:first-of-type {
+    margin-bottom: 15px;
+  }
 }
 
 /* ============ */

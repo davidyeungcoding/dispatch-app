@@ -193,11 +193,3 @@
     margin: 0;
   }
 }
-
-/* =========== */
-/* || Modal || */
-/* =========== */
-
-.error-msg, .success-msg {
-  margin-bottom: 10px;
-}

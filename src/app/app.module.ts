@@ -15,6 +15,8 @@ import { EditAccountComponent } from './components/edit-account/edit-account.com
 import { UserManagementComponent } from './components/user-management/user-management.component';
 import { DeleteUserComponent } from './components/modals/delete-user/delete-user.component';
 import { EditUserComponent } from './components/modals/edit-user/edit-user.component';
+import { VideoCallComponent } from './components/modals/video-call/video-call.component';
+import { SendTextComponent } from './components/modals/send-text/send-text.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { EditUserComponent } from './components/modals/edit-user/edit-user.compo
     EditAccountComponent,
     UserManagementComponent,
     DeleteUserComponent,
-    EditUserComponent
+    EditUserComponent,
+    VideoCallComponent,
+    SendTextComponent
   ],
   imports: [
     BrowserModule,

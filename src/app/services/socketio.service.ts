@@ -141,7 +141,7 @@ export class SocketioService {
     });
 
     this.socket.on('sent-text', (payload: any) => {
-      this.textMessageService.processTextResponse(payload);
+      this.textMessageService.changeResponseMessage(payload);
     });
 
     this.socket.on('force-logout', () => {

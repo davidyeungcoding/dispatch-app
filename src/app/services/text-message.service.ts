@@ -19,14 +19,6 @@ export class TextMessageService {
   responseMessage = this.responseMessageSource.asObservable();
 
   constructor() { }
-
-  // ======================
-  // || Shared Functions ||
-  // ======================
-
-  processTextResponse(payload: any): void {
-    this.changeResponseMessage(payload);
-  };
   
   // ========================
   // || Change Observables ||

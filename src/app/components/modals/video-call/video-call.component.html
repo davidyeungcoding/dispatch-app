@@ -1,0 +1,30 @@
+<form #changeCallLink="ngForm"
+  class="create-form modal-form"
+  (ngSubmit)="onChangeCallLink(changeCallLink)">
+  <div class="form-group text-field">
+    <input type="text"
+      class="form-control"
+      id="callLink"
+      name="callLink"
+      ngModel>
+  </div>
+
+  <div class="msg-container"
+    id="callLinkErrorContainer">
+    <p class="error-msg">{{ callLinkError }}</p>
+  </div>
+
+  <div class="msg-container"
+    id="callLinkSuccessContainer">
+    <p class="success-msg">Link successfully updated</p>
+  </div>
+
+  <div class="custom-modal-footer">
+    <button type="submit"
+      class="btn btn-secondary modal-btn">Submit</button>
+
+    <button type="button"
+      class="btn btn-secondary modal-btn"
+      data-bs-dismiss="modal">Cancel</button>
+  </div>
+</form>

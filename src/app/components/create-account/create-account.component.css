@@ -5,3 +5,18 @@
 .form-btn-container {
   margin-top: 1rem;
 }
+
+@media screen and (max-width: 400px) {
+  .radio-control-container {
+    flex-direction: column;
+  }
+
+  .radio-group {
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  .radio-group:last-of-type {
+    margin-bottom: 0;
+  }
+}

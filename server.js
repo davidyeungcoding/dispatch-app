@@ -143,7 +143,7 @@ io.on('connection', socket => {
     const text = payload.message;
     const recipient = payload.sendTo;
     const regex = /^\d{10}$/;
-    const check = regex.test(recipient) && recipient.length === 10;
+    const check = regex.test(recipient);
 
     if (!text || !recipient || !check) {
       const resPayload = {
@@ -180,12 +180,12 @@ io.on('connection', socket => {
 
   socket.on('send-user-update', user => {
     console.log(`========================||        User Update        ||=======================`);
+    if (!userToSocket[user._id]) return;
     const targetUser = userList[userToSocket[user._id]];
     targetUser.name = user.name;
     targetUser.username = user.username;
     targetUser.accountType = user.accountType;
     if (user.accountType === 'doctor' && user.videoCall) targetUser.videoCall = user.videoCall;
-    if (!userToSocket[user._id]) return;
     if (userToSocket[user._id] !== socket.id) io.to(userToSocket[user._id]).emit('receive-user-update', targetUser);
     userList[userToSocket[user._id]] = targetUser;
     io.emit('user-list-update', userList);
