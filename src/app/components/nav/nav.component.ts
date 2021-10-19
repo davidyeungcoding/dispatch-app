@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { AuthService } from 'src/app/services/auth.service';
 import { RedirectService } from 'src/app/services/redirect.service';
@@ -19,7 +20,8 @@ export class NavComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private redirectService: RedirectService,
-    private userDataService: UserDataService
+    private userDataService: UserDataService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -37,6 +39,8 @@ export class NavComponent implements OnInit, OnDestroy {
   };
 
   onRedirect(destination: string): void {
+    const current = this.route.snapshot.routeConfig?.path;
+    if (current === destination) (<any>$('#offcanvasNav')).offcanvas('hide');
     this.redirectService.handleRedirect(destination);
   };
 }

@@ -76,6 +76,10 @@
   margin: 15px 0;
 }
 
+.user-card:first-of-type {
+  margin-top: 0;
+}
+
 .card-headers {
   justify-content: space-evenly;
 }

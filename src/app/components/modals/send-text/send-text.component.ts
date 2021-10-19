@@ -58,7 +58,6 @@ export class SendTextComponent implements OnInit, OnDestroy {
   // =======================
 
   onSendTextMessage(form: NgForm): void {
-    console.log(this.currentLink)
     $('#textResponseContainer').css('dsiplay', 'none');
     const phoneNumber = form.value.phoneNumber.trim();
     if (!phoneNumber) return this.textError('Please enter a phone number');
@@ -77,6 +76,6 @@ export class SendTextComponent implements OnInit, OnDestroy {
       form.reset({ phoneNumber: '' });
       $('#textResponseContainer').css('display', 'none');
       (<any>$('#sendText')).modal('hide');
-    }, 1000);
+    }, 1100);
   };
 }

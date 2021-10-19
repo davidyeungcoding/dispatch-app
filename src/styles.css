@@ -274,12 +274,18 @@ tr:nth-of-type(even) {
 /* || Global || */
 /* ============ */
 
+.control-icon {
+  -ms-transform: scale(1.25);
+  -webkit-transform: scale(1.25);
+  transform: scale(1.25);
+}
+
 .hide-content {
   display: none;
 }
 
 .nav-offset {
-  padding-top: 108px;
+  padding-top: 80px;
 }
 
 html {
