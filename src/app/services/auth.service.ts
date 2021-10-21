@@ -9,7 +9,7 @@ import { EditAccountService } from './edit-account.service';
 import { UserDataService } from './user-data.service';
 
 import { catchError } from 'rxjs/operators';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -23,15 +23,6 @@ export class AuthService {
     })
   };
   private jwt: JwtHelperService = new JwtHelperService();
-
-  // =================
-  // || Observables ||
-  // =================
-
-  // private authTokenSource = new BehaviorSubject<any>(null);
-  // authToken = this.authTokenSource.asObservable();
-  // private userDataSource = new BehaviorSubject<any>(null);
-  // userData = this.userDataSource.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -148,7 +139,7 @@ export class AuthService {
         token: token
       };
 
-      this.editAccountService.requestNewToken(payload).subscribe(res => {
+      this.editAccountService.requestNewToken(payload).subscribe((res: any) => {
         if (!res.success) return resolve(true);
         this.userDataService.changeAuthToken(res.token);
         return resolve(false);
@@ -210,32 +201,4 @@ export class AuthService {
     if (!check) this.logout(user);
     return check;
   };
-
-  // ========================
-  // || Change Observables ||
-  // ========================
-
-  // changeAuthToken(token: string | null): void {
-  //   this.authTokenSource.next(token);
-  //   if (token && token !== localStorage.getItem('id_token')) localStorage.setItem('id_token', token);
-  // };
-
-  // changeUserData(user: any): void {
-  //   if (!user) return this.userDataSource.next(null);
-  //   let payload: any = {
-  //     _id: user._id,
-  //     username: user.username,
-  //     name: user.name,
-  //     accountType: user.accountType
-  //   };
-
-  //   if (user.accountType === 'doctor') {
-  //     payload.status = user.status,
-  //     payload.videoCall = user.videoCall
-  //   };
-
-  //   this.userDataSource.next(payload);
-  //   const stringUser = JSON.stringify(payload);
-  //   if (stringUser !== localStorage.getItem('user')) localStorage.setItem('user', stringUser);
-  // };
 }
