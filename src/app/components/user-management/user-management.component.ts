@@ -2,7 +2,6 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 
 import { RedirectService } from 'src/app/services/redirect.service';
 import { SearchService } from 'src/app/services/search.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { EditAccountService } from 'src/app/services/edit-account.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 
@@ -28,11 +27,11 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
   errorMessage: string = '';
   successMessage: string = '';
   accountList: any = [];
+  editRequest: string = '';
 
   constructor(
     private redirectService: RedirectService,
     private searchService: SearchService,
-    private authService: AuthService,
     private editAccountService: EditAccountService,
     private userDataService: UserDataService
   ) { }
@@ -101,8 +100,9 @@ export class UserManagementComponent implements OnInit, AfterViewInit, OnDestroy
     this.sortList(this.accountList, term);
   };
 
-  onMarkeUser(user: any, action: string): void {
+  onMarkedUser(user: any, action: string): void {
     $('.msg-container').css('display', 'none');
+    this.editRequest = action === 'delete' ? 'Delete User' : 'Reset Password';
     this.targetAccount = user;
     this.action = action;
   };

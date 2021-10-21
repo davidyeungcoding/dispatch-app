@@ -1,16 +1,6 @@
 <app-nav></app-nav>
 
 <div class="container nav-offset">
-  <div class="back-btn-container">
-    <button type="button"
-      class="btn back-btn"
-      (click)="onCancelEdit()">
-      <i class="fas fa-arrow-left"></i>
-
-      <span>&nbsp;Back</span>
-    </button>
-  </div>
-
   <form #editAccountForm="ngForm"
     class="form-container"
     (submit)="onSubmitForm(editAccountForm)">

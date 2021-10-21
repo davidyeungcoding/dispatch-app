@@ -1,119 +1,109 @@
 <app-nav></app-nav>
 
 <div class="container nav-offset">
-  <div class="table-container-container">
-    <div class="table-back-btn">
-      <button type="button"
-        class="btn back-btn"
-        (click)="onCancel()">
-        <i class="fas fa-arrow-left"></i>
-  
-        <span>&nbsp;Back</span>
-      </button>
-    </div>
+  <h4 class="page-title">User Management</h4>
 
-    <div class="table-container">
-      <table>
-        <tr>
-          <th class="btn-header">Edit</th>
-  
-          <th class="btn-header">Delete</th>
-  
-          <th class="btn-header">Password</th>
-  
-          <th (click)="onSortBy('name')">
-            <div class="table-header-group">
-              <span class="table-header-title">Name</span>
-    
-              <div class="sort-group">
-                <i class="fas fa-angle-up sort-icon active-sort"
-                  id="nameNormal"></i>
-    
-                <i class="fas fa-angle-down sort-icon"
-                  id="nameReverse"></i>
-              </div>
-            </div>
-          </th>
-    
-          <th (click)="onSortBy('username')">
-            <div class="table-header-group">
-              <span class="table-header-title">Username</span>
-    
-              <div class="sort-group">
-                <i class="fas fa-angle-up sort-icon"
-                  id="usernameNormal"></i>
-    
-                <i class="fas fa-angle-down sort-icon"
-                  id="usernameReverse"></i>
-              </div>
-            </div>
-          </th>
-    
-          <th (click)="onSortBy('accountType')">
-            <div class="table-header-group">
-              <span class="table-header-title">Account Type</span>
-    
-              <div class="sort-group">
-                <i class="fas fa-angle-up sort-icon"
-                  id="accountTypeNormal"></i>
-    
-                <i class="fas fa-angle-down sort-icon"
-                  id="accountTypeReverse"></i>
-              </div>
-            </div>
-          </th>
-    
-          <th class="video-call-header"
-            (click)="onSortBy('videoCall')">
-            <div class="table-header-group">
-              <span class="table-header-title">Video Call</span>
-    
-              <div class="sort-group">
-                <i class="fas fa-angle-up sort-icon"
-                  id="videoCallNormal"></i>
-    
-                <i class="fas fa-angle-down sort-icon"
-                  id="videoCallReverse"></i>
-              </div>
-            </div>
-          </th>
-        </tr>
-    
-        <tr *ngFor="let user of accountList">
-          <td class="btn-data">
-            <button type="button"
-              class="btn table-btn-ctrl"
-              data-bs-toggle="modal"
-              data-bs-target="#editUser"
-              (click)="onMarkedForEdit(user)"><i class="far fa-edit"></i></button>
-          </td>
-  
-          <td class="btn-data">
-            <button type="button"
-              class="btn table-btn-ctrl"
-              data-bs-toggle="modal"
-              data-bs-target="#confirmModal"
-              (click)="onMarkeUser(user, 'delete')"><i class="far fa-trash-alt"></i></button>
-          </td>
-  
-          <td class="btn-data">
-            <button type="button"
-              class="btn btn-secondary table-btn-ctrl"
-              data-bs-toggle="modal"
-              data-bs-target="#confirmModal"
-              (click)="onMarkeUser(user, 'reset')">Reset</button>
-          </td>
-  
-          <td class="proper-name">{{ user.name }}</td>
+  <div class="table-container">
+    <table>
+      <tr>
+        <th class="btn-header">Edit</th>
 
-          <td>{{ user.username }}</td>
-          
-          <td class="proper-name">{{ user.accountType }}</td>
-          
-          <td class="video-call-data">{{ user.videoCall }}</td>
-        </tr>
-      </table>
-    </div>
+        <th class="btn-header">Delete</th>
+
+        <th class="btn-header">Password</th>
+
+        <th (click)="onSortBy('name')">
+          <div class="table-header-group">
+            <span class="table-header-title">Name</span>
+  
+            <div class="sort-group">
+              <i class="fas fa-angle-up sort-icon active-sort"
+                id="nameNormal"></i>
+  
+              <i class="fas fa-angle-down sort-icon"
+                id="nameReverse"></i>
+            </div>
+          </div>
+        </th>
+  
+        <th (click)="onSortBy('username')">
+          <div class="table-header-group">
+            <span class="table-header-title">Username</span>
+  
+            <div class="sort-group">
+              <i class="fas fa-angle-up sort-icon"
+                id="usernameNormal"></i>
+  
+              <i class="fas fa-angle-down sort-icon"
+                id="usernameReverse"></i>
+            </div>
+          </div>
+        </th>
+  
+        <th (click)="onSortBy('accountType')">
+          <div class="table-header-group">
+            <span class="table-header-title">Account Type</span>
+  
+            <div class="sort-group">
+              <i class="fas fa-angle-up sort-icon"
+                id="accountTypeNormal"></i>
+  
+              <i class="fas fa-angle-down sort-icon"
+                id="accountTypeReverse"></i>
+            </div>
+          </div>
+        </th>
+  
+        <th class="video-call-header"
+          (click)="onSortBy('videoCall')">
+          <div class="table-header-group">
+            <span class="table-header-title">Video Call</span>
+  
+            <div class="sort-group">
+              <i class="fas fa-angle-up sort-icon"
+                id="videoCallNormal"></i>
+  
+              <i class="fas fa-angle-down sort-icon"
+                id="videoCallReverse"></i>
+            </div>
+          </div>
+        </th>
+      </tr>
+  
+      <tr *ngFor="let user of accountList">
+        <td class="btn-data">
+          <button type="button"
+            class="btn table-btn-ctrl"
+            data-bs-toggle="modal"
+            data-bs-target="#editUser"
+            (click)="onMarkedForEdit(user)"><i class="far fa-edit"></i></button>
+        </td>
+
+        <td class="btn-data">
+          <button type="button"
+            class="btn table-btn-ctrl"
+            data-bs-toggle="modal"
+            data-bs-target="#confirmModal"
+            (click)="onMarkedUser(user, 'delete')"><i class="far fa-trash-alt"></i></button>
+        </td>
+
+        <td class="btn-data">
+          <button type="button"
+            class="btn btn-secondary table-btn-ctrl"
+            data-bs-toggle="modal"
+            data-bs-target="#confirmModal"
+            (click)="onMarkedUser(user, 'reset')">Reset</button>
+        </td>
+
+        <td class="proper-name">{{ user.name }}</td>
+
+        <td>{{ user.username }}</td>
+        
+        <td class="proper-name">{{ user.accountType }}</td>
+        
+        <td class="video-call-data">{{ user.videoCall }}</td>
+      </tr>
+    </table>
   </div>
 </div>
 
@@ -124,7 +114,7 @@
     <div class="modal-content modal-card">
       <div class="modal-body">
         <div class="custom-modal-header">
-          <h5 class="modal-title">Delete User</h5>
+          <h5 class="modal-title">{{ editRequest }}</h5>
 
           <button type="button"
             class="btn-close btn-close-white"
