@@ -1,4 +1,4 @@
-.test {
+.nav-container {
   position: fixed;
 }
 
@@ -10,7 +10,7 @@
 }
 
 @media screen and (max-width: 576px) {
-  .test {
+  .nav-container {
     background-color: var(--color-body-background);
     width: 100vw;
   }

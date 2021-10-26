@@ -55,10 +55,12 @@
 /* =========== */
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Andada Pro', serif;
   color: var(--color-text-light);
 }
 
 p, button, a, label, span {
+  font-family: 'Assistant', sans-serif;
   color: var(--color-text-light);
   word-wrap: break-word;
 }
@@ -268,6 +270,10 @@ tr:nth-of-type(even) {
 
 ::-webkit-scrollbar-corner {
   opacity: 0%;
+}
+
+* {
+  scrollbar-color: hsl(218, 50%, 40%) hsl(218, 30%, 20%);
 }
 
 /* ============ */
