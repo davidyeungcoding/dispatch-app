@@ -73,7 +73,7 @@ p, button, a, label, span {
 /* || Back Button || */
 /* ================= */
 
-.back-btn-container {
+/* .back-btn-container {
   padding: 0 15%;
 }
 
@@ -91,7 +91,7 @@ p, button, a, label, span {
   .back-btn-container {
     padding: 0;
   }
-}
+} */
 
 /* =========== */
 /* || Forms || */
@@ -99,7 +99,8 @@ p, button, a, label, span {
 
 .form-container {
   padding: 0 20%;
-  margin: 20px 0;
+  margin: 20px auto;
+  max-width: 65rem;
 }
 
 .btn-input-group {
