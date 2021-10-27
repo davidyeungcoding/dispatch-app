@@ -2,7 +2,7 @@
   "name": "dispatch-app",
   "version": "0.0.0",
   "engines": {
-    "node": "14.16.1"
+    "node": "16.13.0"
   },
   "scripts": {
     "ng": "ng",
@@ -52,8 +52,5 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
     "typescript": "~4.3.5"
-  },
-  "optionalDependencies": {
-    "fsevents": "~2.3.2"
   }
 }
