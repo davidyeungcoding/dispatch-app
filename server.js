@@ -197,8 +197,8 @@ io.on('connection', socket => {
 // ================
 
 app.use(cors());
-// app.use(express.static(path.join(__dirname, 'src'))); // dev
-app.use(express.static(path.join(__dirname, '/dist/dispatch-app'))); // production
+app.use(express.static(path.join(__dirname, 'src'))); // dev
+// app.use(express.static(path.join(__dirname, '/dist/dispatch-app'))); // production
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({
   extended: false

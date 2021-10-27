@@ -1,5 +1,5 @@
 <form #editUser="ngForm"
-  class="creat-form modal-form"
+  class="create-form modal-form"
   (ngSubmit)="onSubmitChange(editUser)">
   <div *ngIf="targetEdit"
     class="container edit-group">
@@ -139,7 +139,7 @@
     <p class="success-msg">{{ editSuccessMessage }}</p>
   </div>
 
-  <div class="custom-modal-footer">
+  <div class="container custom-modal-footer">
     <button type="submit"
       class="btn btn-secondary modal-btn">Submit</button>
     

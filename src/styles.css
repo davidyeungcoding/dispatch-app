@@ -69,30 +69,6 @@ p, button, a, label, span {
   text-transform: capitalize;
 }
 
-/* ================= */
-/* || Back Button || */
-/* ================= */
-
-/* .back-btn-container {
-  padding: 0 15%;
-}
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  color: var(--color-text-light);
-}
-
-.back-btn:hover {
-  color: var(--color-text-light);
-}
-
-@media screen and (max-width: 767px) {
-  .back-btn-container {
-    padding: 0;
-  }
-} */
-
 /* =========== */
 /* || Forms || */
 /* =========== */
@@ -134,13 +110,30 @@ p, button, a, label, span {
 
 .radio-control-container {
   display: flex;
-  justify-content: space-evenly;
+  flex-direction: column;
   margin: 22px 0;
 }
 
 .radio-group {
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.radio-group:last-of-type {
+  margin-bottom: 0;
+}
+
+@media only screen and (min-width: 401px) {
+  .radio-control-container {
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+
+  .radio-group {
+    margin-bottom: 0;
+  }
 }
 
 input[type=radio] {
@@ -231,17 +224,31 @@ tr:nth-of-type(even) {
 }
 
 .custom-modal-footer {
-  display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
 }
 
 .modal-btn {
-  width: 30%;
-  margin-left: 10px;
+  width: 100%;
 }
 
-.modal-btn:nth-of-type(1) {
-  margin-left: 0;
+.modal-btn:first-of-type {
+  margin-bottom: 10px;
+}
+
+@media screen and (min-width: 401px) {
+  .custom-modal-footer {
+    flex-direction: row;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .modal-btn {
+    margin-left: 10px;
+  }
+
+  .modal-btn:first-of-type {
+    margin: 0;
+  }
 }
 
 /* ================ */
