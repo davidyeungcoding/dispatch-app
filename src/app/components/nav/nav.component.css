@@ -1,5 +1,7 @@
 .nav-container {
   position: fixed;
+  background-color: var(--color-body-background);
+  width: 100vw;
 }
 
 .menu-btn {
@@ -9,10 +11,10 @@
   margin: 20px;
 }
 
-@media screen and (max-width: 576px) {
+@media screen and (min-width: 577px) {
   .nav-container {
-    background-color: var(--color-body-background);
-    width: 100vw;
+    background-color: unset;
+    width: unset;
   }
 }
 

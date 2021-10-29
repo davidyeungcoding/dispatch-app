@@ -3,10 +3,6 @@
 /* ================================ */
 
 .dispatch-nav-btn {
-  display: none;
-}
-
-.dispatch-nav-btn {
   position: fixed;
   top: 50vh;
   height: 125px;
@@ -24,9 +20,9 @@
   border-radius: 5px 0 0 5px;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (min-width: 768px) {
   .dispatch-nav-btn {
-    display: inline;
+    display: none;
   }
 }
 
@@ -40,28 +36,30 @@
   max-width: 65rem;
 }
 
+#dispatchRow {
+  width: 200vw;
+  margin: auto;
+}
+
 #dispatchScrollContent {
   scroll-behavior: smooth;
 }
 
 .dispatch-group {
-  width: 50%;
+  width: 100vw;
   height: 80vh;
+  padding: 0 5%;
   overflow-y: auto;
 }
 
-@media screen and (max-width: 767px) {
-  .dispatch-container {
-    min-width: 100vw;
-  }
-  
+@media screen and (min-width: 768px) {
   #dispatchRow {
-    width: 200vw;
+    width: 100%;
   }
 
   .dispatch-group {
-    width: 100vw;
-    padding: 0 5%;
+    width: 50%;
+    padding: 0 2%;
   }
 }
 
@@ -82,14 +80,26 @@
 }
 
 .card-headers {
+  flex-direction: column;
   justify-content: space-evenly;
 }
 
 .user-title {
-  width: fit-content;
+  width: 100%;
   text-transform: capitalize;
   display: flex;
+  justify-content: center;
   align-self: flex-end;
+}
+
+@media screen and (min-width: 401px) {
+  .card-headers {
+    flex-direction: row;
+  }
+
+  .user-title {
+    width: fit-content;
+  }
 }
 
 .card-name {
@@ -117,9 +127,10 @@
 
 .btn-input-btn {
   width: 15%;
+  padding: 0;
 }
 
-.btn-input-input {
+.call-link {
   color: var(--color-text-light);
   width: 85%;
   padding: 10px 15px;
@@ -127,35 +138,23 @@
   background-color: var(--color-section-background);
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (min-width: 501px) {
   .btn-input-btn {
     width: 10%;
   }
 
-  .btn-input-input {
+  .call-link {
     width: 90%;
   }
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (min-width: 768px) {
   .btn-input-btn {
     width: 15%;
-    padding: 0;
   }
 
-  .btn-input-input {
+  .call-link {
     width: 85%;
-  }
-}
-
-@media screen and (max-width: 400px) {
-  .card-headers {
-    flex-direction: column;
-  }
-
-  .user-title {
-    width: 100%;
-    justify-content: center;
   }
 }
 
@@ -169,32 +168,21 @@
 }
 
 .card-btn {
-  width: 46%;
+  width: 100%;
+  margin: 0 0 10px 0;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: var(--box-shadow);
 }
 
-.guest-btn {
-  margin: 0 10px;
+.card-btn:last-of-type {
+  margin: 0;
 }
 
-.guest-btn:first-child {
-  margin-left: 0;
-}
-
-.guest-btn:last-child {
-  margin-right: 0;
-}
-
-@media screen and (max-width: 400px) {
+@media screen and (min-width: 401px) {
   .card-btn {
-    width: 100%;
-    margin: 0 0 10px 0;
-  }
-
-  .card-btn:last-of-type {
+    width: 48%;
     margin: 0;
   }
 }

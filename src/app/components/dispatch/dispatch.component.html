@@ -66,7 +66,7 @@
                 </button>
               </ng-template>
 
-              <p class="btn-input-input">{{ doctor.videoCall }}</p>
+              <p class="call-link">{{ doctor.videoCall }}</p>
             </div>
 
             <div *ngIf="doctor._id === userData._id; else guestView" class="row btn-container">
@@ -78,13 +78,13 @@
             <ng-template #guestView>
               <div class="row btn-container">
                 <button type="button"
-                  class="btn btn-secondary card-btn guest-btn"
+                  class="btn btn-secondary card-btn"
                   data-bs-toggle="modal"
                   data-bs-target="#sendText"
                   (click)="onStoreVideoCall(doctor.videoCall)"><i class="fas fa-mobile-alt"></i>&nbsp;Text</button>
 
                 <button type="button"
-                  class="btn btn-secondary card-btn guest-btn"
+                  class="btn btn-secondary card-btn"
                   (click)="onStartChat(doctor)"><i class="far fa-comment-alt"></i>&nbsp;Chat</button>
               </div>
             </ng-template>
