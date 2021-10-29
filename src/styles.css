@@ -36,6 +36,7 @@
   /* ================ */
 
   --box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.25);
+  --box-shadow-tight: 11px 11px 15px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* ============= */
@@ -74,15 +75,24 @@ p, button, a, label, span {
 /* =========== */
 
 .form-container {
-  padding: 0 20%;
+  padding: 40px 35px;
   margin: 20px auto;
-  max-width: 65rem;
+  max-width: 35rem;
+  background-color: var(--color-card-background);
+  box-shadow: var(--box-shadow);
+}
+
+@media screen and (min-width: 401px) {
+  .form-container {
+    padding: 40px;
+  }
 }
 
 .btn-input-group {
   display: flex;
   align-items: stretch;
   border-radius: 5px;
+  box-shadow: var(--box-shadow);
 }
 
 .btn-input-btn {
@@ -100,12 +110,31 @@ p, button, a, label, span {
 }
 
 .form-btn-container {
+  margin-top: 1rem;
   display:flex;
-  justify-content: space-around;
+  flex-direction: column;
 }
 
 .form-btn {
-  width: 45%;
+  width: 100%;
+  margin-bottom: 15px;
+  box-shadow: var(--box-shadow);
+}
+
+.form-btn:last-of-type {
+  margin-bottom: 0px;
+}
+
+@media screen and (min-width: 401px) {
+  .form-btn-container {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .form-btn {
+    width: 45%;
+    margin-bottom: 0px;
+  }
 }
 
 .radio-control-container {
@@ -125,7 +154,7 @@ p, button, a, label, span {
   margin-bottom: 0;
 }
 
-@media only screen and (min-width: 401px) {
+@media screen and (min-width: 401px) {
   .radio-control-container {
     flex-direction: row;
     justify-content: space-evenly;
@@ -144,30 +173,6 @@ input[type=radio] {
 
 .radio-label {
   margin-left: 8px;
-}
-
-@media screen and (max-width: 767px) {
-  .form-container {
-    padding: 0 10%;
-  }
-}
-
-@media screen and (max-width: 400px) {
-  .form-container {
-    padding: 0 5%;
-  }
-
-  .form-btn-container {
-    flex-direction: column;
-  }
-
-  .form-btn {
-    width: 100%;
-  }
-
-  .form-btn:first-of-type {
-    margin-bottom: 15px;
-  }
 }
 
 /* ============ */

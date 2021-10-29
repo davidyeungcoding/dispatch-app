@@ -8,8 +8,8 @@ import { BehaviorSubject, of } from 'rxjs';
   providedIn: 'root'
 })
 export class SearchService {
-  private api = 'http://localhost:3000/users'; // dev
-  // private api = 'users'; // production
+  // private api = 'http://localhost:3000/users'; // dev
+  private api = 'users'; // production
 
   // =================
   // || Observables ||

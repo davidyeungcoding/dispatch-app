@@ -11,17 +11,22 @@
   align-items: center;
 }
 
-.name-label {
+#editNameGroup {
+  box-shadow: unset;
+}
+
+#nameLabel {
   margin: 0;
 }
 
-.name-btn {
+#nameBtn {
   height: 36px;
   width: 42px;
   border: 0;
+  box-shadow: var(--box-shadow);
 }
 
-.name-name {
+#nameName {
   margin-left: 10px;
   margin-bottom: 0;
   text-transform: capitalize;
@@ -37,9 +42,5 @@
 
 #submitMsg {
   margin: 0;
-  margin-top: 24px;
-}
-
-.form-btn-container {
   margin-top: 24px;
 }

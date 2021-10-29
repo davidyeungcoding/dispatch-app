@@ -55,6 +55,7 @@
   min-height: 298px;
   width: 100vw;
   object-fit: cover;
+  filter: grayscale(30%) blur(3px);
   box-shadow: -4px 4px 25px 10px rgba(0, 0, 0, .75), -6px 6px 25px 10px rgba(0, 0, 0, .65);
 }
 
@@ -87,15 +88,12 @@
 
 .login-form {
   padding: 20px 8%;
-}
-
-.btn-container {
-  display: flex;
-  justify-content: center;
+  background-color: unset;
+  box-shadow: unset;
 }
 
 .login-btn {
-  width: 40%;
+  width: 50%;
 }
 
 @media screen and (min-width: 500px) {

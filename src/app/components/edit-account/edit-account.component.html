@@ -79,15 +79,16 @@
     </div>
 
     <div class="form-group text-field">
-      <p class="name-label">Name:</p>
+      <label id="nameLabel">Name:</label>
 
-      <div class="btn-input-group">
+      <div class="btn-input-group" id="editNameGroup">
         <button type="button"
-          class="btn btn-secondary name-btn"
+          class="btn btn-secondary"
+          id="nameBtn"
           title="Edit Name"
           (click)="onShowContent('name')"><i class="far fa-edit"></i></button>
   
-          <h4 class="name-name">{{ userData.name }}</h4>
+          <h4 id="nameName">{{ userData.name }}</h4>
       </div>
     </div>
 
