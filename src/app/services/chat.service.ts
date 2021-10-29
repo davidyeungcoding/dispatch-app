@@ -32,20 +32,7 @@ export class ChatService {
     };
     chatEntry ? chatEntry.messages.push(update.messages[0]) : list.push(update);
     this.changeOpenChats(list);
-    this.scrollDown(`#${update._id}ChatDisplay`);
     $(`#${payload._id}ChatControl`).addClass('new-message');
-  };
-
-  // temp workaroud issue where scroll won't go all the way to the bottom
-  // of the element container
-  scrollDown(elemId: string): void {
-    setTimeout(() => {
-      $(elemId)[0].lastElementChild?.scrollIntoView({
-        block: 'end',
-        inline: 'nearest',
-        behavior: 'smooth'
-      });
-    }, 100);
   };
 
   failedToDeliver(payload: any): void {

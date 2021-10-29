@@ -105,7 +105,7 @@
   color: hsl(0, 0%, 30%);
 }
 
-#buffer {
+.buffer {
   height: 10px;
 }
 

@@ -17,6 +17,7 @@ import { DeleteUserComponent } from './components/modals/delete-user/delete-user
 import { EditUserComponent } from './components/modals/edit-user/edit-user.component';
 import { VideoCallComponent } from './components/modals/video-call/video-call.component';
 import { SendTextComponent } from './components/modals/send-text/send-text.component';
+import { ChatMonitorDirective } from './directives/chat-monitor.directive';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { SendTextComponent } from './components/modals/send-text/send-text.compo
     DeleteUserComponent,
     EditUserComponent,
     VideoCallComponent,
-    SendTextComponent
+    SendTextComponent,
+    ChatMonitorDirective
   ],
   imports: [
     BrowserModule,

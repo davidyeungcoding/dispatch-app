@@ -36,8 +36,7 @@
 
     <div class="minimize-content"
       id="{{ conversation._id }}MinimizeContent">
-      <div class="chat-display"
-        id="{{ conversation._id }}ChatDisplay">
+      <div class="chat-display" id="{{ conversation._id }}ChatDisplay" appChatMonitor>
         <div *ngFor="let message of conversation.messages">
           <span *ngIf="message.personal === true; else response" class="chat-message personal">
             {{ message.message }}
@@ -56,7 +55,7 @@
           </ng-template>
         </div>
 
-        <div id="buffer"></div>
+        <div class="buffer"></div>
       </div>
   
       <div class="chat-text-area" id="{{ conversation._id }}TextArea">

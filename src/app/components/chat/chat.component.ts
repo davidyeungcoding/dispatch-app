@@ -3,7 +3,6 @@ import { NgForm } from '@angular/forms';
 
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketioService } from 'src/app/services/socketio.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { UserDataService } from 'src/app/services/user-data.service';
 
 import { Subscription } from 'rxjs';
@@ -23,7 +22,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor(
     private chatService: ChatService,
     private socketioService: SocketioService,
-    private authService: AuthService,
     private userDataService: UserDataService
   ) { }
 
@@ -82,7 +80,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     conversation.messages.push(message);
     this.clearTextField(conversation, form);
     this.sendSocketioMessage(conversation, message.message);
-    this.chatService.scrollDown(`#${conversation._id}ChatDisplay`);
   };
 
   onClose(conversation: ChatEntry): void {
