@@ -202,6 +202,10 @@ th:hover {
   cursor: pointer;
 }
 
+tr:nth-of-type(odd) {
+  background-color: var(--color-body-background);
+}
+
 tr:nth-of-type(even) {
   background-color: var(--color-chat-primary);
 }
@@ -261,19 +265,18 @@ tr:nth-of-type(even) {
 /* ================ */
 
 ::-webkit-scrollbar {
-  width: 15px;
-  height: 15px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
   background: hsl(218, 30%, 20%);
-  border-radius: 100vw;
-  margin: 5px;
+  /* border-radius: 100vw; */
 }
 
 ::-webkit-scrollbar-thumb {
   background: hsl(218, 50%, 40%);
-  border-radius: 100vw;
+  /* border-radius: 100vw; */
 }
 
 ::-webkit-scrollbar-thumb:hover,
@@ -305,6 +308,7 @@ tr:nth-of-type(even) {
 
 .nav-offset {
   padding-top: 80px;
+  padding-bottom: 80px;
 }
 
 html {

@@ -2,6 +2,10 @@
 /* || Dispatch Navigation Button || */
 /* ================================ */
 
+.nav-offset {
+  padding-bottom: 0;
+}
+
 .dispatch-nav-btn {
   position: fixed;
   top: 50vh;

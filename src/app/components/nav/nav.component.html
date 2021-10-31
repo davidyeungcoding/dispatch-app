@@ -1,10 +1,38 @@
-<div class="nav-container">
-  <button type="button"
-    class="btn menu-btn"
-    data-bs-toggle="offcanvas"
-    data-bs-target="#offcanvasNav"
-    aria-controls="offcanvasNav"><i class="fas fa-bars control-icon"></i></button>
-</div>
+<nav class="navbar fixed-top navbar-expand-md nav-content">
+  <div class="container-fluid nav-main">
+    <div class="full-screen-links">
+      <ul class="nav-links">
+        <li class="nav-item">
+          <a class="nav-link active" (click)="onRedirect('dispatch')">Dispatch</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" (click)="onRedirect('edit-account')">Edit Account</a>
+        </li>
+
+        <div *ngIf="currentUser.accountType === 'admin'" class="nav-links">
+          <li class="nav-item">
+            <a class="nav-link" (click)="onRedirect('create-account')">Create Account</a>
+          </li>
+  
+          <li class="nav-item">
+            <a class="nav-link" (click)="onRedirect('user-management')">User Management</a>
+          </li>
+        </div>
+
+        <li class="nav-item">
+          <a class="nav-link" (click)="onLogout()">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <button type="button"
+      class="menu-btn navbar-toggler"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasNav"
+      aria-controls="offcanvasNav"><i class="fas fa-bars control-icon"></i></button>
+  </div>
+</nav>
 
 <div class="offcanvas offcanvas-start"
   data-bs-scroll="true"
