@@ -46,6 +46,7 @@
 
 .error-msg {
   color: var(--color-text-warning);
+  font-weight: bold;
 }
 
 .success-msg {

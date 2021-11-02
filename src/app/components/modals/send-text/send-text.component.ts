@@ -51,6 +51,7 @@ export class SendTextComponent implements OnInit, OnDestroy {
     this.textMessageService.changeResponseMessage(error);
     this.replaceClass('error-msg');
     $('#textResponseContainer').css('display', 'inline');
+    setTimeout(() => { $('#textResponseContainer').css('display', 'none') }, 1500);
   };
 
   // =======================

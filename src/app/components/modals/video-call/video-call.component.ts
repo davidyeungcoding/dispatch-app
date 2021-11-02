@@ -44,6 +44,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.callLinkError = 'No changes detected';
       $('#callLinkErrorContainer').css('display', 'inline');
       form.reset({ callLink: '' });
+      setTimeout(() => { $('#callLinkErrorContainer').css('display', 'none') }, 1500);
       return;
     };
 
