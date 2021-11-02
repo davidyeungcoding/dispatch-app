@@ -18,6 +18,7 @@ import { EditUserComponent } from './components/modals/edit-user/edit-user.compo
 import { VideoCallComponent } from './components/modals/video-call/video-call.component';
 import { SendTextComponent } from './components/modals/send-text/send-text.component';
 import { ChatMonitorDirective } from './directives/chat-monitor.directive';
+import { NavbarIntersectionDirective } from './directives/navbar-intersection.directive';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ChatMonitorDirective } from './directives/chat-monitor.directive';
     EditUserComponent,
     VideoCallComponent,
     SendTextComponent,
-    ChatMonitorDirective
+    ChatMonitorDirective,
+    NavbarIntersectionDirective
   ],
   imports: [
     BrowserModule,

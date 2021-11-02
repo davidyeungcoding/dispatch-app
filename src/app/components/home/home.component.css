@@ -23,6 +23,7 @@
   margin-bottom: 4rem;
   color: rgba(255, 255, 255, .65);
   position: relative;
+  pointer-events: none;
   z-index: 1;
 }
 
@@ -55,7 +56,10 @@
   min-height: 298px;
   width: 100vw;
   background:
-    linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)),
+    linear-gradient(
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0.7)),
     url('/assets/images/national-cancer-institute-NFvdKIhxYlU-unsplash.jpg');
   background-size: cover;
   filter: grayscale(30%) blur(2px);
