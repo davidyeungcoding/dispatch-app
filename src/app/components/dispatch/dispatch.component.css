@@ -35,9 +35,18 @@
 /* ==================== */
 
 .dispatch-container {
-  overflow: hidden;
   height: 100vh;
   max-width: 65rem;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: hidden;
+}
+
+@media screen and (min-width: 768px) {
+  .dispatch-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 }
 
 #dispatchRow {
@@ -101,6 +110,10 @@
     flex-direction: row;
   }
 
+  .card-headers > * {
+    width: 50%;
+  }
+
   .user-title {
     width: fit-content;
   }
@@ -125,6 +138,7 @@
 }
 
 .btn-input-group {
+  min-height: 44px;
   margin-bottom: 12px;
 }
 

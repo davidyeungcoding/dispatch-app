@@ -71,7 +71,7 @@ export class DispatchComponent implements OnInit, AfterViewInit, OnDestroy {
     document.body.appendChild(temp);
     temp.value = link;
     temp.select();
-    document.execCommand('copy');
+    navigator.clipboard.writeText(temp.value);
     document.body.removeChild(temp);
   };
 
