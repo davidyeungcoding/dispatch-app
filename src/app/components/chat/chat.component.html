@@ -11,6 +11,7 @@
         <button type="button"
           class="btn chat-control-btn"
           aria-label="Close"
+          title="Close"
           (click)="onClose(conversation)">
           <i class="fas fa-times"></i>
         </button>
@@ -19,6 +20,7 @@
           type="button"
           class="btn chat-control-btn"
           aria-label="Minimize"
+          title="Minimize"
           (click)="onResize(conversation)">
           <i class="far fa-window-minimize"></i>
         </button>
@@ -27,6 +29,7 @@
           <button type="button"
             class="btn chat-control-btn"
             aria-label="Maximize"
+            title="Maximize"
             (click)="onResize(conversation)">
             <i class="far fa-window-maximize"></i>
           </button>
@@ -66,6 +69,7 @@
             <textarea class="form-control chat-text-field"
               id="{{ conversation._id }}Chat"
               name="message"
+              (keyup.enter)="onSendMessage(conversation, chatMessageForm)"
               ngModel>
             </textarea>
           </div>
