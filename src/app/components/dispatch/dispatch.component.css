@@ -100,9 +100,10 @@
 .user-title {
   width: 100%;
   text-transform: capitalize;
+  word-break: break-word;
   display: flex;
   justify-content: center;
-  align-self: flex-end;
+  align-self: center;
 }
 
 @media screen and (min-width: 401px) {
@@ -117,16 +118,6 @@
   .user-title {
     width: fit-content;
   }
-}
-
-.card-name {
-  overflow: hidden;
-  background: linear-gradient(to right,
-    var(--color-text-light) 90%,
-    var(--color-card-background) 100%
-  );
-  background-clip: text;
-  color: transparent;
 }
 
 .available {

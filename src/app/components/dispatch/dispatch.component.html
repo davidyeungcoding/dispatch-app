@@ -17,7 +17,7 @@
         <div class="row user-card">
           <div class="col">
             <div class="row card-headers">
-              <h4 class="user-title card-name">{{ user.name }}</h4>
+              <h4 class="user-title">{{ user.name }}</h4>
 
               <h6 class="user-title">{{ user.accountType }}</h6>
             </div>
@@ -37,7 +37,7 @@
         <div class="row user-card">
           <div class="col">
             <div class="row card-headers">
-              <h4 class="user-title card-name">{{ doctor.name }}</h4>
+              <h4 class="user-title">{{ doctor.name }}</h4>
               
               <h6 *ngIf="doctor.status === 'available'; else unavailable" class="user-title available">{{ doctor.status }}</h6>
 

@@ -33,12 +33,5 @@
 
 .edit-title {
   margin: 0;
-  overflow: hidden;
-  white-space: pre;
-  background: linear-gradient(to right,
-    var(--color-text-light) 97%,
-    var(--color-card-background) 100%
-  );
-  background-clip: text;
-  color: transparent;
+  word-break: break-word;
 }

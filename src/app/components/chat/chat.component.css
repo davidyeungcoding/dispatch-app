@@ -47,6 +47,7 @@
 
 .chat-name {
   text-transform: capitalize;
+  white-space: nowrap;
   margin: 0 0 0 10px;
   overflow: hidden;
   background: linear-gradient(to right,
@@ -87,14 +88,18 @@
 
 .personal {
   margin-left: 25px;
-  border-radius: 5px 5px 0 5px;
   background-color: var(--color-chat-primary);
 }
 
 .response {
   margin-right: 25px;
-  border-radius: 5px 5px 5px 0;
   background-color: var(--color-chat-secondary);
+}
+
+.personal,
+.response {
+  padding: 7px;
+  border-radius: 5px;
 }
 
 .msg-error-container {
